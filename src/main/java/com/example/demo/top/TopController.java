@@ -4,12 +4,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.example.demo.login.LoginForm;
+
 //　メイン
 @Controller
 public class TopController {
+	
 	@GetMapping(value="/top")
 	public String Get_Top(Model model) {
-//		model.addAttribute("loginForm", new LoginForm());
+		model.addAttribute("loginForm", new LoginForm());
 		return "top";
 	}
 }

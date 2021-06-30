@@ -21,15 +21,24 @@ public class LoginController {
 
 	//Post(トップページ)
 	@PostMapping(value="/top")
-	public String Post_Login(LoginForm loginForm,Model model) {
-	
-		//送信されたデータをDBに保存
-		LoginEntity loginEntity = new LoginEntity();
-		loginEntity.setId(loginForm.getId());
-		loginEntity.setName(loginForm.getName());
-		loginRepository.save(loginEntity);
+	public String Post_Top(LoginForm loginForm,Model model) {
 		
 		model.addAttribute("loginForm",loginForm);
 		return "top";
+	}
+	
+	//ログイン認証
+	@PostMapping(value="login_process")
+	public String Login_Process(LoginForm loginForm) {
+		
+		int form_code = loginForm.getStudentcode();
+		String form_pass = loginForm.getStudentpassword();
+		
+		LoginEntity loginEntity = loginRepository.findByStudentcodeAndStudentpassword(form_code,form_pass);
+		if(loginEntity == null) {
+			return "redirect:/login";
+		}else {
+			return "redirect:/top";
+		}
 	}
 }
