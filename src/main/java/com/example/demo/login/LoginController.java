@@ -12,7 +12,7 @@ public class LoginController {
 	@Autowired
 	LoginRepository loginRepository;
 
-	//Get(ログインページ
+	//Get(ログインページ)
 	@GetMapping(value="/login")
 	public String Get_Login(Model model) {
 		model.addAttribute("loginForm", new LoginForm());
