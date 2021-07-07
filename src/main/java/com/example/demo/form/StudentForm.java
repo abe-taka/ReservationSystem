@@ -1,16 +1,30 @@
-package com.example.demo.login;
+package com.example.demo.form;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.io.Serializable;
 
-public class LoginForm {
+import javax.validation.GroupSequence;
+import javax.validation.constraints.NotBlank;
 
+public class StudentForm implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	/* バリデーション優先順位をグループ化 */
+	public interface Group1 {
+	}
+
+	public interface Group2 {
+	}
+
+	@GroupSequence({ Group1.class, Group2.class })
+	public interface All {
+	}
+	
 	// 学籍番号
-	private int studentcode;
+	@NotBlank(groups = Group1.class)
+	private String studentcode;
 
-	// パスワード(ローカル用)
+	// パスワード
+	@NotBlank(groups = Group1.class)
 	private String studentpassword;
 
 	// 名前
@@ -22,12 +36,14 @@ public class LoginForm {
 	// ？
 	private String studentstat;
 
+	
+	
 	// ゲッター、セッター
-	public int getStudentcode() {
+	public String getStudentcode() {
 		return studentcode;
 	}
 
-	public void setStudentcode(int studentcode) {
+	public void setStudentcode(String studentcode) {
 		this.studentcode = studentcode;
 	}
 

@@ -2,20 +2,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+<link th:href="@{/css/vali.css}" rel="stylesheet">
 <meta charset="UTF-8">
 <title>ログイン</title>
 </head>
 <body>
 	<div class="h-screen w-full flex items-center justify-center">
-		<form th:action="@{/login_process}" th:object="${loginForm}" method="post" class="w-full sm:w-1/4	p-5 flex flex-col space-y-3">
+		<form th:action="@{/login_process}" th:object="${studentForm}" method="post" class="w-full sm:w-1/4	p-5 flex flex-col space-y-3">
 			<div>
+				<!-- バリデーションエラー -->
+				<div class="vali_message" th:if="${#fields.hasErrors('studentcode')}" th:errors="*{studentcode}"></div>
 				<label for="staticEmail" class="block my-2 text-gray-600">ID</label>
-				<input type="text" class="w-full h-10 rounded-lg border px-2" th:field="*{studentcode}"　id="inputId">
+				<input type="text" class="w-full h-10 rounded-lg border px-2" th:errorclass="is-invalid" th:field="*{studentcode}" id="inputId">
 			</div>
+			
 			<div>
+				<!-- バリデーションエラー -->
+				<div class="vali_message" th:if="${#fields.hasErrors('studentpassword')}" th:errors="*{studentpassword}"></div>
 				<label for="inputPassword" class="block my-2 text-gray-600">パスワード</label>
-				<input type="password" class="w-full h-10 rounded-lg border px-2" th:field="*{studentpassword}" id="inputPassword">
+				<input type="password" class="w-full h-10 rounded-lg border px-2" th:errorclass="is-invalid" th:field="*{studentpassword}" id="inputPassword">
 			</div>
+			
 			<div>
 				<button type="submit" th:text="ログイン" class="w-full h-10 bg-green-500 hover:bg-green-700 focus:ring ring-blue-300 rounded-lg mt-5 text-white"></button>
 			</div>
