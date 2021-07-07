@@ -1,4 +1,4 @@
-package com.example.demo.login;
+package com.example.demo.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,13 +9,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="m01_student")
-public class LoginEntity {
+public class StudentEntity {
 
 	//学籍番号
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "m01_student_code")
-	private int studentcode;
+	private String studentcode;
 	
 	//パスワード(ローカル用)
 	@Column(name = "m01_student_password")
@@ -35,11 +35,11 @@ public class LoginEntity {
 
 
 	//ゲッター、セッター
-	public int getStudentcode() {
+	public String getStudentcode() {
 		return studentcode;
 	}
 
-	public void setStudentcode(int studentcode) {
+	public void setStudentcode(String studentcode) {
 		this.studentcode = studentcode;
 	}
 

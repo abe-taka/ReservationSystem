@@ -9,10 +9,13 @@
 <body>
 	<nav class="fixed w-full h-14 flex items-center justify-between bg-white shadow px-2 sm:px-5">
 		<a>FOCS</a>
-		<div class="flex items-center">
-			<span class="mr-2 text-sm sm:text-base"></span>
-			<button class="w-full px-1 h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-sm text-white">ログアウト</button>
-		</div>
+		<div th:text="${session_data}"></div>
+		<form th:action="@{/logout}" method="post">
+			<div class="flex items-center">
+				<span class="mr-2 text-sm sm:text-base"></span>
+				<button class="w-full px-1 h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-sm text-white">ログアウト</button>
+			</div>
+		</form>	
 	</nav>
 	
 	<main class="min-h-screen">
