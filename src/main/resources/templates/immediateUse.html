@@ -4,7 +4,7 @@
 <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<title>利用開始</title>
+<title>即時利用</title>
 </head>
 <body>
 	<nav class="fixed w-full h-14 flex items-center justify-between bg-white shadow px-2 sm:px-5">
@@ -18,35 +18,55 @@
 	<main class="min-h-screen">
 		<div class="flex flex-col sm:flex-row h-screen pt-14 pb-20">
 			<div class="flex flex-row sm:flex-col w-full sm:w-1/4 h-1/4 sm:h-full">
-				<div class="w-1/3 sm:w-full sm:h-1/3 p-1 sm:p-2">
+				<div class="w-1/3 sm:w-full sm:h-1/5 p-1 sm:p-2">
 					<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
-						<span class="text-sm sm:text-lg text-gray-700">階数</span>
+						<span class="text-sm sm:text-lg text-gray-700">&#9312; 階数</span>
 						<div class="h-full flex justify-center items-center">
-							<span>13階</span>
+							<select name="floor" id="floorSelect" class="w-20 mr-2 border">
+								<option value="13">13</option>
+								<option value="13">14</option>
+								<option value="13">15</option>
+								<option value="13">16</option>
+							</select>
+							<span class="text-sm">階</span>
 						</div>
 					</div>
 				</div>
-				<div class="w-1/3 sm:w-full sm:h-1/3 p-1 sm:p-2">
+				<div class="w-2/3 sm:w-full sm:h-4/5 p-1 sm:p-2">
 					<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
-						<span class="text-sm sm:text-lg text-gray-700">機種コード</span>
-						<div class="h-full flex justify-center items-center">
-							<span>13WLMT1</span>
+						<span class="text-sm sm:text-lg text-gray-700">&#9313; 機種コード</span>
+						
+						<!-- 機種コード表示ボックス -->
+						<div class="space-x-1 sm:space-x-0 sm:space-y-2 sm:my-2 p-1 flex sm:block items-center overflow-x-auto sm:overflow-x-hidden sm:overflow-y-auto" style="height: calc(100% - 1rem)">
+							
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							<button class="w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">13WLMT1</button>
+							
 						</div>
-					</div>
-				</div>
-				<div class="w-1/3 sm:w-full sm:h-1/3 p-1 sm:p-2">
-					<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
-						<span class="text-sm sm:text-lg text-gray-700">予約時限</span>
-						<div class="h-full flex justify-center items-center">
-							<span>1限目</span>
-						</div>
+						
+						<button class="w-full px-1 h-12 bg-gray-200 hover:bg-gray-400 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black">ソフトで絞り込み</button>
 					</div>
 				</div>
 			</div>
 			
 			<div class="w-full sm:w-3/4 h-3/4 sm:h-full p-1 sm:p-2 overflow-hidden">
 				<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
-					<span class="text-sm sm:text-lg text-gray-700">&#9312; 座席番号</span>
+					<span class="text-sm sm:text-lg text-gray-700">&#9314; 座席番号</span>
 					
 					<div class="flex flex-col sm:flex-row justify-between py-1 px-2">
 						<div class="text-gray-700 text-xs sm:text-sm">
@@ -144,6 +164,10 @@
 							</tr>
 						</tbody>
 					</table>
+					</div>
+					
+					<div class="pt-2">
+						<button class="w-full px-1 h-12 bg-gray-200 hover:bg-gray-400 focus:ring ring-gray-100 rounded-lg text-sm text-black hover:text-white">マシン開放待ちに登録</button>
 					</div>
 				</div>
 			</div>
