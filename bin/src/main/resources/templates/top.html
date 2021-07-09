@@ -1,14 +1,68 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
 <title>トップ</title>
 </head>
 <body>
-
-	<h1>登録されました</h1>
-	[id]<div th:text="${loginForm.id}"></div>
-	[name]<div th:text="${loginForm.name}"></div>
+	<nav class="fixed w-full h-14 flex items-center justify-between bg-white shadow px-2 sm:px-5">
+		<a>FOCS</a>
+		<div th:text="${session_data}"></div>
+		<form th:action="@{/logout}" method="post">
+			<div class="flex items-center">
+				<span class="mr-2 text-sm sm:text-base"></span>
+				<button class="w-full px-1 h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-sm text-white">ログアウト</button>
+			</div>
+		</form>	
+	</nav>
 	
+	<main class="min-h-screen">
+		<div class="h-screen pt-14">
+			<div class="h-full p-5 sm:p-10 grid grid-cols-1 sm:grid-cols-3 gap-7 sm:gap-12">
+				<div class="flex flex-col">
+					<div class="h-2/3 py-2 sm:py-5">
+						<form th:action="@{/reservation}" method="get" enctype="multipart/form-data">
+							<a href="javascript:void(0)" onclick="this.parentNode.submit()" class="block w-full h-full bg-white hover:bg-blue-200 focus:ring ring-blue-100 cursor-pointer  flex flex-col items-center justify-center rounded-lg shadow p-2">
+								<span class="text-xl sm:text-2xl">予約する</span>					
+							</a>
+						</form>
+					</div>
+					<div class="h-1/3 py-2 sm:py-5">
+						<a class="block w-full h-full bg-white hover:bg-blue-200 focus:ring cursor-pointer ring-blue-100 flex flex-col items-center justify-center rounded-lg shadow p-2">
+							<span class="text-xl sm:text-2xl">予約取消</span>					
+						</a>
+					</div>
+				</div>
+				
+				<div class="flex flex-col">
+					<div class="h-2/3 py-2 sm:py-5">
+						<a class="block w-full h-full bg-white hover:bg-blue-200 focus:ring cursor-pointer ring-blue-100 flex flex-col items-center justify-center rounded-lg shadow p-2">
+							<span class="text-xl sm:text-2xl">利用開始・即時利用</span>					
+						</a>
+					</div>
+					<div class="h-1/3 py-2 sm:py-5">
+						<a class="block w-full h-full bg-white hover:bg-blue-200 focus:ring cursor-pointer ring-blue-100 flex flex-col items-center justify-center rounded-lg shadow p-2">
+							<span class="text-xl sm:text-2xl">マシン解放待ちの解除</span>					
+						</a>
+					</div>
+				</div>
+				
+				<div class="flex flex-col">
+					<div class="h-2/3 py-2 sm:py-5">
+						<a class="block w-full h-full bg-white hover:bg-blue-200 focus:ring cursor-pointer ring-blue-100 flex flex-col items-center justify-center rounded-lg shadow p-2">
+							<span class="text-xl sm:text-2xl">利用終了</span>					
+						</a>
+					</div>
+					<div class="h-1/3 py-2 sm:py-5">
+						<a class="block w-full h-full bg-white hover:bg-blue-200 focus:ring cursor-pointer ring-blue-100 flex flex-col items-center justify-center rounded-lg shadow p-2">
+							<span class="text-xl sm:text-2xl">継続利用</span>					
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>	
 </body>
 </html>

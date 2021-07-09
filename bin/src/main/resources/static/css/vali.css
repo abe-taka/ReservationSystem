@@ -1,0 +1,6 @@
+@charset "UTF-8";
+
+/* バリデーションエラーの文字 */
+.vali_message{
+	color: red;
+}
