@@ -13,11 +13,10 @@ public class StudentEntity {
 
 	//学籍番号
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "m01_student_code")
 	private String studentcode;
 	
-	//パスワード(ローカル用)
+	//パスワード(ローカル用) //本来のテーブルにはない
 	@Column(name = "m01_student_password")
 	private String studentpassword;
 	
@@ -25,13 +24,13 @@ public class StudentEntity {
 	@Column(name = "m01_student_name")
 	private String studentname;
 	
-	//ボランティア委員かのフラグ
+	//アシススタントスタッフのフラグ
 	@Column(name = "m01_student_flag")
-	private String studentflag;
+	private int studentflag;
 	
-	//？
+	//FOCSシステム管理用？0にしておく
 	@Column(name = "m01_student_stat")
-	private String studentstat;
+	private int studentstat;
 
 
 	//ゲッター、セッター
@@ -59,19 +58,19 @@ public class StudentEntity {
 		this.studentname = studentname;
 	}
 
-	public String getStudentflag() {
+	public int getStudentflag() {
 		return studentflag;
 	}
 
-	public void setStudentflag(String studentflag) {
+	public void setStudentflag(int studentflag) {
 		this.studentflag = studentflag;
 	}
 
-	public String getStudentstat() {
+	public int getStudentstat() {
 		return studentstat;
 	}
 
-	public void setStudentstat(String studentstat) {
+	public void setStudentstat(int studentstat) {
 		this.studentstat = studentstat;
 	}
 	

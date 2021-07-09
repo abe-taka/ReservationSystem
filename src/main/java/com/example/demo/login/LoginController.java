@@ -19,6 +19,7 @@ public class LoginController {
 	LoginRepository loginRepository;
 	@Autowired
 	Session_manage session_manage;
+	
 	//セッションデータ用
 	String session_data = null;
 
@@ -31,24 +32,33 @@ public class LoginController {
 	
 	//ログイン認証
 	@PostMapping(value="/login_process")
-	public String Login_Process(@Validated(StudentForm.All.class) StudentForm studentForm, BindingResult result) {
+	public String Login_Process(@Validated(StudentForm.All.class) StudentForm studentForm, BindingResult result,Model model) {
 		
 		//送信された情報を取得
 		String form_code = studentForm.getStudentcode();
 		String form_pass = studentForm.getStudentpassword();
+		
 		//DBに検索
 		StudentEntity studentEntity = loginRepository.findByStudentcodeAndStudentpassword(form_code,form_pass);
 		
+		//バリデーションチェック
 		if (result.hasErrors()) {
 			// エラー(バリデーションチェック)
 			System.out.println("バリデーションエラー");
 			System.out.println("バリデーションログ"+result);
-			return "login";
+			return "redirect:/";
 		}
+		//入力チェック
+		else if(studentEntity == null) {
+			System.out.println("DBに存在しない");
+			//エラー表示は、LDAPが終わってから
+			return "redirect:/";
+		}	
+		//正常
 		else {
 			session_data = studentEntity.getStudentcode();
 			session_manage.setSession_data(session_data);
-			return "top";
+			return "redirect:/top";
 		}
 	}
 }
