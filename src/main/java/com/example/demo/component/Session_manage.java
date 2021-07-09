@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-//セッション情報を渡すクラス
+//セッション情報の受け渡し
 @Component
 public class Session_manage {
 
+	// HttpSession
 	@Autowired
-	HttpSession httpsession; // HttpSession
+	HttpSession httpsession; 
 	
 	private String session_data;
 	
@@ -34,8 +35,6 @@ public class Session_manage {
 		httpsession.getAttribute(data).toString();
 		return data;
 	}
-	
-	
 	
 	public String Get_SessionMail(String session_num) {
 		

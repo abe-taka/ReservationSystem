@@ -22,9 +22,9 @@ public class TopController {
 	@GetMapping(value = "/top")
 	public String Get_Top(Model model) {
 		session_data = session_manage.getSession_data();
+		System.out.println("session_mail"+session_data);
 		model.addAttribute("session_data", session_data);
-		model.addAttribute("loginForm", new StudentForm());
-		
+		model.addAttribute("studentForm", new StudentForm());
 		return "top";
 	}
 
@@ -32,6 +32,7 @@ public class TopController {
 	@PostMapping(value = "/top")
 	public String Post_Top(StudentForm studentForm, Model model) {
 		session_data = session_manage.getSession_data();
+		System.out.println("session_mail"+session_data);
 		model.addAttribute("session_data", session_data);
 		model.addAttribute("studentForm", studentForm);
 		return "top";

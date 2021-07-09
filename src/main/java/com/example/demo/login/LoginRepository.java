@@ -8,9 +8,6 @@ import com.example.demo.entity.StudentEntity;
 @Repository
 public interface LoginRepository extends JpaRepository<StudentEntity,Integer>{
 
-	//学籍番号、パスワード検索
+	//学籍番号、パスワード検索(ログイン認証)
 	public StudentEntity findByStudentcodeAndStudentpassword(String s_code,String s_password);
-	
-	//学籍番号検索
-	public StudentEntity findByStudentcode(String s_code);
 }
