@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.example.demo.component.Session_manage;
 import com.example.demo.form.StudentForm;
 
-//　メイン
+//メイン
 @Controller
 public class TopController {
 	
