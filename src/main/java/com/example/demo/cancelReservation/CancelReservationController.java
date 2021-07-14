@@ -10,7 +10,6 @@ public class CancelReservationController {
 	
 	@GetMapping(value="/cancelReservation")
 	public String Get_CancelReservation(Model model) {
-//		model.addAttribute("loginForm", new LoginForm());
 		return "cancelReservation";
 	}
 }
