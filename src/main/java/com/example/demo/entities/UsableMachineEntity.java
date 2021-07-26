@@ -2,36 +2,59 @@ package com.example.demo.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 
 @Entity
 @Table(name="m05_class_usable_machine")
 public class UsableMachineEntity {
 	
-	//クラス記号
+	//id(連番)
 	@Id
-	@Column(name="m05_class_code")
-	private String classcode;
+	@Column(name="m05_usable_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int usableid;
 	
-	//そのクラスが使用できるマシン名
-	@Column(name="m05_machine_code")
-	private String machinecode;
-
+	//クラス記号
+	@ManyToOne
+	@JoinColumn(name="m05_class_code")
+	private ClassEntity classEntity;
+	
+	//そのクラスが使用できるマシン
+	@ManyToOne
+	@JoinColumn(name="m05_machine_code")
+	@JsonBackReference("Unit")
+	private MachineEntity machine;
+	
 	//ゲッター、セッター
-	public String getClasscode() {
-		return classcode;
+	public void setUsableid(int usableid) {
+		this.usableid = usableid;
 	}
 
-	public void setClasscode(String classcode) {
-		this.classcode = classcode;
+	public int getUsableid() {
+		return usableid;
 	}
 
-	public String getMachinecode() {
-		return machinecode;
+	public ClassEntity getClassEntity() {
+		return classEntity;
 	}
 
-	public void setMachinecode(String machinecode) {
-		this.machinecode = machinecode;
-	}	
+	public void setClassEntity(ClassEntity classEntity) {
+		this.classEntity = classEntity;
+	}
+
+	public MachineEntity getMachine() {
+		return machine;
+	}
+
+	public void setMachine(MachineEntity machine) {
+		this.machine = machine;
+	}
 }

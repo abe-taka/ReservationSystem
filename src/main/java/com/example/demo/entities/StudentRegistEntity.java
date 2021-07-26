@@ -3,10 +3,12 @@ package com.example.demo.entities;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="dbo_m04_student_regist")
+@Table(name="m04_student_regist")
 public class StudentRegistEntity {
 
 	//学籍番号
@@ -15,13 +17,15 @@ public class StudentRegistEntity {
 	private String studentcode;
 	
 	//クラス記号
-	@Column(name="m04_class_code")
-	private String classcode;
+	@ManyToOne
+	@JoinColumn(name="m04_class_code")
+	private ClassEntity classEntity;
 	
 	//出席番号
 	@Column(name="m04_class_no")
 	private int classnum;
 
+	
 	//ゲッター、セッター
 	public String getStudentcode() {
 		return studentcode;
@@ -31,12 +35,12 @@ public class StudentRegistEntity {
 		this.studentcode = studentcode;
 	}
 
-	public String getClasscode() {
-		return classcode;
+	public ClassEntity getClassEntity() {
+		return classEntity;
 	}
 
-	public void setClasscode(String classcode) {
-		this.classcode = classcode;
+	public void setClassEntity(ClassEntity classEntity) {
+		this.classEntity = classEntity;
 	}
 
 	public int getClassnum() {

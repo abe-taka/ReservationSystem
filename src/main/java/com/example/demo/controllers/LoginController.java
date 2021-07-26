@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.demo.components.Session_manage;
+import com.example.demo.components.SessionForm;
 import com.example.demo.entities.StudentEntity;
 import com.example.demo.forms.StudentForm;
 import com.example.demo.repositories.LoginRepository;
@@ -20,7 +20,7 @@ public class LoginController {
 	@Autowired
 	LoginRepository loginRepository;
 	@Autowired
-	Session_manage session_manage;
+	SessionForm sessionForm;
 	
 	//セッションデータ用
 	String session_data = null;
@@ -28,8 +28,15 @@ public class LoginController {
 	//Get(ログインページ
 	@GetMapping(value="/")
 	public String Get_Login(Model model) {
-		model.addAttribute("studentForm", new StudentForm());
-		return "login";
+		
+		//セッション確認
+		session_data = sessionForm.getSession_code();
+		if(session_data!= null) {
+			return "redirect:/top";
+		}else {
+			model.addAttribute("studentForm", new StudentForm());
+			return "login";
+		}	
 	}
 	
 	//ログイン認証
@@ -64,7 +71,7 @@ public class LoginController {
 		//正常
 		else {
 			session_data = studentEntity.getStudentcode();
-			session_manage.setSession_data(session_data);
+			sessionForm.setSession_code(session_data);
 			return "redirect:/top";
 		}
 	}

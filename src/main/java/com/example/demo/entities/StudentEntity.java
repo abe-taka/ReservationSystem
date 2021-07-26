@@ -1,39 +1,43 @@
 package com.example.demo.entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="m01_student")
+@Table(name = "m01_student")
 public class StudentEntity {
 
-	//学籍番号
+	// 学籍番号
 	@Id
 	@Column(name = "m01_student_code")
 	private String studentcode;
-	
-	//パスワード(ローカル用) //本来のテーブルにはない
+
+	// パスワード(ローカル用) //本来のテーブルにはない
 	@Column(name = "m01_student_password")
 	private String studentpassword;
-	
-	//名前
+
+	// 学生の名前
 	@Column(name = "m01_student_name")
 	private String studentname;
-	
-	//アシススタントスタッフのフラグ
+
+	// アシススタントスタッフのフラグ
 	@Column(name = "m01_student_flag")
 	private int studentflag;
-	
-	//FOCSシステム管理用？0にしておく
+
+	// 管理用
 	@Column(name = "m01_student_stat")
 	private int studentstat;
 
+	// t14テーブル(ReservationEntity)
+	@OneToMany(mappedBy = "student")
+	private List<ReservationEntity> reservationEntity;
 
-	//ゲッター、セッター
+	// ゲッター、セッター
 	public String getStudentcode() {
 		return studentcode;
 	}
@@ -73,5 +77,12 @@ public class StudentEntity {
 	public void setStudentstat(int studentstat) {
 		this.studentstat = studentstat;
 	}
-	
+
+	public List<ReservationEntity> getReservationEntity() {
+		return reservationEntity;
+	}
+
+	public void setReservationEntity(List<ReservationEntity> reservationEntity) {
+		this.reservationEntity = reservationEntity;
+	}
 }
