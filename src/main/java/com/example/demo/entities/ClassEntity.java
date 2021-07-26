@@ -1,8 +1,11 @@
 package com.example.demo.entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -17,7 +20,16 @@ public class ClassEntity {
 	//？
 	@Column(name="m03_class_type")
 	private String classtype;
+	
+	//m04(StudentRegistEntity)
+	@OneToMany(mappedBy="classEntity")
+	private List<StudentRegistEntity> studentregist;
+	
+	//m05(UsableMachineEntity)
+	@OneToMany(mappedBy="classEntity")
+	private List<UsableMachineEntity> usableMachineEntity;
 
+	
 	//ゲッター、セッター
 	public String getClasscode() {
 		return classcode;
@@ -33,5 +45,21 @@ public class ClassEntity {
 
 	public void setClasstype(String classtype) {
 		this.classtype = classtype;
+	}
+
+	public List<StudentRegistEntity> getStudentregist() {
+		return studentregist;
+	}
+
+	public void setStudentregist(List<StudentRegistEntity> studentregist) {
+		this.studentregist = studentregist;
+	}
+
+	public List<UsableMachineEntity> getUsableMachineEntity() {
+		return usableMachineEntity;
+	}
+
+	public void setUsableMachineEntity(List<UsableMachineEntity> usableMachineEntity) {
+		this.usableMachineEntity = usableMachineEntity;
 	}
 }

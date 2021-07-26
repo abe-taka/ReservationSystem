@@ -7,6 +7,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+//バリデーション
 @Configuration
 public class ValidationConfig extends WebMvcConfigurerAdapter {
 
@@ -14,9 +15,9 @@ public class ValidationConfig extends WebMvcConfigurerAdapter {
 		LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
 		// メッセージファイルを読込むための設定を記載
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		// 「setBasename」を使用することで任意のファイル名に変更することも可能
+		// ファイル名を「ValidationMessages」に設定
 		messageSource.setBasename("classpath:ValidationMessages");
-		// 「setDefaultEncoding」を使用することで任意の文字コードに変更することも可能
+		// 文字コードをUTF-8にする
 		messageSource.setDefaultEncoding("UTF-8");
 		validator.setValidationMessageSource(messageSource);
 		return validator;

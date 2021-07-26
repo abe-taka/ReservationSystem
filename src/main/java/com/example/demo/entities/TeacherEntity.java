@@ -1,26 +1,32 @@
 package com.example.demo.entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Table
-@Entity(name="m02_teacher")
+@Entity(name = "m02_teacher")
 public class TeacherEntity {
 
-	//教師番号
+	// 教師番号
 	@Id
-	@Column(name="m02_teacher_code")
+	@Column(name = "m02_teacher_code")
 	private String teachercode;
 
-	//先生の名前
-	@Column(name="m02_teacher_name")
+	// 先生の名前
+	@Column(name = "m02_teacher_name")
 	private String teachername;
 
-	//ゲッター、セッター
+	// t14テーブル(ReservationEntity)
+	@OneToMany(mappedBy = "teacher")
+	private List<ReservationEntity> reservationEntity;
+	
+
+	// ゲッター、セッター
 	public String getTeachercode() {
 		return teachercode;
 	}
@@ -35,5 +41,13 @@ public class TeacherEntity {
 
 	public void setTeachername(String teachername) {
 		this.teachername = teachername;
+	}
+	
+	public List<ReservationEntity> getReservationEntity() {
+		return reservationEntity;
+	}
+
+	public void setReservationEntity(List<ReservationEntity> reservationEntity) {
+		this.reservationEntity = reservationEntity;
 	}
 }

@@ -30,13 +30,12 @@ public class StudentForm implements Serializable {
 	// 名前
 	private String studentname;
 
-	// ボランティア委員かのフラグ
-	private String studentflag;
+	// アシスタントスタッフのフラグ
+	private int studentflag;
 
-	// ？
-	private String studentstat;
+	// 管理用
+	private int studentstat;
 
-	
 	
 	// ゲッター、セッター
 	public String getStudentcode() {
@@ -63,19 +62,19 @@ public class StudentForm implements Serializable {
 		this.studentname = studentname;
 	}
 
-	public String getStudentflag() {
+	public int getStudentflag() {
 		return studentflag;
 	}
 
-	public void setStudentflag(String studentflag) {
+	public void setStudentflag(int studentflag) {
 		this.studentflag = studentflag;
 	}
 
-	public String getStudentstat() {
+	public int getStudentstat() {
 		return studentstat;
 	}
 
-	public void setStudentstat(String studentstat) {
+	public void setStudentstat(int studentstat) {
 		this.studentstat = studentstat;
 	}
 }
