@@ -35,6 +35,7 @@ public class ReservationController {
 	public String Get_Reservation(Model model) {
 		//セッション確認
 		session_data = sessionForm.getSession_code();
+		model.addAttribute("session_data", session_data);
 		if(session_data!= null) {
 			System.out.println("session_data"+session_data);
 			model.addAttribute("list_machine", session_data);
