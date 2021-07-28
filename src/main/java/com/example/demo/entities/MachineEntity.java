@@ -10,6 +10,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+//機種
 @Entity
 @Table(name="m06_machine")
 public class MachineEntity {
@@ -43,6 +44,7 @@ public class MachineEntity {
 	
 	//t14テーブル(ReservationEntity)
 	@OneToMany(mappedBy = "machine")
+	@JsonBackReference("Unit4")
 	private List<ReservationEntity> reservationEntity;
 
 	

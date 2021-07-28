@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 public class BeanConfig {
 
-	// ObjectMapper : javaオブジェクトのJson変換オブジェクト
+	// javaオブジェクトのJson変換オブジェクト
 	@Bean
 	public ObjectMapper objectMapper() {
 		ObjectMapper objectMapper = new ObjectMapper();

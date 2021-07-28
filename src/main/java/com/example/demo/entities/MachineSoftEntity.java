@@ -11,6 +11,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+//ソフトに対応している機種
 @Entity
 @Table(name="m08_machine_soft")
 public class MachineSoftEntity {

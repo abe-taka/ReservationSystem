@@ -7,6 +7,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+//所属クラスと出席番号
 @Entity
 @Table(name="m04_student_regist")
 public class StudentRegistEntity {
@@ -19,6 +22,7 @@ public class StudentRegistEntity {
 	//クラス記号
 	@ManyToOne
 	@JoinColumn(name="m04_class_code")
+	@JsonBackReference("Unit5")
 	private ClassEntity classEntity;
 	
 	//出席番号

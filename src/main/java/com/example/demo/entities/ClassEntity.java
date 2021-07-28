@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+//クラス
 @Entity
 @Table(name="m03_class")
 public class ClassEntity {
@@ -23,10 +26,12 @@ public class ClassEntity {
 	
 	//m04(StudentRegistEntity)
 	@OneToMany(mappedBy="classEntity")
+	@JsonBackReference("Unit5")
 	private List<StudentRegistEntity> studentregist;
 	
 	//m05(UsableMachineEntity)
 	@OneToMany(mappedBy="classEntity")
+	@JsonBackReference("Unit6")
 	private List<UsableMachineEntity> usableMachineEntity;
 
 	

@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+//予約
 @Entity
 @Table(name = "t14_reservation")
 public class ReservationEntity {
@@ -22,11 +25,13 @@ public class ReservationEntity {
 	// 学籍番号
 	@ManyToOne
 	@JoinColumn(name = "t14_student_code")
+	@JsonBackReference("Unit7")
 	private StudentEntity student;
 
 	// 教師番号
 	@ManyToOne
 	@JoinColumn(name = "t14_teacher_code")
+	@JsonBackReference("Unit8")
 	private TeacherEntity teacher;
 
 	// 利用開始日
@@ -44,6 +49,7 @@ public class ReservationEntity {
 	// 機種コード
 	@ManyToOne
 	@JoinColumn(name = "t14_machine_code")
+	@JsonBackReference("Unit4")
 	private MachineEntity machine;
 
 	// 予約日
