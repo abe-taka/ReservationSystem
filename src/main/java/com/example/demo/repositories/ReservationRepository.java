@@ -16,7 +16,6 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 	@Query(name="SELECT DISTINCT t14_reservation_date FROM t14_reservation",nativeQuery = true)
 	public List<ReservationEntity> findByMachine(MachineEntity machinecode);
 	
-	
 	public List<Long> countByMachineAndReservationstartdateAndPeriodcode(MachineEntity machinecode,String startdate,String period);
 	
 	public List<ReservationEntity> findByReservationstartdate(String date);

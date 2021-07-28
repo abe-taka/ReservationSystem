@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-
+//各クラスが使える機種
 @Entity
 @Table(name="m05_class_usable_machine")
 public class UsableMachineEntity {
@@ -25,6 +25,7 @@ public class UsableMachineEntity {
 	//クラス記号
 	@ManyToOne
 	@JoinColumn(name="m05_class_code")
+	@JsonBackReference("Unit6")
 	private ClassEntity classEntity;
 	
 	//そのクラスが使用できるマシン
@@ -32,6 +33,7 @@ public class UsableMachineEntity {
 	@JoinColumn(name="m05_machine_code")
 	@JsonBackReference("Unit")
 	private MachineEntity machine;
+	
 	
 	//ゲッター、セッター
 	public void setUsableid(int usableid) {

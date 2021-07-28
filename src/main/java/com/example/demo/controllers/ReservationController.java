@@ -29,16 +29,16 @@ public class ReservationController {
 	@Autowired
 	Realtime_manage realtime_manage;
 	
+	// セッションデータ用
 	String session_data = null;
 	
 	@GetMapping(value="/reservation")
 	public String Get_Reservation(Model model) {
-		//セッション確認
+		
+		//セッションデータの取得
 		session_data = sessionForm.getSession_code();
-		model.addAttribute("session_data", session_data);
+		//セッション確認
 		if(session_data!= null) {
-			System.out.println("session_data"+session_data);
-			model.addAttribute("list_machine", session_data);
 			//所属クラスを取得
 			String session_data = sessionForm.getSession_code();
 			StudentRegistEntity studentreg = new StudentRegistEntity();
@@ -51,7 +51,7 @@ public class ReservationController {
 				System.out.println("所属クラスがない");
 			}
 			
-			//所属クラスが使える機種の階層を重複無しで取得
+			//機種の階層を取得(所属クラスが使える + 重複無し)
 			List<Integer> list_machine = new ArrayList<Integer>();
 			list_machine = machineRepository.findByFloor(classcode);
 			model.addAttribute("list_machine", list_machine);
@@ -61,9 +61,12 @@ public class ReservationController {
 			week_data = realtime_manage.Realtime_process(week_data);
 			model.addAttribute("week_data", week_data);
 			
+			//セッションデータ
+			model.addAttribute("session_data", session_data);
+			
 			return "reservation";
-		}else {
-			System.out.println("session_data"+session_data);
+		}
+		else {
 			return "redirect:/";
 		}
 	}

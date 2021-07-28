@@ -10,6 +10,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+//ソフト
 @Entity
 @Table(name = "m07_soft")
 public class SoftEntity {
@@ -28,7 +29,7 @@ public class SoftEntity {
 	private String maker;
 
 	// m08テーブル
-	@OneToMany(mappedBy = "soft") // 子テーブルが使う変数をセット
+	@OneToMany(mappedBy = "soft")
 	@JsonBackReference("Unit3")
 	private List<MachineSoftEntity> machineSoftEntity;
 	

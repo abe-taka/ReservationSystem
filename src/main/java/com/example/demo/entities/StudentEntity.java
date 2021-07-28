@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+//学生
 @Entity
 @Table(name = "m01_student")
 public class StudentEntity {
@@ -35,8 +38,10 @@ public class StudentEntity {
 
 	// t14テーブル(ReservationEntity)
 	@OneToMany(mappedBy = "student")
+	@JsonBackReference("Unit7")
 	private List<ReservationEntity> reservationEntity;
 
+	
 	// ゲッター、セッター
 	public String getStudentcode() {
 		return studentcode;

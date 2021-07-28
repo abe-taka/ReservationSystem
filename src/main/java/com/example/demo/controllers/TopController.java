@@ -12,18 +12,20 @@ import com.example.demo.forms.StudentForm;
 
 //　トップ
 @Controller
-@SessionAttributes(types=SessionForm.class)
 public class TopController {
 	
 	@Autowired
 	SessionForm sessionForm;
 	
+	// セッションデータ用
 	String session_data = null;
 	
 	@GetMapping(value = "/top")
 	public String Get_Top(Model model) {
-		//セッション確認
+		
+		//セッションデータの取得
 		session_data = sessionForm.getSession_code();
+		//セッション確認
 		if(session_data!= null) {
 			model.addAttribute("session_data", session_data);
 			model.addAttribute("studentForm", new StudentForm());
@@ -36,15 +38,15 @@ public class TopController {
 	// Post(トップページ)
 	@PostMapping(value = "/top")
 	public String Post_Top(StudentForm studentForm, Model model) {
-		//セッション確認
+		
+		//セッションデータの取得
 		session_data = sessionForm.getSession_code();
+		//セッション確認
 		if(session_data!= null) {
 			model.addAttribute("session_data", session_data);
 			model.addAttribute("studentForm", new StudentForm());
 			return "top";
 		}else {
-			System.out.println("session_data"+session_data);
-			model.addAttribute("studentForm", new StudentForm());
 			return "redirect:/";
 		}	
 	}
