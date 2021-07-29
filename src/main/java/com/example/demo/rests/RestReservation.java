@@ -46,14 +46,22 @@ public class RestReservation {
 	// 機種コード取得[階層]
 	@GetMapping("/get_machine")
 	public String Get_Machine(@RequestParam("js_floor") int js_floor) {
-
+		// セッションを取得
+		String session_data = sessionForm.getSession_code();
+		
 		// 取得してきた値(階層)を元にDBに検索し、機種コードを取得する
 		List<MachineEntity> machineEntity = new ArrayList<MachineEntity>();
+		
+		// 所属クラスを取得
+		StudentRegistEntity studentRegistEntity = studentRegistRepository.findByStudentcode(session_data);
+		String class_code = studentRegistEntity.getClassEntity().getClasscode();
+		
 		try {
-			machineEntity = machineRepository.findByFloor(js_floor);
+			machineEntity = machineRepository.findByFloor(js_floor, class_code);
 		} catch (Exception e) {
 			System.out.println("RestReservation_Get_Machine():fail");
 		}
+		
 		// JSONに変換し返却
 		return getJson_Machine(machineEntity);
 	}
@@ -61,7 +69,6 @@ public class RestReservation {
 	// ソフト取得[階層]
 	@GetMapping("/get_soft")
 	public String Get_Soft(@RequestParam("js_floor") int js_floor) {
-
 		// 取得してきた値(階層)を元にDBに検索し、ソフトを取得する
 		List<SoftEntity> softEntity = new ArrayList<SoftEntity>();
 		try {
@@ -75,10 +82,10 @@ public class RestReservation {
 
 	// 機種コード取得[チェックボックス]
 	@GetMapping("/get_machine/fromsoft")
-	public String Get_MachineFromSoft(@RequestParam("js_softcode") String js_softcode) {
-
+	public String Get_MachineFromSoft(@RequestParam("js_softcode") String js_softcode, @RequestParam("js_floor") int js_floor) {		
 		// セッションを取得
 		String session_data = sessionForm.getSession_code();
+		
 		// 所属クラスを取得
 		StudentRegistEntity studentRegistEntity = studentRegistRepository.findByStudentcode(session_data);
 		String class_code = studentRegistEntity.getClassEntity().getClasscode();
@@ -86,12 +93,15 @@ public class RestReservation {
 		// チェックしたソフトが入っている + 所属クラスが使える機種コードを取得
 		List<MachineSoftEntity> machineSoftEntity_list = new ArrayList<>();
 		List<String> machinecode_list = new ArrayList<>();
+		
 		// DB検索
-		machineSoftEntity_list = machineSoftRepository.query(js_softcode, class_code);
+		machineSoftEntity_list = machineSoftRepository.query(js_softcode, js_floor, class_code);
+		
 		// List<String>に取得した機種コードをセット
 		for (int j = 0; j < machineSoftEntity_list.size(); j++) {
 			machinecode_list.add(machineSoftEntity_list.get(j).getMachine().getMachinecode());
 		}
+		
 		// JSONに変換し返却
 		return getJson_MachineFromSoft(machinecode_list);
 	}
