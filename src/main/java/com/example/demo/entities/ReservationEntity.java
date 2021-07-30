@@ -9,9 +9,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 //予約
+@Component
 @Entity
 @Table(name = "t14_reservation")
 public class ReservationEntity {
