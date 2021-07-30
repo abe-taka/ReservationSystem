@@ -63,7 +63,6 @@ public class RestReservation {
 		} catch (Exception e) {
 			System.out.println("RestReservation_Get_Machine():fail");
 		}
-
 		// JSONに変換し返却
 		return getJson_Machine(machineEntity);
 	}
@@ -104,7 +103,7 @@ public class RestReservation {
 		for (int j = 0; j < machineSoftEntity_list.size(); j++) {
 			machinecode_list.add(machineSoftEntity_list.get(j).getMachine().getMachinecode());
 		}
-		
+
 		// JSONに変換し返却
 		return getJson_MachineFromSoft(machinecode_list);
 	}
