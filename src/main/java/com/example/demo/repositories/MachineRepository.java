@@ -16,6 +16,9 @@ public interface MachineRepository extends JpaRepository<MachineEntity, String> 
 	@Query(value = "SELECT DISTINCT m06_floor FROM m05_class_usable_machine x,m06_machine y WHERE x.m05_class_code = :classcode AND x.m05_machine_code = y.m06_machine_code", nativeQuery = true)
 	public List<Integer> findByFloor(@Param("classcode") String classcode);
 
-	// 階層検索
-	public List<MachineEntity> findByFloor(int floor);
+	@Query(value = "SELECT * FROM m06_machine WHERE m06_floor = :floor AND m06_machine_code in (SELECT m05_machine_code FROM m05_class_usable_machine WHERE m05_class_code = :classcode)", nativeQuery = true)
+	public List<MachineEntity> findByFloor(@Param("floor") int floor, @Param("classcode") String classcode);
+	
+	//機種コード検索
+	public MachineEntity findByMachinecode(String machinecode);
 }

@@ -74,8 +74,8 @@
 
 						<!-- 機種コード表示ボックス -->
 						<div class="p-1" style="height: calc(100% - 1rem)">
-							<form id="btnContainer" name="form_machine"
-								class="flex sm:block items-center space-x-1 sm:space-x-0 sm:space-y-2 sm:my-2 overflow-x-auto sm:overflow-x-hidden sm:overflow-y-auto">
+							<form id="btnContainer" name="form_machine"　class="flex sm:block items-center space-x-1 sm:space-x-0 sm:space-y-2 sm:my-2 overflow-x-auto sm:overflow-x-hidden sm:overflow-y-auto">
+								<button name='machinecode' th:text='20WKCG1' th:value='20WKCG1' th:onclick='clickMachine()' class='w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black'>20WKCG1</button>
 							</form>
 						</div>
 
@@ -325,7 +325,7 @@
 				
 				//ボックスタグ作成
 				const boxTag = `<div class="w-full sm:w-1/3">
-					<input type="checkbox" id="${softcode}" name="soft" value="${softcode}" />
+					<input type="radio" id="${softcode}" name="soft" value="${softcode}" />
     				<label for="${softcode}" class="text-sm sm:text-base">${softname}</label>
 				</div>`;
 				
@@ -342,9 +342,11 @@
 	
 	//機種コードの取得[チェックボックス]
 	function clickCheckbox() {
-		
+		// 階数の取得
+		const floor = document.floorform.floor.value;
+
 		//チェックボックスの値取得
-	    var softcode = '';
+	    let softcode = '';
 	    const checkbox_soft = document.soft_form.soft;
 
 	    for (let i = 0; i < checkbox_soft.length; i++) {
@@ -357,34 +359,69 @@
 	    $.ajax({
 			type : "GET",
 			url : "/get_machine/fromsoft",
-			data : {js_softcode : softcode},
+			data : {js_softcode : softcode, js_floor: floor},
 			dataType : "json"
 		})
 		.then(function(response_data) {
-			// 機種コードのコンテナ
+			// UIコンポーネントの取得
 			const btnContainer = $("#btnContainer");
 			const filterBtn = $("#filterBtn");
+			const backdrop = $("#backdrop");
 			
 			// コンテナの初期化
 			btnContainer.empty();
 			
+			console.log(response_data)
+			
 			// 動的表示
-			for(i = 0; i < response_data.length; i++) {
-				const machinecode = (response_data[i]);
-				const btnTag = `<button name='${machinecode}' th:text='${machinecode}' th:value='${machinecode}' th:onclick='clickMachine()' class='w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black'>${machinecode}</button>`;
-								
-				//表示する場所の取得
-				btnContainer.append(btnTag);
+			if (response_data.length > 0) {
+				for(i = 0; i < response_data.length; i++) {
+					const machinecode = (response_data[i]);
+					const btnTag = `<button name='${machinecode}' th:text='${machinecode}' th:value='${machinecode}' th:onclick='clickMachine()' class='w-full px-1 h-10 sm:h-12 border hover:bg-green-200 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black'>${machinecode}</button>`;
+
+					//表示する場所の取得
+					btnContainer.append(btnTag);
+				}
+			} else {
+				const blankTag = `<span class="text-sm">該当無し</span>`;
+				btnContainer.append(blankTag);
 			}
 			
-			// 絞り込みボタンの活性化
-			filterBtn.prop("disabled", false);
-			filterBtn.removeClass("bg-gray-100 text-gray-200 cursor-not-allowed");
-			filterBtn.addClass("bg-gray-200 hover:bg-gray-400 hover:text-white focus:ring ring-gray-100 text-black");
+			// モーダルの非表示
+			backdrop.addClass("hidden");
 		}
 		, function() {
 			//失敗時
 			console.log('clickCheckbox():fail');
+		});
+	}
+	
+	
+	//予約情報取得
+	function clickMachine(){
+		//ボタンの値を取得
+		const button_value = document.form_machine.machinecode.value;
+		console.log("ボタン機種コード",button_value);
+		
+		//非同期処理
+		$.ajax({
+			type : "GET",
+			url : "/get_reservation",
+			data : {js_mcode : button_value},
+			dataType : "json"
+		})
+		.then(function(response_data) {
+			//成功時
+			console.log("response_data",response_data);
+			
+			for(i = 0; i < response_data.length; i++) {
+				const a = (response_data[i][i]);
+				console.log("a",a);
+			}
+		}
+		, function() {
+			//失敗時
+			console.log('clickMachine():fail');
 		});
 	}
 	
