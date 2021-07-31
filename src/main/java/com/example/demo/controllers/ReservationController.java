@@ -64,7 +64,7 @@ public class ReservationController {
 			
 			//現在日付から定められた期間のデータを取得
 			TreeMap<String, String> week_data = new TreeMap<>();
-			week_data = realtime_manage.Realtime_process(week_data);
+			week_data = realtime_manage.Get_Monthdate(week_data);
 			model.addAttribute("week_data", week_data);
 			
 			//時限データの取得
