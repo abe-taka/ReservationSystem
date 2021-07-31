@@ -6,12 +6,19 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.example.demo.entities.AdminEntity;
+import com.example.demo.repositories.AdminRepository;
 
 //1週間の日付を取得するクラス
 @Component
 public class Realtime_manage {
 
+	@Autowired
+	AdminRepository adminRepository;
+	
 	static Calendar calendar = Calendar.getInstance();
 	
 	public TreeMap<String, String> Realtime_process(TreeMap<String, String> real_time) {
@@ -21,8 +28,11 @@ public class Realtime_manage {
 		Date dateObj = new Date();
 		calendar.setTime(dateObj);
 		
-		// 現在日付を基に1週間の日付と曜日を取得
-		for (int i = 0; i < 7; i++) {
+		AdminEntity admin = new AdminEntity();
+		admin = adminRepository.findTopByOrderByAdminIdDesc();
+		
+		// 現在日付とアドミンの予約可能な最大日数を基に日付を取得
+		for (int i = 0; i < admin.getMaxReservationDate(); i++) {
 			String week = null;
 			if(i != 0) {
 				calendar.add(Calendar.DAY_OF_MONTH, 1);
