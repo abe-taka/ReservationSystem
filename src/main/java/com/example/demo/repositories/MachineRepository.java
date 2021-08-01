@@ -1,4 +1,4 @@
-gitpackage com.example.demo.repositories;
+package com.example.demo.repositories;
 
 import java.util.List;
 
