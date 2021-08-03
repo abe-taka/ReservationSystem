@@ -1,5 +1,7 @@
 package com.example.demo.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,11 +41,11 @@ public class ReservationEntity {
 
 	// 利用開始日
 	@Column(name = "t14_reservation_start_date")
-	private String reservationstartdate;
+	private Date reservationstartdate;
 
 	// 利用終了日
 	@Column(name = "t14_reservation_end_date")
-	private String reservationend;
+	private Date reservationend;
 
 	// コマ
 	@Column(name = "t14_period_code")
@@ -57,11 +59,11 @@ public class ReservationEntity {
 
 	// 予約日
 	@Column(name = "t14_reservation_date")
-	private String reservationdate;
+	private Date reservationdate;
 
 	// 更新日
 	@Column(name = "t14_update_date")
-	private String updatedade;
+	private Date updatedade;
 
 	// @Column(name = "day_code")
 	// private int daycode;
@@ -95,19 +97,19 @@ public class ReservationEntity {
 		this.teacher = teacher;
 	}
 
-	public String getReservationstartdate() {
+	public Date getReservationstartdate() {
 		return reservationstartdate;
 	}
 
-	public void setReservationstartdate(String reservationstartdate) {
+	public void setReservationstartdate(Date reservationstartdate) {
 		this.reservationstartdate = reservationstartdate;
 	}
 
-	public String getReservationend() {
+	public Date getReservationend() {
 		return reservationend;
 	}
 
-	public void setReservationend(String reservationend) {
+	public void setReservationend(Date reservationend) {
 		this.reservationend = reservationend;
 	}
 
@@ -127,19 +129,19 @@ public class ReservationEntity {
 		this.machine = machine;
 	}
 
-	public String getReservationdate() {
+	public Date getReservationdate() {
 		return reservationdate;
 	}
 
-	public void setReservationdate(String reservationdate) {
+	public void setReservationdate(Date reservationdate) {
 		this.reservationdate = reservationdate;
 	}
 
-	public String getUpdatedade() {
+	public Date getUpdatedade() {
 		return updatedade;
 	}
 
-	public void setUpdatedade(String updatedade) {
+	public void setUpdatedade(Date updatedade) {
 		this.updatedade = updatedade;
 	}
 }

@@ -25,7 +25,7 @@ public class Realtime_manage {
 	public TreeMap<String, String> Get_Monthdate(TreeMap<String, String> current_md) {
 
 		// 現在日付を取得する
-		SimpleDateFormat format = new SimpleDateFormat("MM/dd");
+		SimpleDateFormat format = new SimpleDateFormat("YYYY/MM/dd");
 		Date dateObj = new Date();
 		calendar.setTime(dateObj);
 		
