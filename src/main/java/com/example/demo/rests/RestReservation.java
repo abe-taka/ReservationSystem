@@ -1,26 +1,38 @@
 package com.example.demo.rests;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.components.Realtime_manage;
 import com.example.demo.components.SessionForm;
+import com.example.demo.entities.HourEntity;
 import com.example.demo.entities.MachineEntity;
 import com.example.demo.entities.MachineSoftEntity;
 import com.example.demo.entities.ReservationEntity;
+import com.example.demo.entities.SeatStatusEntity;
 import com.example.demo.entities.SoftEntity;
 import com.example.demo.entities.StudentRegistEntity;
+import com.example.demo.repositories.HourRepository;
+import com.example.demo.repositories.HourInWorkPatternRepository;
+import com.example.demo.repositories.TroubleMachineRepository;
 import com.example.demo.repositories.MachineRepository;
 import com.example.demo.repositories.MachineSoftRepository;
 import com.example.demo.repositories.ReservationRepository;
 import com.example.demo.repositories.SoftRepository;
 import com.example.demo.repositories.StudentRegistRepository;
+import com.example.demo.repositories.SeatStatusRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,17 +41,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RestReservation {
 
 	@Autowired
-	MachineRepository machineRepository;
-	@Autowired
-	SoftRepository softRepository;
-	@Autowired
 	ObjectMapper objectMapper;
-	@Autowired
-	ReservationRepository reservationRepository;
 	@Autowired
 	SessionForm sessionForm;
 	@Autowired
 	Realtime_manage realtime_manage;
+	@Autowired
+	HourRepository hourRepository;
+	@Autowired
+	HourInWorkPatternRepository hourInWorkPatternRepository;
+	@Autowired
+	MachineRepository machineRepository;
+	@Autowired
+	TroubleMachineRepository troubleMachineRepository;
+	@Autowired
+	SeatStatusRepository seatStatusRepository;
+	@Autowired
+	SoftRepository softRepository;
+	@Autowired
+	ReservationRepository reservationRepository;
 	@Autowired
 	MachineSoftRepository machineSoftRepository;
 	@Autowired
@@ -111,138 +131,229 @@ public class RestReservation {
 	// 予約情報取得
 	@GetMapping("/get_reservation")
 	public String Get_Reservation(@RequestParam("js_mcode") String js_mcode) {
-
 		// セッションを取得
-		String session_data = sessionForm.getSession_code();
+		String studentcode = sessionForm.getSession_code();
 
 		// 機種の台数を取得
 		MachineEntity machineEntity = machineRepository.findByMachinecode(js_mcode);
-		System.out.println("台数" + machineEntity.getCount());
 
-		// 10日×7コマ分の予約情報受け取り用のList (jsに渡す変数)
-		// bigdata_listの中身 → 日付、コマ、予約状況のフラグ、席状況のフラグ
-		// 予約状況のフラグ → 送信者の予約なし:0 予約あり:1
-		// 予約状況のフラグ → 空席有り:0 満席:1
-		List<TreeMap> bigdata_list = new ArrayList<TreeMap>();
-
-		// 1日7コマ分の受け取り用のMap
-		TreeMap<String, List<String>> reseravtion_data = new TreeMap<>();
-		TreeMap<String, List<String>> reseravtion_data2 = new TreeMap<>();
-		TreeMap<String, List<String>> reseravtion_data3 = new TreeMap<>();
-		TreeMap<String, List<String>> reseravtion_data4 = new TreeMap<>();
-		TreeMap<String, List<String>> reseravtion_data5 = new TreeMap<>();
-		TreeMap<String, List<String>> reseravtion_data6 = new TreeMap<>();
-		TreeMap<String, List<String>> reseravtion_data7 = new TreeMap<>();
-
-		// コマ、予約状況のフラグ、席状況のフラグの受け取り用のリスト
-		List<String> reservation_list = new ArrayList<>();
-
-		// 10日間のデータ取得
-		TreeMap<String, String> week_data = new TreeMap<>();
-		week_data = realtime_manage.Get_Monthdate(week_data);
-
-		// 今日の「年/月/日」取得
-		String current_ymd = null;
-		current_ymd = realtime_manage.Get_CurrentYmd(current_ymd);
-
-		// 10日目の 「年/月/日」取得
-		String tenafter_ymd = null;
-		tenafter_ymd = realtime_manage.Get_SevenAfterYmd(tenafter_ymd);
-
-		// 予約情報を取得(指定した機種 + 今日から10日以内の予約)
-		List<ReservationEntity> reser = reservationRepository.findByMachineAndReservationstartdateBetweenOrderByReservationstartdate(machineEntity, current_ymd,tenafter_ymd);
-
-		// 日別でループ処理
-		for (String key : week_data.keySet()) {
-			//コマ別でループ処理
-			for (int p = 1; p < 8; p++) {
-				// リストの初期化
-				reservation_list = new ArrayList<>();
-				// 予約数のカウント
-				int reservation_count = 0;
-				// 送信者が既に予約しているかのフラグ
-				int sender_flag = 0;
-				// コマをリストに追加
-				reservation_list.add(String.valueOf(p));
-				// DBの日付置換用
-				String db_monthdate;
-				// コマ
-				String pp;
-				// 予約情報をループ
-				for (int i = 0; i < reser.size(); i++) {
-					// DBに取得した日付を置換する(2021-01-01 → 01/01)
-					db_monthdate = null;
-					db_monthdate = reser.get(i).getReservationstartdate().substring(5).replace("-", "/");
-
-					// コマ
-					pp = null;
-					pp = String.valueOf(p);
-					// 1日ずつ検証
-					if (key.equals(db_monthdate) && pp.equals(reser.get(i).getPeriodcode())) {
-						reservation_count++;
-						// 既に予約している場合1をセット
-						// 学生
-						try {
-							if (session_data.equals(reser.get(i).getStudent().getStudentcode()) && sender_flag == 0) {
-								reservation_list.add("1");
-								sender_flag++;
+		// 10日×(1日付+7コマ)分の予約情報受け取り用のList
+		List resultList = new ArrayList();
+		
+		// (1日付+7コマ)の受け取り用のリスト
+		List seatStatusPerDay = new ArrayList();
+		
+		// 時限データをDBから取得
+		List<HourEntity> listHours = new ArrayList<HourEntity>();
+		listHours = hourRepository.findAll();
+		
+		// 10日間の日付データを取得
+		TreeMap<String, String> periodData = new TreeMap<>();
+		periodData = realtime_manage.Get_Monthdate(periodData);
+		
+		for (int i = 0; i < periodData.size(); i++) {
+			seatStatusPerDay = new ArrayList();
+			
+			// 日付データの日・曜日を取得し、1日付+7コマのリストの最初に入れる
+			String key = (String) periodData.keySet().toArray()[i];
+			String value = periodData.get(key);		
+			seatStatusPerDay.add(key + value);
+			
+			for (int j = 0; j < listHours.size(); j++) {
+				String hour = listHours.get(j).getHourCode();
+				System.out.println("hour: " + listHours.get(j).getHourCode());
+				
+				Date date = strDateToDate(key + " 00:00:00");			
+				System.out.println("date: " + date);
+				
+				// 現在の時限より前かどうかをチェック
+				if (checkIsBeforeCurrentTime(hour, date)) {
+					// RED!!
+					System.out.println("BEFORE: RED!!");
+					seatStatusPerDay.add("RED-NONE");
+				// 稼動パターンに対応しているかどうかをチェック
+				} else if (checkIsMachineRoomNotWorking(hour, date)) {
+					// RED!!
+					System.out.println("NOT WORKING: RED!!");
+					seatStatusPerDay.add("RED-NONE");
+				} else {
+					// ユーザが確定予約を持っている場合
+					if (checkIsMachineReserved(date, hour, studentcode)) {
+						// BLUE!!
+						String reservedMachineCode = getReservedMachineCode(date, hour, studentcode);
+						System.out.println("BLUE!! " + reservedMachineCode);
+						seatStatusPerDay.add("BLUE-" + reservedMachineCode);
+					// 確定予約ではない場合
+					} else {
+						// 仮予約の場合
+						if (checkIsMachineTentativelyReserved(date, hour, studentcode)) {
+							// YELLOW!!
+							String tentativelyReservedMachineCode = getTentativelyReservedMachineCode(date, hour, studentcode);
+							System.out.println("YELLOW!! " + tentativelyReservedMachineCode);
+							seatStatusPerDay.add("YELLOW-" + tentativelyReservedMachineCode);
+						// 仮予約ではない場合
+						} else {
+							//残席がない場合
+							if (checkLimitSeatPersonal(js_mcode, hour, date)) {
+								// RED!!
+								System.out.println("RED!!");
+								seatStatusPerDay.add("RED-NONE");
+							//すべてのケースに該当しないため、予約可能にする	
+							} else {
+								// WHITE!!
+								System.out.println("WHITE!!");
+								seatStatusPerDay.add("WHITE-NONE");
 							}
-						} catch (Exception e) {
-						}
-
-						// 教師
-						try {
-							if (session_data.equals(reser.get(i).getTeacher().getTeachercode()) && sender_flag == 0) {
-								reservation_list.add("1");
-								sender_flag++;
-							}
-						} catch (Exception e) {
 						}
 					}
 				}
-				System.out.println("予約数" + reservation_count);
-				// 予約していない場合0をセット
-				if (sender_flag == 0) {
-					reservation_list.add("0");
+			}
+			// 結果リストに座席状態データを追加する
+			resultList.add(seatStatusPerDay);
+		}
+		
+		System.out.println("Done!: ");
+		System.out.println("resultList: " + resultList);
+
+		return getJson_Reservation(resultList);
+	}
+	
+	
+	// 予約確定処理
+	@PostMapping("/make_reservation")
+	public String Post_Reservation(@RequestParam("date") String date, @RequestParam("hour") String hour, @RequestParam("machinecode") String machinecode, @RequestParam("studentcode") String studentcode) {
+		
+		// 予約テーブルにデータを追加する(X)
+		
+		// 座席状態テーブルにデータを追加する
+		
+	}
+	
+	// String型の日付をDate型に変換する
+	private Date strDateToDate(String strDate) {
+		Date date = null;
+		try {
+			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+			date = sdFormat.parse(strDate + " 00:00:00");	
+		} catch (ParseException e) {
+            e.printStackTrace();
+        }
+		
+		return date;
+	}
+	
+	// Date型の日付をString型に変換する
+	private String dateToStrDate(Date date) {
+		return new SimpleDateFormat("yyyy-MM-dd").format(date);
+	}
+	
+	// Date型の時間をString型に変換する
+	private String dateToStrTime(Date date) {
+		return new SimpleDateFormat("HH:mm:ss:S").format(date);
+	}
+	
+	// 現在の時限より前かどうかチェック()
+	private boolean checkIsBeforeCurrentTime(String targetHour, Date date) {
+		System.out.println("checkIsBeforeCurrentTime");
+		
+		// 現在時刻を取得
+		Date currentTime = new Date(System.currentTimeMillis());
+		
+		// DB比較用の臨時文字列を生成
+		String tempTimeStr = "1900/01/01 " + dateToStrTime(currentTime);
+		
+		// 現在の時刻を文字列化する
+		String currentStrDate = dateToStrDate(currentTime);
+		
+		// 対象日と現在日が一緒であれば
+		if (dateToStrDate(date).equals(currentStrDate)) {
+			try {
+				// DBから時限コードを取得
+				String currentHour = hourRepository.findHourCode(tempTimeStr).getHourCode();
+				// 処理しようとする時限と取得した時限コードの時限を比べ、現在時刻より前の時限をtrueにする
+				if (Integer.parseInt(targetHour) < Integer.parseInt(currentHour)) {
+					return true;
 				}
-				// 予約数
-				if (machineEntity.getCount() == reservation_count) {
-					// 満席の場合1をセット
-					reservation_list.add("1");
-				} else {
-					// 満席の場合0をセット
-					reservation_list.add("0");
-				}
-				// 日付
-				if (p == 1) {
-					reseravtion_data.put(key, reservation_list);
-					bigdata_list.add(reseravtion_data);
-				} else if (p == 2) {
-					reseravtion_data2.put(key, reservation_list);
-					bigdata_list.add(reseravtion_data2);
-				} else if (p == 3) {
-					reseravtion_data3.put(key, reservation_list);
-					bigdata_list.add(reseravtion_data3);
-				} else if (p == 4) {
-					reseravtion_data4.put(key, reservation_list);
-					bigdata_list.add(reseravtion_data4);
-				} else if (p == 5) {
-					reseravtion_data5.put(key, reservation_list);
-					bigdata_list.add(reseravtion_data5);
-				} else if (p == 6) {
-					reseravtion_data6.put(key, reservation_list);
-					bigdata_list.add(reseravtion_data6);
-				} else if (p == 7) {
-					reseravtion_data7.put(key, reservation_list);
-					bigdata_list.add(reseravtion_data7);
-				}
-				// カウントリセット
-				reservation_count = 0;
-				sender_flag = 0;
+				return false;
+			// 現在時刻がDBに登録した時限の時間外の場合、trueを返す
+			} catch (NullPointerException e) {
+				return true;
 			}
 		}
-		System.out.println("bigdata_list" + bigdata_list);
-		return getJson_Reservation(bigdata_list);
+		return false;
+	}
+	
+	// マシンルームが非稼働かどうかチェック(非稼働：true, 稼働：false)
+	private boolean checkIsMachineRoomNotWorking(String targetHour, Date date) {
+		System.out.println("checkIsMachineRoomNotWorking");
+		// DBから該当時限で検索し、非稼働であればtrueを返す
+		if (hourInWorkPatternRepository.findNotWorkingHour(targetHour, date).size() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	// 予約確定かを調査する(確定：true, 未定：false)
+	private boolean checkIsMachineReserved(Date date, String targetHour, String studentcode) {
+		System.out.println("checkIsMachineReserved");
+		// DBから日付・時限・学籍番号で検索し、その日時に該当学生がどれかのマシーンを予約していればtrueを返す
+		if (seatStatusRepository.findIfAlreadyReserved(date, targetHour, studentcode).size() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	// 予約確定の機種コードを取得する
+	private String getReservedMachineCode(Date date, String targetHour, String studentcode) {
+		System.out.println("getReservedMachineCode");
+		List<SeatStatusEntity> entities = seatStatusRepository.findIfAlreadyReserved(date, targetHour, studentcode);
+		if (entities.size() > 0) {
+			return entities.get(0).getMachineCode();
+		}
+		return "";
+	}
+	
+	// 仮予約かを調査する(仮予約：true, 未定：false)
+	private boolean checkIsMachineTentativelyReserved(Date date, String targetHour, String studentcode) {
+		System.out.println("checkIsMachineTentativelyReserved");
+		if (seatStatusRepository.findIfAlreadyTentativelyReserved(date, targetHour, studentcode).size() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	// 仮予約の機種コードを取得する
+	private String getTentativelyReservedMachineCode(Date date, String targetHour, String studentcode) {
+		System.out.println("getTentativelyReservedMachineCode");
+		List<SeatStatusEntity> entities = seatStatusRepository.findIfAlreadyTentativelyReserved(date, targetHour, studentcode);
+		if (entities.size() > 0) {
+			return entities.get(0).getMachineCode();
+		}
+		return "";
+	}
+	
+	// 該当機種に残席があるかチェック(有：true, 無：false)
+	private boolean checkLimitSeatPersonal(String machinecode, String hour, Date date) {
+		//マシンの総台数を取得
+        int int_limit_seat = machineRepository.getSeatCountSelectMachine(machinecode);
+        System.out.println("int_limit_seat: " + int_limit_seat);
+
+        //故障機数の取得
+        int int_trouble_machine = troubleMachineRepository.getTroubleMachine(machinecode);
+        System.out.println("int_trouble_machine: " + int_trouble_machine);
+
+        //予約・利用中の台数の取得
+        int int_reservation_machine = seatStatusRepository.countReservedMachineByDateAndCheckinHourAndMachineCode(date, hour, machinecode);
+        System.out.println("int_reservation_machine: " + int_reservation_machine);
+        
+        int int_seat_count = int_limit_seat - int_trouble_machine - int_reservation_machine;
+        System.out.println("int_seat_count: " + int_seat_count);
+        
+        //空席数が0以上の場合、予約可能なのでfalseを返す
+        if (int_seat_count > 0) {
+        	return false;
+        }
+        return true;
 	}
 
 	/** 引数のオブジェクトをJSON文字列に変換 **/
@@ -289,7 +400,7 @@ public class RestReservation {
 	}
 
 	// 予約情報
-	private String getJson_Reservation(List<TreeMap> bigdata_list) {
+	private String getJson_Reservation(List bigdata_list) {
 		// json変換取得変数
 		String json_convert = null;
 

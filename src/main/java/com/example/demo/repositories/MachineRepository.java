@@ -19,6 +19,10 @@ public interface MachineRepository extends JpaRepository<MachineEntity, String> 
 	@Query(value = "SELECT * FROM m06_machine WHERE m06_floor = :floor AND m06_machine_code in (SELECT m05_machine_code FROM m05_class_usable_machine WHERE m05_class_code = :classcode)", nativeQuery = true)
 	public List<MachineEntity> findByFloor(@Param("floor") int floor, @Param("classcode") String classcode);
 	
+	// 選択したマシンの最大数を取得
+	@Query(value = "SELECT m06_count FROM m06_machine WHERE m06_machine_code= :machinecode", nativeQuery = true)
+	public Integer getSeatCountSelectMachine(@Param("machinecode") String machinecode);
+	
 	//機種コード検索
 	public MachineEntity findByMachinecode(String machinecode);
 }

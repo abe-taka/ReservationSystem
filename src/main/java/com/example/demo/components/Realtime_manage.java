@@ -3,9 +3,7 @@ package com.example.demo.components;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.TreeMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +23,7 @@ public class Realtime_manage {
 	public TreeMap<String, String> Get_Monthdate(TreeMap<String, String> current_md) {
 
 		// 現在日付を取得する
-		SimpleDateFormat format = new SimpleDateFormat("MM/dd");
+		SimpleDateFormat format = new SimpleDateFormat("YYYY/MM/dd");
 		Date dateObj = new Date();
 		calendar.setTime(dateObj);
 		

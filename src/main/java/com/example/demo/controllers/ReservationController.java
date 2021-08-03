@@ -63,9 +63,9 @@ public class ReservationController {
 			model.addAttribute("list_machine", list_machine);
 			
 			//現在日付から定められた期間のデータを取得
-			TreeMap<String, String> week_data = new TreeMap<>();
-			week_data = realtime_manage.Get_Monthdate(week_data);
-			model.addAttribute("week_data", week_data);
+			TreeMap<String, String> list_date = new TreeMap<>();
+			list_date = realtime_manage.Get_Monthdate(list_date);
+			model.addAttribute("list_date", list_date);
 			
 			//時限データの取得
 			List<HourEntity> list_hours = new ArrayList<HourEntity>();
