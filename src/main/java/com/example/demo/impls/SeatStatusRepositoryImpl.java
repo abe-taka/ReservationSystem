@@ -14,6 +14,7 @@ import com.example.demo.customRepositories.SeatStatusCustomRepository;
 import com.example.demo.entities.SeatStatusEntity;
 
 
+@SuppressWarnings("rawtypes")
 @Repository
 @Transactional
 public class SeatStatusRepositoryImpl implements SeatStatusCustomRepository {
@@ -26,7 +27,7 @@ public class SeatStatusRepositoryImpl implements SeatStatusCustomRepository {
 	@Override
 	public List<SeatStatusEntity> findIfAlreadyReserved(Date date, String hour, String studentcode) {     
 		String jpql = "SELECT * FROM t09_seat_status WHERE t09_date = :date AND t09_checkin_hour = :hour AND t09_student_code = :studentcode AND t09_checkin_flag='1'"; 
-      
+		
 		TypedQuery<SeatStatusEntity> query = (TypedQuery<SeatStatusEntity>) entityManager.createNativeQuery(jpql, SeatStatusEntity.class);
 		query.setParameter("date", date);
 		query.setParameter("hour", hour);

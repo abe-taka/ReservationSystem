@@ -2,13 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org">
 <head>
-<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
-	rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"
-	integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-	crossorigin="anonymous"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
+	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+		rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+		crossorigin="anonymous"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>
 <title>予約</title>
 </head>
 <body>
@@ -313,6 +314,7 @@
 		//コマ表示を初期化
 		$("#tableBody").empty();
 		
+		//学籍番号の取得
 		const usercode = $("#usercode").text();
 		
 		//非同期処理
@@ -323,9 +325,7 @@
 			dataType : "json"
 		})
 		.then(function(response_data) {
-			//成功時
-			console.log("response_data",response_data);
-			
+			//成功時			
 			for (i = 0; i < response_data.length; i++) {
 				let innerTag = "";
 				
@@ -349,7 +349,7 @@
 			console.log('clickMachine():fail');
 		});
 		
-		//
+		// 予約確定ボタンの活性化
 		$("#btnReservation").prop("disabled", false);
 		$("#btnReservation").removeClass("cursor-not-allowed");
 	}
@@ -370,19 +370,25 @@
 		if (reservationValue) {
 			// 取得した値の加工
 			let [valueDate, valueHour, valueMachineCode, valueUserCode] = reservationValue.split("-");
-				
+			
+			// ダイアログの表示	
 			if (confirm(`予約日：${valueDate}\n予約時限：${valueHour !== "7" ? valueHour + "限目" : "夜間"}\n予約機種：${valueMachineCode}\n\n予約を確定しますか？`)) {
 				// 日付値の加工
-				valueDate = valueDate.slice(0, valueDate.length - 3).replaceAll("/", "-");
+				valueDate = valueDate.slice(0, valueDate.length - 3);
 				
+				// CSRFトークンの取得
+				const token = $("meta[name='_csrf']").attr("content");
+					
 				// POST
 				$.ajax({
 					type: "POST",
 					url: "/make_reservation",
-					data: {date: valueDate, hour: valueHour, machinecode: valueMachineCode, studentcode: valueUserCode},
-					dataType: "json",
-					success: function() {
-						window.alert("予約を確定しました！");
+					headers: {"X-CSRF-TOKEN": token},
+					data: {"date": valueDate, "hour": valueHour, "machinecode": valueMachineCode, "studentcode": valueUserCode},
+					dataType: "text",
+					success: function(data) {
+						location.replace("/top");
+						window.alert(data);
 					}
 				})
 			}
@@ -390,6 +396,5 @@
 			window.alert("予約する日時を選択してください。");
 		}
 	}
-	
 </script>
 </html>

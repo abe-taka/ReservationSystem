@@ -12,12 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.example.demo.components.Realtime_manage;
 import com.example.demo.components.SessionForm;
 import com.example.demo.entities.HourEntity;
-import com.example.demo.entities.AdminEntity; 
 import com.example.demo.entities.StudentRegistEntity;
-import com.example.demo.forms.StudentForm;
 import com.example.demo.repositories.MachineRepository;
 import com.example.demo.repositories.StudentRegistRepository;
-import com.example.demo.repositories.AdminRepository;
 import com.example.demo.repositories.HourRepository;
 
 //　座席予約

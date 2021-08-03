@@ -2,8 +2,6 @@ package com.example.demo.rests;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +9,8 @@ import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +19,6 @@ import com.example.demo.components.SessionForm;
 import com.example.demo.entities.HourEntity;
 import com.example.demo.entities.MachineEntity;
 import com.example.demo.entities.MachineSoftEntity;
-import com.example.demo.entities.ReservationEntity;
 import com.example.demo.entities.SeatStatusEntity;
 import com.example.demo.entities.SoftEntity;
 import com.example.demo.entities.StudentRegistEntity;
@@ -220,13 +218,23 @@ public class RestReservation {
 	
 	
 	// 予約確定処理
-	@PostMapping("/make_reservation")
+	@RequestMapping(value="/make_reservation", method=RequestMethod.POST)
 	public String Post_Reservation(@RequestParam("date") String date, @RequestParam("hour") String hour, @RequestParam("machinecode") String machinecode, @RequestParam("studentcode") String studentcode) {
+		// タイプ変換
+		Date dateDate = strDateToDate(date);
 		
-		// 予約テーブルにデータを追加する(X)
+		// 現在時刻の取得
+		Date todayDate = new Date();
 		
-		// 座席状態テーブルにデータを追加する
-		
+		// 該当機種に残席があるかチェック
+		if (!checkLimitSeatPersonal(machinecode, hour, dateDate)) {
+			// 座席状態テーブルにデータを追加する
+			SeatStatusEntity entity = new SeatStatusEntity(dateDate, hour, machinecode, 1, studentcode, "1", todayDate);
+			entity = seatStatusRepository.save(entity);
+		} else {
+			return "残席がありません。";
+		}
+		return "予約を確定しました！";
 	}
 	
 	// String型の日付をDate型に変換する
@@ -308,6 +316,7 @@ public class RestReservation {
 		System.out.println("getReservedMachineCode");
 		List<SeatStatusEntity> entities = seatStatusRepository.findIfAlreadyReserved(date, targetHour, studentcode);
 		if (entities.size() > 0) {
+			System.out.println(entities);
 			return entities.get(0).getMachineCode();
 		}
 		return "";
