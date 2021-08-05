@@ -2,8 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+		crossorigin="anonymous"></script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>
 	<title>予約取消 | FOCS</title>
 </head>
 <body>
@@ -20,104 +24,23 @@
 	
 	<main class="min-h-screen">
 		<div class="min-h-screen pt-14">
-			<div class="h-full flex flex-col p-10 items-center space-y-5 mb-20">
+			<div id="reservationContainer" class="h-full flex flex-col p-3 sm:p-10 items-center space-y-5 mb-20">
 				
-				<div class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
+				<div th:each="reservation : ${list_reservations}"
+					class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
 					<div class="flex flex-col text-xs sm:text-base">
-						<span>2021/06/30 3限目</span>
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
+						<div>
+							<span class="text-gray-600">時間：</span>
+							<span class="sm:mr-2" th:text="${#dates.format(reservation.date, 'yyyy/MM/dd(E)')}"></span>
+							<span th:text="${reservation.checkinHour + '限目'}"></span>
+						</div>
+						<div>
+							<span class="text-gray-600">機種コード：</span>
+							<span th:text="${reservation.machineCode}"></span>
+						</div>
 					</div>
 					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-400 hover:bg-red-600 focus:ring ring-red-200 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>2021/06/30 3限目</span>
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>2021/06/30 3限目</span>
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>2021/06/30 3限目</span>
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>2021/06/30 3限目</span>
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>2021/06/30 3限目</span>
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>2021/06/30 3限目</span>
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>2021/06/30 3限目</span>
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>2021/06/30 3限目</span>
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
+						<button th:onclick="clickCancelReservation([[${reservation.number}]], [[${#dates.format(reservation.date, 'yyyy/MM/dd(E)')}]], [[${reservation.checkinHour}]], [[${reservation.machineCode}]]);" class="w-20 sm:w-24 h-8 sm:h-10 bg-red-400 hover:bg-red-600 focus:ring ring-red-200 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
 					</div>
 				</div>
 				
@@ -129,4 +52,31 @@
 		<button th:onclick="window.location.href='/top'" class="mx-3 w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">メニューへ戻る</button>
 	</div>
 </body>
+<script>
+	// 予約取消ボタンのクリック処理
+	function clickCancelReservation(reservationNumber, reservationDate, reservationCheckinHour, reservationMachineCode) {
+		//学籍番号の取得
+		const usercode = $("#usercode").text();
+		
+		// ダイアログの表示
+		if (confirm(`予約日：${reservationDate}\n予約時限：${reservationCheckinHour !== "7" ? reservationCheckinHour.toString() + "限目" : "夜間"}\n予約機種：${reservationMachineCode}\n\n予約を取消しますか？`)) {
+			// CSRFトークンの取得
+			const token = $("meta[name='_csrf']").attr("content");
+		
+			//非同期通信
+			$.ajax({
+				type : "POST",
+				url : "/cancel_reservation",
+				headers: {"X-CSRF-TOKEN": token},
+				data : {reservationNumber: reservationNumber, usercode: usercode},
+				dataType: "text",
+				success: function(data) {
+					location.replace("/cancelReservation");
+					window.alert(data);
+				}
+			})
+		}
+	}
+
+</script>
 </html>

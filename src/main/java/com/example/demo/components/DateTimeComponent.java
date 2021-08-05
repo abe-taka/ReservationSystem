@@ -1,5 +1,6 @@
 package com.example.demo.components;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,13 +11,16 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.entities.AdminEntity;
 import com.example.demo.repositories.AdminRepository;
+import com.example.demo.repositories.HourRepository;
 
 //1週間の日付を取得するクラス
 @Component
-public class Realtime_manage {
+public class DateTimeComponent {
 
 	@Autowired
 	AdminRepository adminRepository;
+	@Autowired
+	HourRepository hourRepository;
 	
 	static Calendar calendar = Calendar.getInstance();
 
@@ -91,5 +95,72 @@ public class Realtime_manage {
 			return "(土)";
 		}
 		throw new IllegalStateException();
+	}
+	
+	// String型の日付をDate型に変換する
+	public Date strDateToDate(String strDate, String dateFormat) {
+		Date date = null;
+		try {
+			SimpleDateFormat sdFormat = new SimpleDateFormat(dateFormat);
+			date = sdFormat.parse(strDate + " 00:00:00");
+		} catch (ParseException e) {
+	        e.printStackTrace();
+	    }
+			
+		return date;
+	}
+		
+	// Date型の日付をString型に変換する
+	public String dateToStrDate(Date date) {
+		return new SimpleDateFormat("yyyy-MM-dd").format(date);
+	}
+		
+	// Date型の時間をString型に変換する
+	public String dateToStrTime(Date date) {
+		return new SimpleDateFormat("HH:mm:ss:S").format(date);
+	}
+	
+	// 現在時刻を基に現在時限を返還する
+	public String getCurrentHour() {
+		String currentHour = null;
+			
+		// 現在時刻を取得
+		Date currentTime = new Date(System.currentTimeMillis());
+						
+		// DB比較用の臨時文字列を生成
+		String tempTimeStr = "1900/01/01 " + dateToStrTime(currentTime);
+						
+		try {
+			// DBから時限コードを取得
+			currentHour = hourRepository.findHourCode(tempTimeStr).getHourCode();
+		// 現在時刻がDBに登録した時限の時間外の場合、最大時限数に+1をした値を返還
+		} catch (NullPointerException e) {
+			int beyondMaxHour = Integer.parseInt(hourRepository.findFirstByOrderByHourEndTimeDesc().getHourCode()) + 1;
+			currentHour = String.valueOf(beyondMaxHour);
+		}
+			
+		return currentHour;
+	}
+	
+	// 現在時刻を基に現在時限を返還する
+	public boolean checkIsTargetHourBeforeCurrentHour(String targetHour) {				
+		// 現在時刻を取得
+		Date currentTime = new Date(System.currentTimeMillis());
+							
+		// DB比較用の臨時文字列を生成
+		String tempTimeStr = "1900/01/01 " + dateToStrTime(currentTime);
+							
+		try {
+			// DBから時限コードを取得
+			String currentHour = hourRepository.findHourCode(tempTimeStr).getHourCode();
+			// 処理しようとする時限と取得した時限コードの時限を比べ、現在時刻より前の時限をtrueにする
+			if (Integer.parseInt(targetHour) < Integer.parseInt(currentHour)) {
+				return true;
+			}
+			return false;
+		// 現在時刻がDBに登録した時限の時間外の場合、trueを返す
+		} catch (NullPointerException e) {
+			return true;
+		}
 	}
 }

@@ -1,7 +1,5 @@
 package com.example.demo.rests;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.components.Realtime_manage;
+import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionForm;
 import com.example.demo.entities.HourEntity;
 import com.example.demo.entities.MachineEntity;
@@ -43,7 +41,7 @@ public class RestReservation {
 	@Autowired
 	SessionForm sessionForm;
 	@Autowired
-	Realtime_manage realtime_manage;
+	DateTimeComponent dateTimeComponent;
 	@Autowired
 	HourRepository hourRepository;
 	@Autowired
@@ -63,6 +61,7 @@ public class RestReservation {
 	@Autowired
 	StudentRegistRepository studentRegistRepository;
 
+	
 	// 機種コード取得[階層]
 	@GetMapping("/get_machine")
 	public String Get_Machine(@RequestParam("js_floor") int js_floor) {
@@ -147,7 +146,7 @@ public class RestReservation {
 		
 		// 10日間の日付データを取得
 		TreeMap<String, String> periodData = new TreeMap<>();
-		periodData = realtime_manage.Get_Monthdate(periodData);
+		periodData = dateTimeComponent.Get_Monthdate(periodData);
 		
 		for (int i = 0; i < periodData.size(); i++) {
 			seatStatusPerDay = new ArrayList();
@@ -161,7 +160,7 @@ public class RestReservation {
 				String hour = listHours.get(j).getHourCode();
 				System.out.println("hour: " + listHours.get(j).getHourCode());
 				
-				Date date = strDateToDate(key + " 00:00:00");			
+				Date date = dateTimeComponent.strDateToDate(key + " 00:00:00", "yyyy/MM/dd hh:mm:ss");			
 				System.out.println("date: " + date);
 				
 				// 現在の時限より前かどうかをチェック
@@ -221,7 +220,7 @@ public class RestReservation {
 	@RequestMapping(value="/make_reservation", method=RequestMethod.POST)
 	public String Post_Reservation(@RequestParam("date") String date, @RequestParam("hour") String hour, @RequestParam("machinecode") String machinecode, @RequestParam("studentcode") String studentcode) {
 		// タイプ変換
-		Date dateDate = strDateToDate(date);
+		Date dateDate = dateTimeComponent.strDateToDate(date, "yyyy/MM/dd hh:mm:ss");
 		
 		// 現在時刻の取得
 		Date todayDate = new Date();
@@ -237,56 +236,20 @@ public class RestReservation {
 		return "予約を確定しました！";
 	}
 	
-	// String型の日付をDate型に変換する
-	private Date strDateToDate(String strDate) {
-		Date date = null;
-		try {
-			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
-			date = sdFormat.parse(strDate + " 00:00:00");	
-		} catch (ParseException e) {
-            e.printStackTrace();
-        }
-		
-		return date;
-	}
 	
-	// Date型の日付をString型に変換する
-	private String dateToStrDate(Date date) {
-		return new SimpleDateFormat("yyyy-MM-dd").format(date);
-	}
-	
-	// Date型の時間をString型に変換する
-	private String dateToStrTime(Date date) {
-		return new SimpleDateFormat("HH:mm:ss:S").format(date);
-	}
-	
-	// 現在の時限より前かどうかチェック()
+	// 現在の時限より前かどうかチェック
 	private boolean checkIsBeforeCurrentTime(String targetHour, Date date) {
 		System.out.println("checkIsBeforeCurrentTime");
 		
 		// 現在時刻を取得
 		Date currentTime = new Date(System.currentTimeMillis());
 		
-		// DB比較用の臨時文字列を生成
-		String tempTimeStr = "1900/01/01 " + dateToStrTime(currentTime);
-		
 		// 現在の時刻を文字列化する
-		String currentStrDate = dateToStrDate(currentTime);
+		String currentStrDate = dateTimeComponent.dateToStrDate(currentTime);
 		
 		// 対象日と現在日が一緒であれば
-		if (dateToStrDate(date).equals(currentStrDate)) {
-			try {
-				// DBから時限コードを取得
-				String currentHour = hourRepository.findHourCode(tempTimeStr).getHourCode();
-				// 処理しようとする時限と取得した時限コードの時限を比べ、現在時刻より前の時限をtrueにする
-				if (Integer.parseInt(targetHour) < Integer.parseInt(currentHour)) {
-					return true;
-				}
-				return false;
-			// 現在時刻がDBに登録した時限の時間外の場合、trueを返す
-			} catch (NullPointerException e) {
-				return true;
-			}
+		if (dateTimeComponent.dateToStrDate(date).equals(currentStrDate)) {
+			return dateTimeComponent.checkIsTargetHourBeforeCurrentHour(targetHour);
 		}
 		return false;
 	}
