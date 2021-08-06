@@ -1,16 +1,12 @@
 package com.example.demo.repositories;
 
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-import com.example.demo.customRepositories.HourInWorkPatternCustomRepository;
 import com.example.demo.customRepositories.SeatStatusCustomRepository;
-import com.example.demo.entities.HourInWorkPatternEntity;
 import com.example.demo.entities.SeatStatusEntity;
 
 public abstract interface SeatStatusRepository extends JpaRepository<SeatStatusEntity, Integer>, SeatStatusCustomRepository<SeatStatusEntity> {

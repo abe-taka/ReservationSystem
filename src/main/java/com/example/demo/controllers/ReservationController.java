@@ -9,15 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.example.demo.components.Realtime_manage;
+import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionForm;
 import com.example.demo.entities.HourEntity;
-import com.example.demo.entities.AdminEntity; 
 import com.example.demo.entities.StudentRegistEntity;
-import com.example.demo.forms.StudentForm;
 import com.example.demo.repositories.MachineRepository;
 import com.example.demo.repositories.StudentRegistRepository;
-import com.example.demo.repositories.AdminRepository;
 import com.example.demo.repositories.HourRepository;
 
 //　座席予約
@@ -33,7 +30,7 @@ public class ReservationController {
 	@Autowired
 	HourRepository hourRepository;
 	@Autowired
-	Realtime_manage realtime_manage;
+	DateTimeComponent realtime_manage;
 	
 	// セッションデータ用
 	String session_data = null;
@@ -43,17 +40,18 @@ public class ReservationController {
 		
 		//セッションデータの取得
 		session_data = sessionForm.getSession_code();
+		
 		//セッション確認
-		if(session_data!= null) {
+		if(session_data != null) {
 			//所属クラスを取得
 			String session_data = sessionForm.getSession_code();
 			StudentRegistEntity studentreg = new StudentRegistEntity();
 			studentreg = studentregRepository.findByStudentcode(session_data);
 			String classcode = null;
 			
-			if(studentreg != null) {
+			if (studentreg != null) {
 				classcode = studentreg.getClassEntity().getClasscode();
-			}else {
+			} else {
 				System.out.println("所属クラスがない");
 			}
 			

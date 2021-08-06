@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-<link th:href="@{/css/vali.css}" rel="stylesheet">
-<meta charset="UTF-8">
-<title>ログイン</title>
+	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<title>ログイン | FOCS</title>
 </head>
 <body>
 	<div class="h-screen w-full flex items-center justify-center">
 		<form th:action="@{/login_process}" th:object="${studentForm}" method="post" class="w-full sm:w-1/4	p-5 flex flex-col space-y-3">
+			<h1 class="text-center font-bold text-2xl pb-3 text-gray-800">FOCS</h1>
+		
 			<div>
 				<label for="staticEmail" class="block my-2 text-gray-600">ID</label>
 				<input type="text" required maxlength="8" class="w-full h-10 rounded-lg border px-2" th:errorclass="is-invalid" th:field="*{studentcode}" id="inputId">
@@ -19,7 +21,7 @@
 				<input type="password" required class="w-full h-10 rounded-lg border px-2" th:errorclass="is-invalid" th:field="*{studentpassword}" id="inputPassword">
 			</div>
 			
-			<!-- バリデーションエラー -->
+			<!-- エラー表示 -->
 			<div th:text="${err}" class="text-sm text-red-500"></div>
 			
 			<div>

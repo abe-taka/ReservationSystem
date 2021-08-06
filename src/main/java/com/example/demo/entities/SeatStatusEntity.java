@@ -66,7 +66,20 @@ public class SeatStatusEntity {
 	//
 	@Column(name="t09_machine_count")
 	private Integer machineCount;
-
+	
+	
+	public SeatStatusEntity() {
+	}
+	
+	public SeatStatusEntity(Date date, String checkinHour, String machineCode, Integer machineCount, String studentCode, String checkinFlag, Date updateDate) {
+		this.date = date;
+        this.checkinHour = checkinHour;
+        this.machineCode = machineCode;
+        this.machineCount = machineCount;
+        this.studentCode = studentCode;
+        this.checkinFlag = checkinFlag;
+        this.updateDate = updateDate;
+	}
 
 	public Integer getNumber() {
 		return number;
