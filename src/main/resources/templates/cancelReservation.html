@@ -24,26 +24,31 @@
 	
 	<main class="min-h-screen">
 		<div class="min-h-screen pt-14">
-			<div id="reservationContainer" class="h-full flex flex-col p-3 sm:p-10 items-center space-y-5 mb-20">
-				
+			<div id="reservationContainer" th:if="${#lists.size(list_reservations) > 0}" class="h-full flex flex-col p-3 sm:p-10 items-center space-y-5 mb-20">
+				<!-- 予約リストの表示 -->
 				<div th:each="reservation : ${list_reservations}"
 					class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
 					<div class="flex flex-col text-xs sm:text-base">
 						<div>
 							<span class="text-gray-600">時間：</span>
 							<span class="sm:mr-2" th:text="${#dates.format(reservation.date, 'yyyy/MM/dd(E)')}"></span>
-							<span th:text="${reservation.checkinHour + '限目'}"></span>
+							<span th:if="${reservation.hour.getHourCode() != '7'}" th:text="${reservation.hour.getHourCode() + '限目'}"></span>
+							<span th:unless="${reservation.hour.getHourCode() != '7'}" th:text="夜間"></span>
 						</div>
 						<div>
 							<span class="text-gray-600">機種コード：</span>
-							<span th:text="${reservation.machineCode}"></span>
+							<span th:text="${reservation.machine.getMachinecode()}"></span>
 						</div>
 					</div>
 					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button th:onclick="clickCancelReservation([[${reservation.number}]], [[${#dates.format(reservation.date, 'yyyy/MM/dd(E)')}]], [[${reservation.checkinHour}]], [[${reservation.machineCode}]]);" class="w-20 sm:w-24 h-8 sm:h-10 bg-red-400 hover:bg-red-600 focus:ring ring-red-200 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
+						<button th:onclick="clickCancelReservation([[${reservation.number}]], [[${#dates.format(reservation.date, 'yyyy/MM/dd(E)')}]], [[${reservation.hour.getHourCode()}]], [[${reservation.machine.getMachinecode()}]]);" class="w-20 sm:w-24 h-8 sm:h-10 bg-red-400 hover:bg-red-600 focus:ring ring-red-200 rounded-lg text-xs sm:text-sm text-white">予約取消</button>
 					</div>
 				</div>
-				
+			</div>
+			
+			<!-- 予約リストに要素がない場合の表示 -->
+			<div th:unless="${#lists.size(list_reservations) > 0}" class="flex justify-center items-center" style="height: calc(100vh - 8.5rem);">
+				<span class="text-gray-600">予約無し</span>
 			</div>
 		</div>
 	</main>
@@ -55,7 +60,7 @@
 <script>
 	// 予約取消ボタンのクリック処理
 	function clickCancelReservation(reservationNumber, reservationDate, reservationCheckinHour, reservationMachineCode) {
-		//学籍番号の取得
+		// 学籍番号の取得
 		const usercode = $("#usercode").text();
 		
 		// ダイアログの表示
@@ -63,7 +68,7 @@
 			// CSRFトークンの取得
 			const token = $("meta[name='_csrf']").attr("content");
 		
-			//非同期通信
+			// 非同期通信
 			$.ajax({
 				type : "POST",
 				url : "/cancel_reservation",
@@ -77,6 +82,5 @@
 			})
 		}
 	}
-
 </script>
 </html>

@@ -24,6 +24,7 @@
 		</div>
 	</nav>
 
+	<!-- ソフト絞り込み用のモーダル -->
 	<div id="backdrop"
 		class="fixed w-full h-screen bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
 		<div
@@ -157,7 +158,7 @@
 	</div>
 </body>
 <script>
-	//UIボタンの操作
+	// UIボタンの操作
 	$(document).ready(function(){
 		const backdrop = $("#backdrop");
    		const filterBtn = $("#filterBtn");
@@ -175,11 +176,11 @@
 	});
 	
 	
-	//機種コード、ソフトの取得[階層]
+	// 機種コード、ソフトの取得[階層]
 	function clickFloor() {
 		const floor = document.floorform.floor.value;
 
-		//非同期通信(機種コード)
+		// 非同期通信(機種コード)
 		$.ajax({
 			type : "GET",
 			url : "/get_machine",
@@ -200,7 +201,7 @@
 				
 				const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 focus:ring ring-gray-100 rounded-lg text-sm text-black'>${machinecode}</button>`;
 								
-				//表示する場所の取得
+				// 表示する場所の取得
 				btnContainer.append(btnTag);
 			}
 			
@@ -210,11 +211,11 @@
 			filterBtn.addClass("bg-gray-200 hover:bg-gray-400 hover:text-white focus:ring ring-gray-100 text-black");
 		}
 		, function() {
-			//失敗時
+			// 失敗時
 			console.log('clickFloor()_machincode:fail');
 		});
 		
-		//非同期通信(ソフト)
+		// 非同期通信(ソフト)
 		$.ajax({
 			type : "GET",
 			url : "/get_soft",
@@ -233,29 +234,29 @@
 				const softname = (response_data[i]["softname"]);
 				const softcode = (response_data[i]["softcode"]);
 				
-				//ボックスタグ作成
+				// ボックスタグ作成
 				const boxTag = `<div class="w-full sm:w-1/3">
 					<input type="radio" id="${softcode}" name="soft" value="${softcode}" />
     				<label for="${softcode}" class="text-sm sm:text-base">${softname}</label>
 				</div>`;
 				
-				//表示する場所の取得
+				// 表示する場所の取得
 				boxContainer.append(boxTag);
 			}
 		}
 		, function() {
-			//失敗時
+			// 失敗時
 			console.log('clickFloor()_soft:fail');
 		});
 	}
 	
 	
-	//機種コードの取得[チェックボックス]
+	// 機種コードの取得[チェックボックス]
 	function clickCheckbox() {
 		// 階数の取得
 		const floor = document.floorform.floor.value;
 
-		//チェックボックスの値取得
+		// チェックボックスの値取得
 	    let softcode = '';
 	    const checkbox_soft = document.soft_form.soft;
 
@@ -265,7 +266,7 @@
 	      	}
 	   	}
 	    
-	    //非同期通信
+	    // 非同期通信
 	    $.ajax({
 			type : "GET",
 			url : "/get_machine/fromsoft",
@@ -287,7 +288,7 @@
 					const machinecode = (response_data[i]);
 					const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black'>${machinecode}</button>`;
 					
-					//表示する場所の取得
+					// 表示する場所の取得
 					btnContainer.append(btnTag);
 				}
 			} else {
@@ -299,24 +300,24 @@
 			backdrop.addClass("hidden");
 		}
 		, function() {
-			//失敗時
+			// 失敗時
 			console.log('clickCheckbox():fail');
 		});
 	}
 	
 	
-	//予約情報取得
+	// 予約情報取得
 	function clickMachine(machinecode) {
-		//選択している機種のテキストを変更
+		// 選択している機種のテキストを変更
 		$("#textMachineType").text(machinecode);
 		
-		//コマ表示を初期化
+		// コマ表示を初期化
 		$("#tableBody").empty();
 		
-		//学籍番号の取得
+		// 学籍番号の取得
 		const usercode = $("#usercode").text();
 		
-		//非同期処理
+		// 非同期処理
 		$.ajax({
 			type : "GET",
 			url : "/get_reservation",
@@ -324,7 +325,7 @@
 			dataType : "json"
 		})
 		.then(function(response_data) {
-			//成功時			
+			// 成功時			
 			for (i = 0; i < response_data.length; i++) {
 				let innerTag = "";
 				
@@ -344,7 +345,7 @@
 			}
 		}
 		, function() {
-			//失敗時
+			// 失敗時
 			console.log('clickMachine():fail');
 		});
 		

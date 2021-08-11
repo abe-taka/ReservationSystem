@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 //時限
 @Entity
 @Table(name="m10_hour")
@@ -50,6 +52,11 @@ public class HourEntity {
 	// m12テーブル
 	@OneToMany(mappedBy = "hour")
 	private List<HourInWorkPatternEntity> hourInWorkPatternEntity;
+	
+	// t09テーブル(SeatStatusEntity)
+	@OneToMany(mappedBy = "hour")
+	@JsonBackReference("Unit7")
+	private List<SeatStatusEntity> seatStatusEntity;
 
 	
 	public String getHourCode() {
@@ -123,5 +130,12 @@ public class HourEntity {
 	public void setHourInWorkPatternEntity(List<HourInWorkPatternEntity> hourInWorkPatternEntity) {
 		this.hourInWorkPatternEntity = hourInWorkPatternEntity;
 	}
-	
+
+	public List<SeatStatusEntity> getSeatStatusEntity() {
+		return seatStatusEntity;
+	}
+
+	public void setSeatStatusEntity(List<SeatStatusEntity> seatStatusEntity) {
+		this.seatStatusEntity = seatStatusEntity;
+	}
 }

@@ -13,7 +13,7 @@ import com.example.demo.entities.AdminEntity;
 import com.example.demo.repositories.AdminRepository;
 import com.example.demo.repositories.HourRepository;
 
-//1週間の日付を取得するクラス
+//日付・時間に関するコンポーネント
 @Component
 public class DateTimeComponent {
 
@@ -109,6 +109,11 @@ public class DateTimeComponent {
 			
 		return date;
 	}
+	
+	// Date型の日付をString型に変換する
+	public String dateToStrDateWithDay(Date date) {
+		return new SimpleDateFormat("yyyy/MM/dd(E)").format(date);
+	}
 		
 	// Date型の日付をString型に変換する
 	public String dateToStrDate(Date date) {
@@ -130,11 +135,11 @@ public class DateTimeComponent {
 		// DB比較用の臨時文字列を生成
 		String tempTimeStr = "1900/01/01 " + dateToStrTime(currentTime);
 						
-		try {
+		if (hourRepository.getHourCodeBetweenCheckinStartAndCheckoutLimit(tempTimeStr).size() > 0) {
 			// DBから時限コードを取得
-			currentHour = hourRepository.findHourCode(tempTimeStr).getHourCode();
-		// 現在時刻がDBに登録した時限の時間外の場合、最大時限数に+1をした値を返還
-		} catch (NullPointerException e) {
+			currentHour = hourRepository.getHourCodeBetweenCheckinStartAndCheckoutLimit(tempTimeStr).get(0).getHourCode();
+		} else {
+			// 現在時刻がDBに登録した時限の時間外の場合、最大時限数に+1をした値を返還
 			int beyondMaxHour = Integer.parseInt(hourRepository.findFirstByOrderByHourEndTimeDesc().getHourCode()) + 1;
 			currentHour = String.valueOf(beyondMaxHour);
 		}
@@ -149,18 +154,35 @@ public class DateTimeComponent {
 							
 		// DB比較用の臨時文字列を生成
 		String tempTimeStr = "1900/01/01 " + dateToStrTime(currentTime);
-							
-		try {
+						
+		if (hourRepository.getHourCodeBetweenCheckinStartAndCheckoutLimit(tempTimeStr).size() > 0) {
 			// DBから時限コードを取得
-			String currentHour = hourRepository.findHourCode(tempTimeStr).getHourCode();
+			String currentHour = hourRepository.getHourCodeBetweenCheckinStartAndCheckoutLimit(tempTimeStr).get(0).getHourCode();
+			
 			// 処理しようとする時限と取得した時限コードの時限を比べ、現在時刻より前の時限をtrueにする
 			if (Integer.parseInt(targetHour) < Integer.parseInt(currentHour)) {
 				return true;
 			}
 			return false;
-		// 現在時刻がDBに登録した時限の時間外の場合、trueを返す
-		} catch (NullPointerException e) {
+		} else {
+			// 現在時刻がDBに登録した時限の時間外の場合、trueを返す
 			return true;
 		}
+	}
+	
+	// 現在時刻を基に利用開始できるかをチェック
+	public boolean checkIfMachineCanBeStarted(String targetHour) {
+		// 現在時刻を取得
+		Date currentTime = new Date(System.currentTimeMillis());
+									
+		// DB比較用の臨時文字列を生成
+		String tempTimeStr = "1900/01/01 " + dateToStrTime(currentTime);
+		
+		// 
+		if (hourRepository.checkIfCurrentTimeIsBetweenStartAndLimit(tempTimeStr, targetHour).size() > 0) {
+			return true;
+		}	
+		// 現在時刻がDBに登録した時限の時間外の場合、falseを返す	
+		return false;
 	}
 }

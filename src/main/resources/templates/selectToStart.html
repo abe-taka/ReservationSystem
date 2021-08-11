@@ -2,9 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+		crossorigin="anonymous"></script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
-	<title>利用開始・即時利用 | FOCS</title>
+	<title>利用開始 | FOCS</title>
 </head>
 <body>
 	<nav class="fixed w-full h-14 flex items-center justify-between bg-white shadow px-2 sm:px-5">
@@ -20,51 +23,27 @@
 	
 	<main class="min-h-screen">
 		<div class="min-h-screen pt-14">
-			<!-- もし、予約したマシンがある場合、予約分を繰り返し -->
-			<div class="h-full flex flex-col p-10 items-center space-y-5 mb-20">
-
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
+			<form id="startForm" th:action="@{/redirect_to_start}" class="h-full flex flex-col p-3 sm:p-10 items-center space-y-5 mb-20">
+				<!-- 予約リストの表示 -->
+				<div th:each="reservation : ${list_reservations}" 
+					class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
 					<div class="flex flex-col text-xs sm:text-base">
-						<span>階数：13</span>
-						<span>機種コード：13WSDSDA</span>
+						<div>
+							<span class="text-gray-600">時間：</span>
+							<span class="sm:mr-2" th:text="${#dates.format(reservation.date, 'yyyy/MM/dd(E)')}"></span>
+							<span th:if="${reservation.hour.getHourCode() != '7'}" th:text="${reservation.hour.getHourCode() + '限目'}"></span>
+							<span th:unless="${reservation.hour.getHourCode() != '7'}" th:text="夜間"></span>
+						</div>
+						<div>
+							<span class="text-gray-600">機種コード：</span>
+							<span th:text="${reservation.machine.getMachinecode()}"></span>
+						</div>
 					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-xs sm:text-sm text-white">利用開始へ</button>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>階数：13</span>
-						<span>機種コード：13WSDSDA</span>
+					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
+						<button type="submit" th:onclick="clickToStart([[${reservation.hour.getHourCode()}]], [[${reservation.machine.getMachinecode()}]], [[${#dates.format(reservation.date, 'yyyy/MM/dd(E)')}]])" class="w-20 sm:w-24 h-8 sm:h-10 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-xs sm:text-sm text-white">利用開始へ</button>
 					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-xs sm:text-sm text-white">利用開始へ</button>
 				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>階数：13</span>
-						<span>機種コード：13WSDSDA</span>
-					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-xs sm:text-sm text-white">利用開始へ</button>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>階数：13</span>
-						<span>機種コード：13WSDSDA</span>
-					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-xs sm:text-sm text-white">利用開始へ</button>
-				</div>
-			</div>
-			
-			<!--　予約したマシンが存在しない場合、即時利用へ誘導する画面を表示 
-				
-			<div class="h-screen pb-24 flex flex-col justify-center items-center space-y-5 mb-20">
-				<p class="text-lg px-2">予約が存在しません。</p>
-				<p class="text-base px-2">すぐ利用したい場合は、</p>
-				<button class="w-24 h-10 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-sm text-white">即時利用へ</button>
-			</div>
-			-->
-			
+			</form>	
 		</div>
 	</main>
 	
@@ -72,4 +51,23 @@
 		<button th:onclick="window.location.href='/top'" class="mx-3 w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">メニューへ戻る</button>
 	</div>
 </body>
+<script th:inline="javascript">
+	// ページにアクセスできない場合の処理
+	const isNotAvailable = [[${notAvailable != null}]];
+
+	if(isNotAvailable) {
+		location.replace("/top");
+		window.alert([[${notAvailable}]]);
+	}
+</script>
+<script>
+	// 利用開始ボタンの処理
+	function clickToStart(checkinHour, machineCode, reservDate) {
+		// フォーム送信用のインプットタグを入れ、フォームを送信する
+		const inputTags = `<input type="hidden" name="checkinHour" value="${checkinHour}" /><input type="hidden" name="machineCode" value="${machineCode}" /><input type="hidden" name="reservDate" value="${reservDate}" />`;		
+		$("#startForm").append(inputTags);
+		
+		$("#startForm").submit();
+	}
+</script>
 </html>
