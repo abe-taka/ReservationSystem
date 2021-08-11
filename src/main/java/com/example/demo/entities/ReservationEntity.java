@@ -1,6 +1,7 @@
 package com.example.demo.entities;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.stereotype.Component;
@@ -65,12 +67,10 @@ public class ReservationEntity {
 	@Column(name = "t14_update_date")
 	private Date updatedade;
 
-	// @Column(name = "day_code")
-	// private int daycode;
-
-	// @Column(name = "week_code")
-	// private int weekcode;
-	
+	// t09テーブル(SeatStatusEntity)
+	@OneToMany(mappedBy = "reservation")
+	@JsonBackReference("Unit7")
+	private List<SeatStatusEntity> seatStatusEntity;
 
 	// ゲッター、セッター
 	public int getReservationnum() {
@@ -143,5 +143,13 @@ public class ReservationEntity {
 
 	public void setUpdatedade(Date updatedade) {
 		this.updatedade = updatedade;
+	}
+
+	public List<SeatStatusEntity> getSeatStatusEntity() {
+		return seatStatusEntity;
+	}
+
+	public void setSeatStatusEntity(List<SeatStatusEntity> seatStatusEntity) {
+		this.seatStatusEntity = seatStatusEntity;
 	}
 }

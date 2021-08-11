@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionForm;
+import com.example.demo.components.UtilComponent;
 import com.example.demo.entities.HourEntity;
 import com.example.demo.entities.MachineEntity;
 import com.example.demo.entities.MachineSoftEntity;
@@ -28,11 +29,11 @@ import com.example.demo.repositories.MachineSoftRepository;
 import com.example.demo.repositories.ReservationRepository;
 import com.example.demo.repositories.SoftRepository;
 import com.example.demo.repositories.StudentRegistRepository;
+import com.example.demo.repositories.StudentRepository;
 import com.example.demo.repositories.SeatStatusRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-//非同期処理(予約機能)
+// 非同期処理(予約機能)
 @RestController
 public class RestReservation {
 
@@ -43,6 +44,8 @@ public class RestReservation {
 	@Autowired
 	DateTimeComponent dateTimeComponent;
 	@Autowired
+	UtilComponent utilComponent;
+	@Autowired
 	HourRepository hourRepository;
 	@Autowired
 	HourInWorkPatternRepository hourInWorkPatternRepository;
@@ -50,6 +53,8 @@ public class RestReservation {
 	MachineRepository machineRepository;
 	@Autowired
 	TroubleMachineRepository troubleMachineRepository;
+	@Autowired
+	StudentRepository studentRepository;
 	@Autowired
 	SeatStatusRepository seatStatusRepository;
 	@Autowired
@@ -81,7 +86,7 @@ public class RestReservation {
 			System.out.println("RestReservation_Get_Machine():fail");
 		}
 		// JSONに変換し返却
-		return getJson_Machine(machineEntity);
+		return utilComponent.listToJSON(machineEntity);
 	}
 
 	// ソフト取得[階層]
@@ -95,7 +100,7 @@ public class RestReservation {
 			System.out.println("RestReservation_Get_Soft():fail");
 		}
 		// JSONに変換し返却
-		return getJson_Soft(softEntity);
+		return utilComponent.listToJSON(softEntity);
 	}
 
 	// 機種コード取得[チェックボックス]
@@ -122,7 +127,7 @@ public class RestReservation {
 		}
 
 		// JSONに変換し返却
-		return getJson_MachineFromSoft(machinecode_list);
+		return utilComponent.listToJSON(machinecode_list);
 	}
 
 	// 予約情報取得
@@ -190,7 +195,7 @@ public class RestReservation {
 							seatStatusPerDay.add("YELLOW-" + tentativelyReservedMachineCode);
 						// 仮予約ではない場合
 						} else {
-							//残席がない場合
+							// 残席がない場合
 							if (checkLimitSeatPersonal(js_mcode, hour, date)) {
 								// RED!!
 								System.out.println("RED!!");
@@ -212,7 +217,7 @@ public class RestReservation {
 		System.out.println("Done!: ");
 		System.out.println("resultList: " + resultList);
 
-		return getJson_Reservation(resultList);
+		return utilComponent.listToJSON(resultList);
 	}
 	
 	
@@ -228,7 +233,7 @@ public class RestReservation {
 		// 該当機種に残席があるかチェック
 		if (!checkLimitSeatPersonal(machinecode, hour, dateDate)) {
 			// 座席状態テーブルにデータを追加する
-			SeatStatusEntity entity = new SeatStatusEntity(dateDate, hour, machinecode, 1, studentcode, "1", todayDate);
+			SeatStatusEntity entity = new SeatStatusEntity(dateDate, hourRepository.findByHourCode(hour), machineRepository.findByMachinecode(machinecode), 1, studentRepository.findByStudentcode(studentcode), "1", todayDate);
 			entity = seatStatusRepository.save(entity);
 		} else {
 			return "残席がありません。";
@@ -280,7 +285,7 @@ public class RestReservation {
 		List<SeatStatusEntity> entities = seatStatusRepository.findIfAlreadyReserved(date, targetHour, studentcode);
 		if (entities.size() > 0) {
 			System.out.println(entities);
-			return entities.get(0).getMachineCode();
+			return entities.get(0).getMachine().getMachinecode();
 		}
 		return "";
 	}
@@ -299,90 +304,32 @@ public class RestReservation {
 		System.out.println("getTentativelyReservedMachineCode");
 		List<SeatStatusEntity> entities = seatStatusRepository.findIfAlreadyTentativelyReserved(date, targetHour, studentcode);
 		if (entities.size() > 0) {
-			return entities.get(0).getMachineCode();
+			return entities.get(0).getMachine().getMachinecode();
 		}
 		return "";
 	}
 	
 	// 該当機種に残席があるかチェック(有：true, 無：false)
 	private boolean checkLimitSeatPersonal(String machinecode, String hour, Date date) {
-		//マシンの総台数を取得
+		// マシンの総台数を取得
         int int_limit_seat = machineRepository.getSeatCountSelectMachine(machinecode);
         System.out.println("int_limit_seat: " + int_limit_seat);
 
-        //故障機数の取得
+        // 故障機数の取得
         int int_trouble_machine = troubleMachineRepository.getTroubleMachine(machinecode);
         System.out.println("int_trouble_machine: " + int_trouble_machine);
 
-        //予約・利用中の台数の取得
-        int int_reservation_machine = seatStatusRepository.countReservedMachineByDateAndCheckinHourAndMachineCode(date, hour, machinecode);
+        // 予約・利用中の台数の取得
+        int int_reservation_machine = seatStatusRepository.countReservedMachine(date, hour, machinecode);
         System.out.println("int_reservation_machine: " + int_reservation_machine);
         
         int int_seat_count = int_limit_seat - int_trouble_machine - int_reservation_machine;
         System.out.println("int_seat_count: " + int_seat_count);
         
-        //空席数が0以上の場合、予約可能なのでfalseを返す
+        // 空席数が0以上の場合、予約可能なのでfalseを返す
         if (int_seat_count > 0) {
         	return false;
         }
         return true;
-	}
-
-	/** 引数のオブジェクトをJSON文字列に変換 **/
-	// 機種コード[階層]
-	private String getJson_Machine(List<MachineEntity> machineEntity) {
-		// json変換取得変数
-		String json_convert = null;
-
-		// 変換処理
-		try {
-			json_convert = objectMapper.writeValueAsString(machineEntity);
-		} catch (JsonProcessingException e) {
-			System.out.println("getJson_Machine():fail");
-		}
-		return json_convert;
-	}
-
-	// ソフト[階層]
-	private String getJson_Soft(List<SoftEntity> softEntity) {
-		// json変換取得変数
-		String json_convert = null;
-
-		// 変換処理
-		try {
-			json_convert = objectMapper.writeValueAsString(softEntity);
-		} catch (JsonProcessingException e) {
-			System.out.println("getJson_Soft():fail");
-		}
-		return json_convert;
-	}
-
-	// 機種コード[チェックボックス]
-	private String getJson_MachineFromSoft(List<String> machine_list) {
-		// json変換取得変数
-		String json_convert = null;
-
-		// 変換処理
-		try {
-			json_convert = objectMapper.writeValueAsString(machine_list);
-		} catch (JsonProcessingException e) {
-			System.out.println("getJson_MachineFromSoft():fail");
-		}
-		return json_convert;
-	}
-
-	// 予約情報
-	private String getJson_Reservation(List bigdata_list) {
-		// json変換取得変数
-		String json_convert = null;
-
-		// 変換処理
-		try {
-			json_convert = objectMapper.writeValueAsString(bigdata_list);
-		} catch (JsonProcessingException e) {
-			System.err.println(e);
-			System.out.println("getJson_Reservation():fail");
-		}
-		return json_convert;
 	}
 }

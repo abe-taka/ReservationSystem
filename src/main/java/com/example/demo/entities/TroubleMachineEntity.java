@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -12,8 +14,13 @@ import javax.persistence.Table;
 @Table(name="t18_trouble_machine")
 public class TroubleMachineEntity {
 	
-	//故障機コード
+	//id(連番)
 	@Id
+	@Column(name="t18_trouble_machine_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int troubleMachineId;
+	
+	//故障機コード
 	@Column(name="t18_machine_code")
 	private String machinecode;
 		

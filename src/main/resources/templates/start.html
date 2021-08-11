@@ -2,9 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+		crossorigin="anonymous"></script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
-	<title>利用開始 | FOCS</title>
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>
+	<title th:if="${floor != null && machineCode != null && checkinHour != null}" th:text="'利用開始 | FOCS'"></title>
+	<title th:unless="${floor != null && machineCode != null && checkinHour != null}" th:text="'即時利用 | FOCS'"></title>
 </head>
 <body>
 	<nav class="fixed w-full h-14 flex items-center justify-between bg-white shadow px-2 sm:px-5">
@@ -18,14 +23,38 @@
 		</div>
 	</nav>
 	
+	<!-- ソフト絞り込み用のモーダル -->
+	<div id="backdrop"
+		class="fixed w-full h-screen bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+		<div
+			class="w-3/4 h-3/4 sm:w-2/3 sm:h-2/3 bg-white rounded-lg p-3 sm:p-5 flex flex-col justify-between">
+			<h2 class="text-lg font-semibold">ソフト絞り込み</h2>
+
+			<!-- ソフトの表示 -->
+			<form id="boxContainer" name="soft_form"
+				class="flex flex-wrap w-full py-5 overflow-y-auto"
+				style="max-height: calc(100% - 6rem)"></form>
+
+			<div class="flex space-x-5">
+				<button id="backBtn"
+					class="w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">戻る</button>
+				<button
+					class="w-full px-1 h-12 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-sm text-white"
+					th:onclick="clickCheckbox()">絞り込む</button>
+			</div>
+		</div>
+	</div>
+	
 	<main class="min-h-screen">
 		<div class="flex flex-col sm:flex-row h-screen pt-14 pb-20">
-			<div class="flex flex-row sm:flex-col w-full sm:w-1/4 h-1/4 sm:h-full">
+			<!-- 予約リストから利用開始に遷移した場合 -->
+			<div th:if="${floor != null && machineCode != null && checkinHour != null}" class="flex flex-row sm:flex-col w-full sm:w-1/4 h-1/4 sm:h-full">
 				<div class="w-1/3 sm:w-full sm:h-1/3 p-1 sm:p-2">
 					<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
 						<span class="text-sm sm:text-lg text-gray-700">階数</span>
 						<div class="h-full flex justify-center items-center">
-							<span>13階</span>
+							<span th:text="${floor}"></span>
+							<span>階</span>
 						</div>
 					</div>
 				</div>
@@ -33,120 +62,119 @@
 					<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
 						<span class="text-sm sm:text-lg text-gray-700">機種コード</span>
 						<div class="h-full flex justify-center items-center">
-							<span>13WLMT1</span>
+							<span th:text="${machineCode}"></span>
 						</div>
 					</div>
 				</div>
 				<div class="w-1/3 sm:w-full sm:h-1/3 p-1 sm:p-2">
 					<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
 						<span class="text-sm sm:text-lg text-gray-700">予約時限</span>
-						<div class="h-full flex justify-center items-center">
-							<span>1限目</span>
+						<div class="h-full flex flex-col justify-center items-center">
+							<span id="checkinHour" th:text="${checkinHour}" class="hidden"></span>
+							<span id="todayDate" th:text="${reservDate}"></span>
+							<span th:if="${checkinHour != '7'}" th:text="${checkinHour + '限目'}"></span>
+							<span th:unless="${checkinHour != '7'}" th:text="夜間"></span>
 						</div>
 					</div>
 				</div>
 			</div>
+			<!-- 即時利用の場合 -->
+			<div
+				th:unless="${floor != null && machineCode != null && checkinHour != null}"
+				class="flex flex-row sm:flex-col w-full sm:w-1/4 h-1/4 sm:h-full">
+				<div class="w-1/3 sm:w-full sm:h-1/5 p-1 sm:p-2">
+					<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
+						<span class="text-sm sm:text-lg text-gray-700">&#9312; 階数</span>
+						<form name="floorform"
+							class="h-full flex flex-col justify-between items-center">
+							<div>
+								<select name="floor" id="floorSelect"
+									class="w-14 sm:w-20 mr-2 border">
+									<option th:each="list_machine : ${list_machine}"
+										th:text="${list_machine}" th:value="${list_machine}"></option>
+								</select> <span class="text-sm">階</span>
+							</div>
+							<span id="checkinHour" th:text="${checkinHour}" class="hidden"></span>
+							<span id="todayDate" th:text="${reservDate}" class="hidden"></span>
+							<button type="button" th:onclick="clickFloor()"
+								class="w-full p-1 bg-gray-400 hover:bg-gray-600 focus:ring ring-gray-200 rounded-lg text-sm text-white">検索</button>
+						</form>
+					</div>
+				</div>
+				
+				<div class="w-2/3 sm:w-full sm:h-4/5 p-1 sm:p-2">
+					<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
+						<span class="text-sm sm:text-lg text-gray-700">&#9313;
+							機種コード</span>
+
+						<!-- 機種コード表示ボックス -->
+						<div class="p-1" style="height: calc(100% - 1rem)">
+							<form id="btnContainer" name="form_machine" class="flex sm:block items-center space-x-1 sm:space-x-0 sm:space-y-2 sm:my-2 overflow-x-auto sm:overflow-x-hidden sm:overflow-y-auto">
+							</form>
+						</div>
+
+						<button id="filterBtn"
+							class="w-full px-1 h-12 bg-gray-100 rounded-lg text-sm text-gray-200 cursor-not-allowed"
+							disabled>ソフトで絞り込み</button>
+					</div>
+				</div>
+			</div>
+			
 			
 			<div class="w-full sm:w-3/4 h-3/4 sm:h-full p-1 sm:p-2 overflow-hidden">
 				<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
-					<span class="text-sm sm:text-lg text-gray-700">&#9312; 座席番号</span>
+					<span th:if="${floor != null && machineCode != null && checkinHour != null}" th:text="${#strings.escapeXml('&#9312; 座席番号')}" class="text-sm sm:text-lg text-gray-700"></span>
+					<span th:unless="${floor != null && machineCode != null && checkinHour != null}" th:text="${#strings.escapeXml('&#9314; 座席番号')}" class="text-sm sm:text-lg text-gray-700"></span>
 					
 					<div class="flex flex-col sm:flex-row justify-between py-1 px-2">
 						<div class="text-gray-700 text-xs sm:text-sm">
 							<span>選択している機種: </span>
-							<span class="font-semibold">13WLMT1</span>
+							<span id="textMachineType" th:text="${machineCode}" class="font-semibold"></span>
 						</div>
-						<div class="text-gray-700 text-xs sm:text-sm flex justify-end space-x-1 sm:space-x-3">
+						<div class="text-gray-700 text-xs sm:text-sm flex flex-wrap justify-end space-x-1 sm:space-x-3">
 							<div class="flex items-center">
-								<span class="w-3 h-3 sm:w-4 sm:h-4 bg-green-500 mr-1"></span>
+								<span class="w-3 h-3 sm:w-4 sm:h-4 bg-white mr-1 border"></span>
+								<span>利用可</span>
+							</div>
+							<div class="flex items-center">
+								<span class="w-3 h-3 sm:w-4 sm:h-4 bg-purple-400 mr-1"></span>
 								<span>利用中</span>
 							</div>
 							<div class="flex items-center">
-								<span class="w-3 h-3 sm:w-4 sm:h-4 bg-blue-500 mr-1"></span>
-								<span>予約済み</span>
+								<span class="w-3 h-3 sm:w-4 sm:h-4 bg-blue-400 mr-1"></span>
+								<span>予約済み(教官)</span>
 							</div>
 							<div class="flex items-center">
-								<span class="w-3 h-3 sm:w-4 sm:h-4 bg-yellow-500 mr-1"></span>
-								<span>故障報告</span>
+								<span class="w-3 h-3 sm:w-4 sm:h-4 bg-yellow-400 mr-1"></span>
+								<span>故障報告(利用可)</span>
 							</div>
 							<div class="flex items-center">
-								<span class="w-3 h-3 sm:w-4 sm:h-4 bg-red-500 mr-1"></span>
+								<span class="w-3 h-3 sm:w-4 sm:h-4 bg-red-400 mr-1"></span>
 								<span>故障</span>
 							</div>
 						</div>
 					</div>
 					
-					<div class="w-full p-2 overflow-y-auto" style="height: calc(100% - 3.5rem)">
-					<table class="table-fixed sm:w-full overflow-y-auto">
-						<tbody>
-							<tr class="h-16 sm:h-20">
-								<!--繰り返す-->
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-							</tr>
-							<tr class="h-16 sm:h-20">
-								<!--繰り返す-->
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-							</tr>
-							<tr class="h-16 sm:h-20">
-								<!--繰り返す-->
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-							</tr>
-							<tr class="h-16 sm:h-20">
-								<!--繰り返す-->
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-							</tr>
-							<tr class="h-16 sm:h-20">
-								<!--繰り返す-->
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-							</tr>
-							<tr class="h-16 sm:h-20">
-								<!--繰り返す-->
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-								<td class="w-16 sm:w-1/8 border"></td>
-							</tr>
-						</tbody>
-					</table>
+					<!-- 座席表示ボックス -->
+					<div id="seatBox" class="flex flex-wrap w-full p-2 overflow-y-auto" style="height: calc(100% - 4rem)">
+					
+						<!-- 予約リストから利用開始に遷移した場合 -->
+						<div th:if="list_seats != null" th:each="seat : ${list_seats}" 
+							th:class="'w-16 h-16 sm:w-32 sm:h-32 mb-0.5 mr-0.5 sm:mb-1 sm:mr-1 border text-xs sm:text-sm flex flex-col items-center justify-center ' + 
+								${#strings.arraySplit(seat, '-')[1] == 'PURPLE' ? 'bg-purple-400' : #strings.arraySplit(seat, '-')[1] == 'BLUE' ? 'bg-blue-400' : #strings.arraySplit(seat, '-')[1] == 'YELLOW' ? 'bg-yellow-400' : #strings.arraySplit(seat, '-')[1] == 'RED' ? 'bg-red-400' : 'bg-white'}">
+							<div>
+								<span th:text="${#strings.arraySplit(seat, '-')[0]}"></span>
+							</div>
+							<span th:text="${#strings.arraySplit(seat, '-')[1]}"></span>
+							<input th:if="${#strings.arraySplit(seat, '-')[1] == 'WHITE' || #strings.arraySplit(seat, '-')[1] == 'YELLOW'}" th:id="${#strings.arraySplit(seat, '-')[0]}" name="seat" th:value="${#strings.arraySplit(seat, '-')[0]}" type="radio" />
+						</div>
+					
+					</div>
+					
+					<!-- 解放待ちボタンの表示(残席がない場合のみ) -->
+					<div id="waitBtnContainer" class="flex justify-center items-center h-16 bg-white" th:classappend="${!isFull} ? 'hidden' : ''">
+						<button id="waitBtn" onclick="clickAddWait()"
+							class="w-full px-1 h-12 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-sm text-white">マシン解放待ちに登録</button>
 					</div>
 				</div>
 			</div>
@@ -155,7 +183,310 @@
 	
 	<div class="fixed bottom-0 bg-white w-full h-20 flex items-center justify-around border-t">
 		<button th:onclick="window.location.href='/top'" class="mx-3 w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">メニューへ戻る</button>
-		<button class="mx-3 w-full px-1 h-12 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-sm text-white">利用開始</button>
+		<button	id="startBtn" onclick="clickStart(1)" 
+			class="mx-3 w-full px-1 h-12 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-sm text-white cursor-not-allowed" disabled>利用開始</button>
 	</div>
 </body>
+<script th:inline="javascript">
+	// ページにアクセスできない場合の処理
+	const isNotAvailable = [[${notAvailable != null}]];
+
+	if (isNotAvailable) {
+		location.replace("/top");
+		window.alert([[${notAvailable}]]);
+	}
+
+	// 利用開始ボタンの活性化(予約から来た時)
+	const startBtn = $("#startBtn");
+	
+	const isStartFromReserv = [[${floor != null && machineCode != null && checkinHour != null}]];
+	
+	isStartFromReserv ? startBtn.attr("onClick", "clickStart(1)") : startBtn.attr("onClick", "clickStart(2)");
+	isStartFromReserv && startBtn.prop("disabled", false);
+	isStartFromReserv && startBtn.removeClass("cursor-not-allowed");
+</script>
+<script>
+	// UIボタンの操作
+	$(document).ready(function(){
+		const backdrop = $("#backdrop");
+   		const filterBtn = $("#filterBtn");
+   		const backBtn = $("#backBtn");
+   		
+   		// 絞り込みボタンの処理
+   		filterBtn.on("click", () => {
+			backdrop.removeClass("hidden");
+		});
+		
+		// 戻るボタンの処理
+		backBtn.on("click", () => {
+			backdrop.addClass("hidden");
+		});
+	});
+	
+	// 機種コード、ソフトの取得[階層]
+	function clickFloor() {
+		const floor = document.floorform.floor.value;
+
+		// 非同期通信(機種コード)
+		$.ajax({
+			type : "GET",
+			url : "/get_machine",
+			data : {js_floor : floor},
+			dataType : "json"
+		})
+		.then(function(response_data) {
+			// 機種コードのコンテナ
+			const btnContainer = $("#btnContainer");
+			const filterBtn = $("#filterBtn");
+			
+			// コンテナの初期化
+			btnContainer.empty();
+			
+			// 動的表示
+			for(i = 0; i < response_data.length; i++) {
+				const machinecode = (response_data[i]["machinecode"]);
+				
+				const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 focus:ring ring-gray-100 rounded-lg text-sm text-black'>${machinecode}</button>`;
+								
+				// 表示する場所の取得
+				btnContainer.append(btnTag);
+			}
+			
+			// 絞り込みボタンの活性化
+			filterBtn.prop("disabled", false);
+			filterBtn.removeClass("bg-gray-100 text-gray-200 cursor-not-allowed");
+			filterBtn.addClass("bg-gray-200 hover:bg-gray-400 hover:text-white focus:ring ring-gray-100 text-black");
+		}
+		, function() {
+			// 失敗時
+			console.log('clickFloor()_machincode:fail');
+		});
+		
+		// 非同期通信(ソフト)
+		$.ajax({
+			type : "GET",
+			url : "/get_soft",
+			data : {js_floor : floor},
+			dataType : "json"
+		})
+		.then(function(response_data) {
+			// ボックスコンテナの取得
+			const boxContainer = $("#boxContainer");
+			
+			// ボックスコンテナの初期化
+			boxContainer.empty();
+			
+			// 動的表示
+			for(i = 0; i < response_data.length; i++) {
+				const softname = (response_data[i]["softname"]);
+				const softcode = (response_data[i]["softcode"]);
+				
+				// ボックスタグ作成
+				const boxTag = `<div class="w-full sm:w-1/3">
+					<input type="radio" id="${softcode}" name="soft" value="${softcode}" />
+    				<label for="${softcode}" class="text-sm sm:text-base">${softname}</label>
+				</div>`;
+				
+				// 表示する場所の取得
+				boxContainer.append(boxTag);
+			}
+		}
+		, function() {
+			// 失敗時
+			console.log('clickFloor()_soft:fail');
+		});
+	}
+	
+	// 機種コードの取得[チェックボックス]
+	function clickCheckbox() {
+		// 階数の取得
+		const floor = document.floorform.floor.value;
+
+		// チェックボックスの値取得
+	    let softcode = '';
+	    const checkbox_soft = document.soft_form.soft;
+
+	    for (let i = 0; i < checkbox_soft.length; i++) {
+	    	if (checkbox_soft[i].checked) {
+	    		softcode = checkbox_soft[i].value;
+	      	}
+	   	}
+	    
+	    // 非同期通信
+	    $.ajax({
+			type : "GET",
+			url : "/get_machine/fromsoft",
+			data : {js_softcode : softcode, js_floor: floor},
+			dataType : "json"
+		})
+		.then(function(response_data) {
+			// UIコンポーネントの取得
+			const btnContainer = $("#btnContainer");
+			const filterBtn = $("#filterBtn");
+			const backdrop = $("#backdrop");
+			
+			// コンテナの初期化
+			btnContainer.empty();
+			
+			// 動的表示
+			if (response_data.length > 0) {
+				for(i = 0; i < response_data.length; i++) {
+					const machinecode = (response_data[i]);
+					const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black'>${machinecode}</button>`;
+					
+					// 表示する場所の取得
+					btnContainer.append(btnTag);
+				}
+			} else {
+				const blankTag = `<span class="text-sm">該当無し</span>`;
+				btnContainer.append(blankTag);
+			}
+			
+			// モーダルの非表示
+			backdrop.addClass("hidden");
+		}
+		, function() {
+			// 失敗時
+			console.log('clickCheckbox():fail');
+		});
+	}
+	
+	// 機種ボタンクリック時の処理
+	function clickMachine(machinecode) {
+		// 選択している機種のテキストを変更
+		$("#textMachineType").text(machinecode);
+		
+		// コマ表示を初期化
+		$("#seatBox").empty();
+		
+		// 学籍番号の取得
+		const usercode = $("#usercode").text();
+		
+		// 解放待ちボタンの初期化
+		$("#waitBtnContainer").addClass("hidden");
+		
+		// 利用開始ボタンの活性化
+		$("#startBtn").prop("disabled", false);
+		$("#startBtn").removeClass("cursor-not-allowed");
+		
+		// 非同期処理
+		$.ajax({
+			type : "GET",
+			url : "/get_seats",
+			data : {js_mcode : machinecode},
+			dataType : "json"
+		})
+		.then(function(response_data) {
+			// デフォルトを満席として初期化
+			let isFull = true;
+			
+			for (i = 0; i < response_data.length; i++) {
+				// 座席番号・色の取得
+				let [seatNumber, color] = response_data[i].split("-");
+				
+				// もし利用可能な席の場合、満席フラグをfalseにする
+				if (color === "WHITE" || color === "YELLOW") {
+					isFull = false;
+				}
+				
+				// radioタグの生成
+				let radioTag = `<input type="radio" name="seat" value="${seatNumber}" />`;
+				let innerTag = `<div><span>${seatNumber}</span></div><span>${color}</span>${(color === "WHITE" || color === "YELLOW") ? radioTag : ""}`;
+				
+				// 表示する場所の取得し入れる
+				let outerTag = `<div class="w-16 h-16 sm:w-32 sm:h-32 mb-0.5 mr-0.5 sm:mb-1 sm:mr-1 border text-xs sm:text-sm flex flex-col items-center justify-center ${color === "PURPLE" ? 'bg-purple-400' : color === "BLUE" ? 'bg-blue-400' : color === "YELLOW" ? 'bg-yellow-400' : color === "RED" ? 'bg-red-400' : 'bg-white'}">${innerTag}</div>`;
+				$("#seatBox").append(outerTag);
+			}
+			
+			// 満席の場合
+			if (isFull) {
+				// 解放待ちボタンの表示
+				$("#waitBtnContainer").removeClass("hidden");
+				
+				// 利用開始ボタンの非活性化
+				$("#startBtn").prop("disabled", true);
+				$("#startBtn").addClass("cursor-not-allowed");
+			}
+		}
+		, function() {
+			//失敗時
+			console.log('clickMachine():fail');
+		});
+	}
+	
+	
+	// 利用開始ボタンの処理(processType -> 1:利用開始  2:即時利用)
+	function clickStart(processType) {
+		// radioボタンの値取得
+		let seatValue;
+		const targets = $("input[name='seat']");
+		for (let i = 0; i < targets.length; i++) {
+	    	if (targets[i].checked) {
+	    		seatValue = targets[i].value;
+	      	}
+	   	}
+	   	
+	   	// 機種コードの取得
+	   	let machineCode = processType === 1 ? "" : $("#textMachineType").text();
+	   	
+	   	//利用開始処理
+		if (seatValue) {		
+			// ダイアログの表示
+			if (confirm(`座席番号：${seatValue}\n\n利用を開始しますか？`)) {
+				// 値の取得
+				const valueDate = $("#todayDate").text().split("(")[0];
+				const valueHour = $("#checkinHour").text();
+				const valueUserCode = $("#usercode").text();
+				
+				// CSRFトークンの取得
+				const token = $("meta[name='_csrf']").attr("content");
+					
+				// POST
+				$.ajax({
+					type: "POST",
+					url: "/make_start",
+					headers: {"X-CSRF-TOKEN": token},
+					data: {"date": valueDate, "hour": valueHour, "machineCode": machineCode, "studentcode": valueUserCode, "machineNumber": seatValue, "processType": processType},
+					dataType: "text",
+					success: function(data) {
+						location.replace("/top");
+						window.alert(data);
+					}
+				})
+			}
+		} else {
+			window.alert("利用する座席を選択してください。");
+		}
+	}
+	
+	
+	// マシン解放待ちボタンのクリック
+	function clickAddWait() { 	
+	   	// 値の取得   
+	   	const tempDate = $("#todayDate").text();
+	   	const valueDate = tempDate.split("(")[0];
+		const valueHour = $("#checkinHour").text();
+		const machineCode = $("#textMachineType").text();
+		const valueUserCode = $("#usercode").text();
+
+		// ダイアログの表示
+		if (confirm(`日付：${tempDate}\n時限：${valueHour !== "7" ? valueHour + "限目" : "夜間"}\n機種コード：${machineCode}\n\nマシン解放待ちに登録しますか？`)) {
+			// CSRFトークンの取得
+			const token = $("meta[name='_csrf']").attr("content");
+			
+			// POST
+			$.ajax({
+				type: "POST",
+				url: "/make_wait",
+				headers: {"X-CSRF-TOKEN": token},
+				data: {"date": valueDate, "hour": valueHour, "machineCode": machineCode, "studentcode": valueUserCode},
+				dataType: "text",
+				success: function(data) {
+					location.replace("/top");
+					window.alert(data);
+				}
+			})
+		}
+	}
+</script>
 </html>

@@ -1,22 +1,14 @@
 package com.example.demo.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
+import com.example.demo.customRepositories.HourCustomRepository;
 import com.example.demo.entities.HourEntity;
 
-@Repository
-public interface HourRepository extends JpaRepository<HourEntity, String> {
+public abstract interface HourRepository extends JpaRepository<HourEntity, String>, HourCustomRepository<HourEntity> {
 	
-	//すべての時限開始時刻を取得
-	//@Query(name = "SELECT m10_hour_start_time FROM m10_hour", nativeQuery = true)
-	//public Date findHourStartTime();
+	public HourEntity findByHourCode(String hour);
 	
-	// 現在の時間を基に現在の時限コードを取得
-	@Query(value = "SELECT * FROM m10_hour WHERE m10_checkin_start_time <= :date AND m10_checkout_limit_time >= :date", nativeQuery = true)
-	public HourEntity findHourCode(@Param("date") String date);
-
 	public HourEntity findFirstByOrderByHourEndTimeDesc();
+
 }

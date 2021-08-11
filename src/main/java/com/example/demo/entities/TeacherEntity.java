@@ -23,6 +23,11 @@ public class TeacherEntity {
 	// 先生の名前
 	@Column(name = "m02_teacher_name")
 	private String teachername;
+	
+	// t09テーブル(SeatStatusEntity)
+	@OneToMany(mappedBy = "teacher")
+	@JsonBackReference("Unit7")
+	private List<SeatStatusEntity> seatStatusEntity;
 
 	// t14テーブル(ReservationEntity)
 	@OneToMany(mappedBy = "teacher")
@@ -47,6 +52,14 @@ public class TeacherEntity {
 		this.teachername = teachername;
 	}
 	
+	public List<SeatStatusEntity> getSeatStatusEntity() {
+		return seatStatusEntity;
+	}
+
+	public void setSeatStatusEntity(List<SeatStatusEntity> seatStatusEntity) {
+		this.seatStatusEntity = seatStatusEntity;
+	}
+
 	public List<ReservationEntity> getReservationEntity() {
 		return reservationEntity;
 	}
