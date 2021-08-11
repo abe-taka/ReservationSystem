@@ -15,13 +15,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	// 「WebSecurityのconfigureメソッドでは全体に対するセキュリティ設定を行う。」
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/image/**", "/css/**", "/javascript/**","/bootstrap/**","/webjars/**");
+//		web.ignoring().antMatchers("/css/**");
 	}
 	
 	// 「HttpSecurityのconfigureメソッドではURLごとにセキュリティ設定を行う」
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-			
+		http.authorizeRequests().antMatchers("/image/**").permitAll();
 		//http
 			//アクセス許可に関する設定
 			//.authorizeRequests()

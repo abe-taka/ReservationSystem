@@ -1,23 +1,62 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<title>利用終了</title>
+	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+		crossorigin="anonymous"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<title>利用終了 | FOCS</title>
 </head>
 <body>
 	<nav class="fixed w-full h-14 flex items-center justify-between bg-white shadow px-2 sm:px-5">
-		<a>FOCS</a>
+		<h1 class="font-semibold text-lg">FOCS</h1>
 		<div class="flex items-center">
-			<span th:text="${session_data}" class="mr-2 text-sm sm:text-base" />
-			<button class="w-full px-1 h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-sm text-white">ログアウト</button>
+			<span id="usercode" th:text="${session_data}" class="mr-3 text-sm sm:text-base text-gray-600"></span>
+			<form th:action="@{/logout}" method="get">
+				<button type="submit"
+					class="w-full px-2 h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-sm text-white">ログアウト</button>
+			</form>
 		</div>
 	</nav>
+	
+	<div id="backdrop"
+		class="fixed w-full h-screen bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+		<div
+			class="w-3/4 h-3/4 sm:w-2/3 sm:h-2/3 bg-white rounded-lg p-3 sm:p-5 flex flex-col justify-between">
+			<h2 class="text-lg font-semibold">故障機報告</h2>
+			
+			<input type="radio" name="trouble" value="ハードウェア : マウス、ディスプレイ等に不具合が見られる場合">ハードウェア : マウス、ディスプレイ等に不具合が見られる場合
+			<input type="radio" name="trouble" value="ソフトウェア : インストールされているソフトに不具合が見られる場合">ソフトウェア : インストールされているソフトに不具合が見られる場合
+			<input type="radio" name="trouble" value="その他 : 上記2つ以外の場合">その他 : 上記2つ以外の場合
+			<input type="radio" name="trouble" value="不明 ">不明
+						
+			<div class="flex space-x-5">
+				<button id="backBtn"
+					class="w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">戻る</button>
+				<button class="w-full px-1 h-12 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-sm text-white" th:data-parameter1="${seatStatus.machineCode}"  th:data-parameter2="${seatStatus.machineNo}"  th:onclick="Trouble(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))">OK</button>
+			</div>
+		</div>
+	</div>
 	
 	<main class="min-h-screen">
 		<div class="min-h-screen pt-14">
 			<div class="h-full flex flex-col p-10 items-center space-y-5 mb-20">
+				
+				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
+					<div class="flex flex-col text-xs sm:text-base" th:object="${seatStatus}">
+						
+						<span th:text="機種名 + *{machineCode}"></span>
+						<span th:text="座席 + *{machineNo}"></span>
+						
+						
+					</div>
+					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
+						<button id="filterBtn" class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
+						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-pink-500 hover:bg-pink-700 focus:ring ring-pink-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
+					</div>
+				</div>
 				
 				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
 					<div class="flex flex-col text-xs sm:text-base">
@@ -25,8 +64,8 @@
 						<span>座席：001</span>
 					</div>
 					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
+						<button id="filterBtn" class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
+						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-pink-500 hover:bg-pink-700 focus:ring ring-pink-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
 					</div>
 				</div>
 				
@@ -109,10 +148,50 @@
 				
 			</div>
 		</div>
-	</main>	
+	</main>
+	
+	
 	
 	<div class="fixed bottom-0 bg-white w-full h-20 flex items-center justify-around border-t">
 		<button th:onclick="window.location.href='/top'" class="mx-3 w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">メニューへ戻る</button>
 	</div>
+	
 </body>
+
+<script>
+	//UIボタンの操作
+	$(document).ready(function(){
+		const backdrop = $("#backdrop");
+   		const filterBtn = $("#filterBtn");
+   		const backBtn = $("#backBtn");
+   		
+   		// 絞り込みボタンの処理
+   		filterBtn.on("click", () => {
+			backdrop.removeClass("hidden");
+		});
+		
+		// 戻るボタンの処理
+		backBtn.on("click", () => {
+			backdrop.addClass("hidden");
+		});
+	});
+	
+	
+	//故障機報告、利用終了処理
+	function Trouble(mcode,mnum) {
+		//radioボタンの値取得
+		let TroubleValue;
+		const targets = $("input[name='trouble']");
+		for (let i = 0; i < targets.length; i++) {
+	    	if (targets[i].checked) {
+	    		TroubleValue = targets[i].value;
+	      	}
+	   	}
+		
+		console.log("チェックボックスの値",TroubleValue);
+		console.log("マシーンコード",mcode);
+		
+		
+	}
+</script>
 </html>

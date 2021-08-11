@@ -10,4 +10,9 @@ public interface SeatStatusCustomRepository<T> {
 	List<SeatStatusEntity> findIfAlreadyReserved(Date date, String hour, String studentcode);
 
 	List<SeatStatusEntity> findIfAlreadyTentativelyReserved(Date date, String hour, String studentcode);
+	
+	List<SeatStatusEntity> getReservations(Date date, String hour, String studentcode);
+	
+	SeatStatusEntity getReservationByNumber(Date date, String hour, String studentcode, int reservationNumber);
+	
 }

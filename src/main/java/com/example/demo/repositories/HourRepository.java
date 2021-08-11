@@ -1,7 +1,5 @@
 package com.example.demo.repositories;
 
-import java.util.Date;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +15,8 @@ public interface HourRepository extends JpaRepository<HourEntity, String> {
 	//public Date findHourStartTime();
 	
 	// 現在の時間を基に現在の時限コードを取得
-	// 作業中
-	@Query(value = "SELECT m10_hour_code FROM m10_hour WHERE m10_checkin_start_time <= :date AND m10_checkout_limit_time >= :date", nativeQuery = true)
+	@Query(value = "SELECT * FROM m10_hour WHERE m10_checkin_start_time <= :date AND m10_checkout_limit_time >= :date", nativeQuery = true)
 	public HourEntity findHourCode(@Param("date") String date);
+
+	public HourEntity findFirstByOrderByHourEndTimeDesc();
 }

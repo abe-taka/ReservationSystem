@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.customRepositories.HourInWorkPatternCustomRepository;
 import com.example.demo.entities.HourInWorkPatternEntity;
 
+@SuppressWarnings("rawtypes")
 @Repository
 @Transactional
 public class HourInWorkPatternRepositoryImpl implements HourInWorkPatternCustomRepository {

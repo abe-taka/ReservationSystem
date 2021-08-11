@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<title>継続利用</title>
+	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<title>継続利用 | FOCS</title>
 </head>
 <body>
 	<nav class="fixed w-full h-14 flex items-center justify-between bg-white shadow px-2 sm:px-5">
-		<a>FOCS</a>
+		<h1 class="font-semibold text-lg">FOCS</h1>
 		<div class="flex items-center">
-			<span th:text="${session_data}" class="mr-2 text-sm sm:text-base" />
-			<button class="w-full px-1 h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-sm text-white">ログアウト</button>
+			<span id="usercode" th:text="${session_data}" class="mr-3 text-sm sm:text-base text-gray-600"></span>
+			<form th:action="@{/logout}" method="get">
+				<button type="submit"
+					class="w-full px-2 h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-sm text-white">ログアウト</button>
+			</form>
 		</div>
 	</nav>
 	
@@ -24,7 +27,7 @@
 						<span>機種名：MAC</span>
 						<span>座席：001</span>
 					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-xs sm:text-sm text-white">継続利用</button>
+					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-300 hover:bg-green-500 focus:ring ring-green-100 rounded-lg text-xs sm:text-sm text-white">継続利用</button>
 				</div>
 				
 				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
