@@ -1,15 +1,21 @@
 package com.example.demo.entities;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 //座席状態
 @Component
@@ -28,28 +34,38 @@ public class SeatStatusEntity {
 	private Date date;
 	
 	//
-	@Column(name="t09_checkin_hour")
-	private String checkinHour;
+	@ManyToOne
+	@JoinColumn(name="t09_checkin_hour")
+	@JsonBackReference("Unit2")
+	private HourEntity hour;
 	
 	//
-	@Column(name="t09_machine_code")
-	private String machineCode;
+	@ManyToOne
+	@JoinColumn(name="t09_machine_code")
+	@JsonBackReference("Unit2")
+	private MachineEntity machine;
 	
 	//
 	@Column(name="t09_machine_no")
 	private String machineNo;
 	
 	//
-	@Column(name="t09_reservation_no")
-	private Integer reservationNo;
+	@ManyToOne
+	@JoinColumn(name="t09_reservation_no")
+	@JsonBackReference("Unit2")
+	private ReservationEntity reservation;
 	
 	//
-	@Column(name="t09_student_code")
-	private String studentCode;
+	@ManyToOne
+	@JoinColumn(name="t09_student_code")
+	@JsonBackReference("Unit2")
+	private StudentEntity student;
 	
 	//
-	@Column(name="t09_teacher_code")
-	private String teacherCode;
+	@ManyToOne
+	@JoinColumn(name="t09_teacher_code")
+	@JsonBackReference("Unit2")
+	private TeacherEntity teacher;
 	
 	//
 	@Column(name="t09_checkin_flag")
@@ -67,16 +83,21 @@ public class SeatStatusEntity {
 	@Column(name="t09_machine_count")
 	private Integer machineCount;
 	
+	//t16テーブル(CancelWaitEntity)
+	@OneToMany(mappedBy = "student")
+	@JsonBackReference("Unit4")
+	private List<CancelWaitEntity> cancelWaitEntity;
+	
 	
 	public SeatStatusEntity() {
 	}
 	
-	public SeatStatusEntity(Date date, String checkinHour, String machineCode, Integer machineCount, String studentCode, String checkinFlag, Date updateDate) {
+	public SeatStatusEntity(Date date, HourEntity hour, MachineEntity machine, Integer machineCount, StudentEntity student, String checkinFlag, Date updateDate) {
 		this.date = date;
-        this.checkinHour = checkinHour;
-        this.machineCode = machineCode;
+        this.hour = hour;
+        this.machine = machine;
         this.machineCount = machineCount;
-        this.studentCode = studentCode;
+        this.student = student;
         this.checkinFlag = checkinFlag;
         this.updateDate = updateDate;
 	}
@@ -97,20 +118,20 @@ public class SeatStatusEntity {
 		this.date = date;
 	}
 
-	public String getCheckinHour() {
-		return checkinHour;
+	public HourEntity getHour() {
+		return hour;
 	}
 
-	public void setCheckinHour(String checkinHour) {
-		this.checkinHour = checkinHour;
+	public void setHour(HourEntity hour) {
+		this.hour = hour;
 	}
 
-	public String getMachineCode() {
-		return machineCode;
+	public MachineEntity getMachine() {
+		return machine;
 	}
 
-	public void setMachineCode(String machineCode) {
-		this.machineCode = machineCode;
+	public void setMachine(MachineEntity machine) {
+		this.machine = machine;
 	}
 
 	public String getMachineNo() {
@@ -121,28 +142,28 @@ public class SeatStatusEntity {
 		this.machineNo = machineNo;
 	}
 
-	public Integer getReservationNo() {
-		return reservationNo;
+	public ReservationEntity getReservation() {
+		return reservation;
 	}
 
-	public void setReservationNo(Integer reservationNo) {
-		this.reservationNo = reservationNo;
+	public void setReservation(ReservationEntity reservation) {
+		this.reservation = reservation;
 	}
 
-	public String getStudentCode() {
-		return studentCode;
+	public StudentEntity getStudent() {
+		return student;
 	}
 
-	public void setStudentCode(String studentCode) {
-		this.studentCode = studentCode;
+	public void setStudent(StudentEntity student) {
+		this.student = student;
 	}
 
-	public String getTeacherCode() {
-		return teacherCode;
+	public TeacherEntity getTeacher() {
+		return teacher;
 	}
 
-	public void setTeacherCode(String teacherCode) {
-		this.teacherCode = teacherCode;
+	public void setTeacher(TeacherEntity teacher) {
+		this.teacher = teacher;
 	}
 
 	public String getCheckinFlag() {
@@ -176,5 +197,12 @@ public class SeatStatusEntity {
 	public void setMachineCount(Integer machineCount) {
 		this.machineCount = machineCount;
 	}
-	
+
+	public List<CancelWaitEntity> getCancelWaitEntity() {
+		return cancelWaitEntity;
+	}
+
+	public void setCancelWaitEntity(List<CancelWaitEntity> cancelWaitEntity) {
+		this.cancelWaitEntity = cancelWaitEntity;
+	}
 }

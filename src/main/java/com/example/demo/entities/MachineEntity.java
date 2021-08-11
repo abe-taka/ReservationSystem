@@ -42,11 +42,20 @@ public class MachineEntity {
 	@JsonBackReference("Unit2")
 	private List<MachineSoftEntity> machineSoftEntity;
 	
+	// t09テーブル(SeatStatusEntity)
+	@OneToMany(mappedBy = "machine")
+	@JsonBackReference("Unit7")
+	private List<SeatStatusEntity> seatStatusEntity;
+	
 	//t14テーブル(ReservationEntity)
 	@OneToMany(mappedBy = "machine")
 	@JsonBackReference("Unit4")
 	private List<ReservationEntity> reservationEntity;
-
+	
+	//t16テーブル(CancelWaitEntity)
+	@OneToMany(mappedBy = "machine")
+	@JsonBackReference("Unit4")
+	private List<CancelWaitEntity> cancelWaitEntity;
 	
 	//ゲッター、セッター
 	public String getMachinecode() {
@@ -95,6 +104,22 @@ public class MachineEntity {
 
 	public void setMachineSoftEntity(List<MachineSoftEntity> machineSoftEntity) {
 		this.machineSoftEntity = machineSoftEntity;
+	}
+	
+	public List<SeatStatusEntity> getSeatStatusEntity() {
+		return seatStatusEntity;
+	}
+
+	public void setSeatStatusEntity(List<SeatStatusEntity> seatStatusEntity) {
+		this.seatStatusEntity = seatStatusEntity;
+	}
+
+	public List<CancelWaitEntity> getCancelWaitEntity() {
+		return cancelWaitEntity;
+	}
+
+	public void setCancelWaitEntity(List<CancelWaitEntity> cancelWaitEntity) {
+		this.cancelWaitEntity = cancelWaitEntity;
 	}
 
 	public List<ReservationEntity> getReservationEntity() {

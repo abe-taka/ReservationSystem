@@ -35,11 +35,21 @@ public class StudentEntity {
 	// 管理用
 	@Column(name = "m01_student_stat")
 	private int studentstat;
+	
+	// t09テーブル(SeatStatusEntity)
+	@OneToMany(mappedBy = "student")
+	@JsonBackReference("Unit7")
+	private List<SeatStatusEntity> seatStatusEntity;
 
 	// t14テーブル(ReservationEntity)
 	@OneToMany(mappedBy = "student")
 	@JsonBackReference("Unit7")
 	private List<ReservationEntity> reservationEntity;
+	
+	//t16テーブル(CancelWaitEntity)
+	@OneToMany(mappedBy = "student")
+	@JsonBackReference("Unit4")
+	private List<CancelWaitEntity> cancelWaitEntity;
 
 	
 	// ゲッター、セッター
@@ -89,5 +99,21 @@ public class StudentEntity {
 
 	public void setReservationEntity(List<ReservationEntity> reservationEntity) {
 		this.reservationEntity = reservationEntity;
+	}
+
+	public List<SeatStatusEntity> getSeatStatusEntity() {
+		return seatStatusEntity;
+	}
+
+	public void setSeatStatusEntity(List<SeatStatusEntity> seatStatusEntity) {
+		this.seatStatusEntity = seatStatusEntity;
+	}
+
+	public List<CancelWaitEntity> getCancelWaitEntity() {
+		return cancelWaitEntity;
+	}
+
+	public void setCancelWaitEntity(List<CancelWaitEntity> cancelWaitEntity) {
+		this.cancelWaitEntity = cancelWaitEntity;
 	}
 }
