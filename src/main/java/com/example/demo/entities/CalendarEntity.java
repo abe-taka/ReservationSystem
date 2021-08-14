@@ -4,8 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -19,14 +17,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity
 @Table(name="m13_calendar")
 public class CalendarEntity {
-
-	//稼働日程コード
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="m13_calendar_code")
-	private String calendarCode;
 		
 	//日付
+	@Id
 	@Column(name="m13_date")
 	private Date date;
 		
@@ -37,14 +30,6 @@ public class CalendarEntity {
 	private WorkPatternEntity workPattern;
 
 	
-	public String getCalendarCode() {
-		return calendarCode;
-	}
-
-	public void setCalendarCode(String calendarCode) {
-		this.calendarCode = calendarCode;
-	}
-
 	public Date getDate() {
 		return date;
 	}

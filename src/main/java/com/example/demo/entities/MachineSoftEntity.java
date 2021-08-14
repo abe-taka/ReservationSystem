@@ -1,49 +1,43 @@
 package com.example.demo.entities;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.example.demo.entities.composites.MachineSoftId;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 //ソフトに対応している機種
 @Entity
+@IdClass(MachineSoftId.class)
 @Table(name="m08_machine_soft")
 public class MachineSoftEntity {
-
-	//id(連番)
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="m08_machine_soft_id")
-	private int machinesoftid;
 	
 	//機種コード
+	@Id
 	@ManyToOne
 	@JoinColumn(name="m08_machine_code")
 	@JsonBackReference("Unit2")
 	private MachineEntity machine;
 	
 	//ソフトコード
+	@Id
 	@ManyToOne
 	@JoinColumn(name="m08_soft_code")
 	@JsonBackReference("Unit3")
 	private SoftEntity soft;
 	
+	//階数コード
+	@ManyToOne
+	@JoinColumn(name="m08_floor_code")
+	@JsonBackReference("Unit4")
+	private FloorEntity floor;
+	
 
 	//ゲッター、セッター
-	public int getMachinesoftid() {
-		return machinesoftid;
-	}
-
-	public void setMachinesoftid(int machinesoftid) {
-		this.machinesoftid = machinesoftid;
-	}
-
 	public MachineEntity getMachine() {
 		return machine;
 	}
@@ -58,6 +52,14 @@ public class MachineSoftEntity {
 
 	public void setSoft(SoftEntity soft) {
 		this.soft = soft;
+	}
+
+	public FloorEntity getFloor() {
+		return floor;
+	}
+
+	public void setFloor(FloorEntity floor) {
+		this.floor = floor;
 	}
 
 }
