@@ -16,7 +16,6 @@ import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionForm;
 import com.example.demo.components.UtilComponent;
 import com.example.demo.entities.CancelWaitEntity;
-import com.example.demo.entities.HourEntity;
 import com.example.demo.entities.MachineEntity;
 import com.example.demo.entities.SeatStatusEntity;
 import com.example.demo.repositories.CancelWaitRepository;
@@ -58,7 +57,7 @@ public class RestStart {
 		// 機種エンティティを取得
 		MachineEntity machine = machineRepository.findByMachinecode(js_mcode);
 
-		// 
+		// 座席情報を格納するリスト宣言
 		List<String> list_seats = new ArrayList<String>();
 		
 		//現在日を取得		
@@ -74,11 +73,11 @@ public class RestStart {
 		
 		// 階数・時限・機種コードを基に座席リストを取得する
 		for (int i = 1; i < totalAmounts + 1; i++) {			
-			//
+			// 座席番号・色の取得
 			String seatNumber = setSeatNumber(i);
 			String seatColor = checkSeatCurrentStatus(todayDate, hour, js_mcode, seatNumber, studentcode);
 			
-			//
+			// 結果リストに座席情報を格納する
 			list_seats.add(seatNumber + "-" + seatColor);
 		}
 			
@@ -90,8 +89,8 @@ public class RestStart {
 
 	// 利用開始処理
 	@RequestMapping(value="/make_start", method=RequestMethod.POST)
-	public String Post_Start(@RequestParam("date") String date, @RequestParam("hour") String hour, @RequestParam("machineCode") String machineCode, @RequestParam("studentcode") String studentcode, @RequestParam("machineNumber") String machineNumber, @RequestParam("processType") int processType) {
-		System.out.println(date + hour + machineCode + studentcode + machineNumber);
+	public String Post_Start(@RequestParam("date") String date, @RequestParam("hour") String hour, @RequestParam("machineCode") String machineCode, @RequestParam("studentcode") String studentcode, @RequestParam("machineNumber") String machineNumber, @RequestParam("processType") int processType, @RequestParam("checkinFlag") String checkinFlag) {
+		System.out.println(date + hour + machineCode + studentcode + machineNumber + checkinFlag);
 		// タイプ変換
 		Date dateDate = dateTimeComponent.strDateToDate(date, "yyyy/MM/dd hh:mm:ss");
 		System.out.println(dateDate);
@@ -101,8 +100,9 @@ public class RestStart {
 		
 		// 予約リストから利用開始の場合
 		if (processType == 1) {
-			// 
-			List<SeatStatusEntity> reservations = seatStatusRepository.getReservationForStart(dateDate, hour, studentcode, "1");
+			// 座席状態テーブルに予約データが格納されているか確認するために取得
+			List<SeatStatusEntity> reservations = seatStatusRepository.getReservationForStart(dateDate, hour, studentcode, checkinFlag);
+					
 			System.out.println(reservations);
 				
 			// 該当機種に残席があるかチェック
@@ -113,7 +113,25 @@ public class RestStart {
 				entity.setCheckinFlag("2");
 				entity.setPopupFlag("1");
 				entity.setUpdateDate(todayDate);
-				seatStatusRepository.save(entity);
+				entity = seatStatusRepository.save(entity);
+				
+				System.out.println(entity.getNumber());
+				// マシン解放待ちデータがあれば削除する
+				CancelWaitEntity waitEntity = cancelWaitRepository.findBySeatStatus(seatStatusRepository.findByNumber(entity.getNumber()));
+				System.out.print(waitEntity);			
+				if (waitEntity != null) {
+					cancelWaitRepository.delete(waitEntity);
+				}
+				
+				// ログ保存
+				utilComponent.saveToLog(null, null, studentcode, "利用開始");
+				System.out.println(machineCode);
+				
+				// 予約ログ保存
+				utilComponent.saveToReservationLog(machineCode, machineNumber, studentcode, "", dateDate, hour, "利用開始");
+				
+				// 利用ログ保存
+				utilComponent.saveToUseLog(dateDate, hour, machineCode, machineNumber);
 				
 				return "利用開始を確定しました！";
 			}
@@ -132,6 +150,15 @@ public class RestStart {
 			entity.setStudent(studentRepository.findByStudentcode(studentcode));
 			entity.setUpdateDate(todayDate);
 			entity = seatStatusRepository.save(entity);
+			
+			// ログ保存
+			utilComponent.saveToLog(null, null, studentcode, "利用開始");
+			
+			// 予約ログ保存
+			utilComponent.saveToReservationLog(machineCode, machineNumber, studentcode, "", dateDate, hour, "利用開始");
+			
+			// 利用ログ保存
+			utilComponent.saveToUseLog(dateDate, hour, machineCode, machineNumber);
 			
 			return "利用開始を確定しました！";
 		}
@@ -162,7 +189,7 @@ public class RestStart {
 		seatStatusEntity = seatStatusRepository.save(seatStatusEntity);
 		System.out.println(seatStatusEntity);
 		
-		// マシン開放待ちテーブルにテータを追加
+		// マシン解放待ちテーブルにテータを追加
 		CancelWaitEntity cancelWaitEntity = new CancelWaitEntity();
 		cancelWaitEntity.setStudent(studentRepository.findByStudentcode(studentcode));
 		cancelWaitEntity.setMachine(machineRepository.findByMachinecode(machineCode));
@@ -172,6 +199,9 @@ public class RestStart {
 		System.out.println(cancelWaitEntity);
 		
 		if (seatStatusEntity != null && cancelWaitEntity != null) {
+			// ログ保存
+			utilComponent.saveToLog(null, null, studentcode, "解放待ち登録");
+			
 			return "マシン解放待ちに登録しました！";
 		}
 		return "マシン解放待ちに失敗しました。";
