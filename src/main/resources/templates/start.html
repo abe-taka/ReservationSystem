@@ -53,8 +53,8 @@
 					<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
 						<span class="text-sm sm:text-lg text-gray-700">階数</span>
 						<div class="h-full flex justify-center items-center">
-							<span th:text="${floor}"></span>
-							<span>階</span>
+							<span th:text="${floor.getFloorCode()}" class="text-xs sm:text-base"></span>
+							<span class="text-xs sm:text-base">階</span>
 						</div>
 					</div>
 				</div>
@@ -62,7 +62,7 @@
 					<div class="flex flex-col w-full h-full rounded-lg shadow p-2">
 						<span class="text-sm sm:text-lg text-gray-700">機種コード</span>
 						<div class="h-full flex justify-center items-center">
-							<span th:text="${machineCode}"></span>
+							<span th:text="${machineCode}" class="text-xs sm:text-base"></span>
 						</div>
 					</div>
 				</div>
@@ -71,9 +71,10 @@
 						<span class="text-sm sm:text-lg text-gray-700">予約時限</span>
 						<div class="h-full flex flex-col justify-center items-center">
 							<span id="checkinHour" th:text="${checkinHour}" class="hidden"></span>
-							<span id="todayDate" th:text="${reservDate}"></span>
-							<span th:if="${checkinHour != '7'}" th:text="${checkinHour + '限目'}"></span>
-							<span th:unless="${checkinHour != '7'}" th:text="夜間"></span>
+							<span id="checkinFlag" th:text="${checkinFlag}" class="hidden"></span>
+							<span id="todayDate" th:text="${reservDate}" class="text-xs sm:text-base"></span>
+							<span th:if="${checkinHour != '7'}" th:text="${checkinHour + '限目'}" class="text-xs sm:text-base"></span>
+							<span th:unless="${checkinHour != '7'}" th:text="夜間" class="text-xs sm:text-base"></span>
 						</div>
 					</div>
 				</div>
@@ -96,6 +97,7 @@
 							</div>
 							<span id="checkinHour" th:text="${checkinHour}" class="hidden"></span>
 							<span id="todayDate" th:text="${reservDate}" class="hidden"></span>
+							
 							<button type="button" th:onclick="clickFloor()"
 								class="w-full p-1 bg-gray-400 hover:bg-gray-600 focus:ring ring-gray-200 rounded-lg text-sm text-white">検索</button>
 						</form>
@@ -165,14 +167,13 @@
 							<div>
 								<span th:text="${#strings.arraySplit(seat, '-')[0]}"></span>
 							</div>
-							<span th:text="${#strings.arraySplit(seat, '-')[1]}"></span>
 							<input th:if="${#strings.arraySplit(seat, '-')[1] == 'WHITE' || #strings.arraySplit(seat, '-')[1] == 'YELLOW'}" th:id="${#strings.arraySplit(seat, '-')[0]}" name="seat" th:value="${#strings.arraySplit(seat, '-')[0]}" type="radio" />
 						</div>
 					
 					</div>
 					
 					<!-- 解放待ちボタンの表示(残席がない場合のみ) -->
-					<div id="waitBtnContainer" class="flex justify-center items-center h-16 bg-white" th:classappend="${!isFull} ? 'hidden' : ''">
+					<div id="waitBtnContainer" class="flex justify-center items-center h-16 bg-white hidden">
 						<button id="waitBtn" onclick="clickAddWait()"
 							class="w-full px-1 h-12 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-sm text-white">マシン解放待ちに登録</button>
 					</div>
@@ -194,6 +195,14 @@
 	if (isNotAvailable) {
 		location.replace("/top");
 		window.alert([[${notAvailable}]]);
+	}
+	
+	// 満席の場合、マシン解放待ちボタンを表示(予約から来た時)
+	const isFull = [[${isFull}]];
+	
+	if (isFull) {
+		const waitBtnContainer = $("#waitBtnContainer");
+		waitBtnContainer.removeClass("hidden");
 	}
 
 	// 利用開始ボタンの活性化(予約から来た時)
@@ -246,7 +255,7 @@
 			for(i = 0; i < response_data.length; i++) {
 				const machinecode = (response_data[i]["machinecode"]);
 				
-				const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 focus:ring ring-gray-100 rounded-lg text-sm text-black'>${machinecode}</button>`;
+				const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-8 sm:h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 focus:ring ring-gray-100 rounded-lg text-xs sm:text-sm text-black'>${machinecode}</button>`;
 								
 				// 表示する場所の取得
 				btnContainer.append(btnTag);
@@ -332,7 +341,7 @@
 			if (response_data.length > 0) {
 				for(i = 0; i < response_data.length; i++) {
 					const machinecode = (response_data[i]);
-					const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black'>${machinecode}</button>`;
+					const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-8 sm:h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 focus:ring ring-gray-100 rounded-lg text-xs sm:text-sm text-black'>${machinecode}</button>`;
 					
 					// 表示する場所の取得
 					btnContainer.append(btnTag);
@@ -391,7 +400,7 @@
 				
 				// radioタグの生成
 				let radioTag = `<input type="radio" name="seat" value="${seatNumber}" />`;
-				let innerTag = `<div><span>${seatNumber}</span></div><span>${color}</span>${(color === "WHITE" || color === "YELLOW") ? radioTag : ""}`;
+				let innerTag = `<div><span>${seatNumber}</span></div>${(color === "WHITE" || color === "YELLOW") ? radioTag : ""}`;
 				
 				// 表示する場所の取得し入れる
 				let outerTag = `<div class="w-16 h-16 sm:w-32 sm:h-32 mb-0.5 mr-0.5 sm:mb-1 sm:mr-1 border text-xs sm:text-sm flex flex-col items-center justify-center ${color === "PURPLE" ? 'bg-purple-400' : color === "BLUE" ? 'bg-blue-400' : color === "YELLOW" ? 'bg-yellow-400' : color === "RED" ? 'bg-red-400' : 'bg-white'}">${innerTag}</div>`;
@@ -427,7 +436,7 @@
 	   	}
 	   	
 	   	// 機種コードの取得
-	   	let machineCode = processType === 1 ? "" : $("#textMachineType").text();
+	   	let machineCode = $("#textMachineType").text();
 	   	
 	   	//利用開始処理
 		if (seatValue) {		
@@ -437,6 +446,7 @@
 				const valueDate = $("#todayDate").text().split("(")[0];
 				const valueHour = $("#checkinHour").text();
 				const valueUserCode = $("#usercode").text();
+				const checkinFlag = $("#checkinFlag").text();
 				
 				// CSRFトークンの取得
 				const token = $("meta[name='_csrf']").attr("content");
@@ -446,7 +456,7 @@
 					type: "POST",
 					url: "/make_start",
 					headers: {"X-CSRF-TOKEN": token},
-					data: {"date": valueDate, "hour": valueHour, "machineCode": machineCode, "studentcode": valueUserCode, "machineNumber": seatValue, "processType": processType},
+					data: {"date": valueDate, "hour": valueHour, "machineCode": machineCode, "studentcode": valueUserCode, "machineNumber": seatValue, "processType": processType, "checkinFlag": checkinFlag},
 					dataType: "text",
 					success: function(data) {
 						location.replace("/top");

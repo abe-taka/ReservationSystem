@@ -58,24 +58,23 @@ public class ReservationController {
 			//機種の階層を取得(所属クラスが使える + 重複無し)
 			List<Integer> list_machine = new ArrayList<Integer>();
 			list_machine = machineRepository.findByFloor(classcode);
-			model.addAttribute("list_machine", list_machine);
 			
 			//現在日付から定められた期間のデータを取得
 			TreeMap<String, String> list_date = new TreeMap<>();
 			list_date = realtime_manage.Get_Monthdate(list_date);
-			model.addAttribute("list_date", list_date);
 			
 			//時限データの取得
 			List<HourEntity> list_hours = new ArrayList<HourEntity>();
 			list_hours = hourRepository.findAll();
-			model.addAttribute("list_hours", list_hours);
 			
 			//セッションデータ
+			model.addAttribute("list_machine", list_machine);
+			model.addAttribute("list_date", list_date);
+			model.addAttribute("list_hours", list_hours);
 			model.addAttribute("session_data", session_data);
 			
 			return "reservation";
-		}
-		else {
+		} else {
 			return "redirect:/";
 		}
 	}

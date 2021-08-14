@@ -21,6 +21,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	// 「HttpSecurityのconfigureメソッドではURLごとにセキュリティ設定を行う」
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests().antMatchers("/favicon.ico").permitAll();
 		http.authorizeRequests().antMatchers("/image/**").permitAll();
 		//http
 			//アクセス許可に関する設定

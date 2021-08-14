@@ -18,6 +18,7 @@ import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionForm;
 import com.example.demo.entities.SeatStatusEntity;
 import com.example.demo.entities.StudentRegistEntity;
+import com.example.demo.repositories.HourInWorkPatternRepository;
 import com.example.demo.repositories.SeatStatusRepository;
 import com.example.demo.repositories.StudentRegistRepository;
 
@@ -33,6 +34,8 @@ public class SelectToStartController {
 	StudentRegistRepository studentregRepository;
 	@Autowired
 	SeatStatusRepository seatStatusRepository;
+	@Autowired
+	HourInWorkPatternRepository hourInWorkPatternRepository;
 	
 	// セッションデータ用
 	String session_data = null;
@@ -72,17 +75,17 @@ public class SelectToStartController {
 			// 現在時限を取得
 			String hour = dateTimeComponent.getCurrentHour();
 			
-			// 現在が時間外の場合
-			if (hour.equals("8")) {
-				model.addAttribute("notAvailable", "現在は利用時間外です。");
+			// 現在が利用可能時間外の場合、利用開始画面に遷移しダイアログを表示する
+			if (checkIfCurrentlyNotAvailable(hour, todayDate)) {
+				model.addAttribute("notAvailable", "現在は利用可能時間外です。");
 				return "/start";
+			// 現在が利用可能時間内の場合、通常の処理を行う
 			} else {
 				// 1. マシン解放待ちに登録中かを調べる -> Y: 予約リストに移動し、"マシン解放待ちに登録中でまだ利用不可です。"のダイアログ表示後、トップに移動する N: 次へ
 				if (checkIfCurrentlyWaiting(todayDate, hour, session_data)) {					
-					model.addAttribute("notAvailable", "現在マシン解放待ちに登録中です。");
+					model.addAttribute("notAvailable", "現在マシン解放待ち登録済みで、まだ利用不可です。");
 					return "/selectToStart";
-					
-				// 2. マシン開放待ち登録中で利用可能の場合 -> 予約リスト表示
+				// 2. マシン解放待ち登録中で利用可能の場合 -> 予約リスト表示
 				} else if (checkIfCurrentlyWaitingAndCanCheckIn(todayDate, hour, session_data)) {			
 					//現在日・現在時限・学籍番号を基に、現在日・現在時限で有効な予約のみを取得
 					List<SeatStatusEntity> list_reservations = new ArrayList<SeatStatusEntity>();
@@ -91,7 +94,6 @@ public class SelectToStartController {
 					model.addAttribute("currentTime", hour);
 					model.addAttribute("list_reservations", list_reservations);
 					return "/selectToStart";	
-				
 				// 3. 現在日・現在時限を基に、予約がある場合 -> 予約リスト表示
 				} else if (checkIfReservationsExist(todayDate, hour, session_data)) {
 					//現在日・現在時限・学籍番号を基に、現在日・現在時限で有効な予約のみを取得
@@ -101,7 +103,6 @@ public class SelectToStartController {
 					model.addAttribute("currentTime", hour);
 					model.addAttribute("list_reservations", list_reservations);
 					return "/selectToStart";	
-				
 				}
 				// 4. 予約がない場合 -> 即時利用
 				return "redirect:/start";
@@ -118,8 +119,24 @@ public class SelectToStartController {
 		redirectAttributes.addFlashAttribute("reservDate", request.getParameter("reservDate"));
 		redirectAttributes.addFlashAttribute("checkinHour", request.getParameter("checkinHour"));
 		redirectAttributes.addFlashAttribute("machineCode", request.getParameter("machineCode"));
+		redirectAttributes.addFlashAttribute("checkinFlag", request.getParameter("checkinFlag"));
 		return "redirect:/start";
     }
+	
+	
+	// 利用可能時間外または稼働時間外かをチェックする
+	private boolean checkIfCurrentlyNotAvailable(String targetHour, Date date) {
+		System.out.println("checkIfCurrentlyNotAvailable");
+		// DBに設定されている時限コードを超えた数字になった場合、利用不可判定
+		if (targetHour.equals("8")) {
+			return true;
+		}
+		// DBから該当時限で検索し、非稼働であればtrueを返す
+		if (hourInWorkPatternRepository.findNotWorkingHour(targetHour, date).size() > 0) {
+			return true;
+		}
+		return false;
+	}
 	
 	
 	// 現在、マシン解放待ちに登録中かをチェック
