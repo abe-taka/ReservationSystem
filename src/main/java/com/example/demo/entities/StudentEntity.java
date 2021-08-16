@@ -29,8 +29,8 @@ public class StudentEntity {
 	private String studentname;
 
 	// アシススタントスタッフのフラグ
-	@Column(name = "m01_student_flag")
-	private int studentflag;
+	@Column(name = "m01_assistant_flag")
+	private int assistantflag;
 
 	// 管理用
 	@Column(name = "m01_student_stat")
@@ -82,12 +82,12 @@ public class StudentEntity {
 		this.studentname = studentname;
 	}
 
-	public int getStudentflag() {
-		return studentflag;
+	public int getAssistantflag() {
+		return assistantflag;
 	}
 
-	public void setStudentflag(int studentflag) {
-		this.studentflag = studentflag;
+	public void setAssistantflag(int assistantflag) {
+		this.assistantflag = assistantflag;
 	}
 
 	public int getStudentstat() {

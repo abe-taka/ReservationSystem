@@ -199,7 +199,7 @@
 			for(i = 0; i < response_data.length; i++) {
 				const machinecode = (response_data[i]["machinecode"]);
 				
-				const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 focus:ring ring-gray-100 rounded-lg text-sm text-black'>${machinecode}</button>`;
+				const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-8 sm:h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 focus:ring ring-gray-100 rounded-lg text-xs sm:text-sm text-black'>${machinecode}</button>`;
 								
 				// 表示する場所の取得
 				btnContainer.append(btnTag);
@@ -286,7 +286,7 @@
 			if (response_data.length > 0) {
 				for(i = 0; i < response_data.length; i++) {
 					const machinecode = (response_data[i]);
-					const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 hover:text-white focus:ring ring-gray-100 rounded-lg text-sm text-black'>${machinecode}</button>`;
+					const btnTag = `<button type="button" name='${machinecode}' th:text='${machinecode}' onclick="clickMachine('${machinecode}')" class='w-full px-1 h-8 sm:h-10 sm:h-12 border hover:border-green-500 hover:bg-green-100 focus:ring ring-gray-100 rounded-lg text-xs sm:text-sm text-black'>${machinecode}</button>`;
 					
 					// 表示する場所の取得
 					btnContainer.append(btnTag);

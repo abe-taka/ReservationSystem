@@ -105,7 +105,7 @@ public class RestReservation {
 
 	// 機種コード取得[チェックボックス]
 	@GetMapping("/get_machine/fromsoft")
-	public String Get_MachineFromSoft(@RequestParam("js_softcode") String js_softcode, @RequestParam("js_floor") int js_floor) {
+	public String Get_MachineFromSoft(@RequestParam("js_softcode") String js_softcode, @RequestParam("js_floor") String js_floor) {
 
 		// セッションを取得
 		String session_data = sessionForm.getSession_code();
@@ -117,9 +117,9 @@ public class RestReservation {
 		// チェックしたソフトが入っている + 所属クラスが使える機種コードを取得
 		List<MachineSoftEntity> machineSoftEntity_list = new ArrayList<>();
 		List<String> machinecode_list = new ArrayList<>();
-
+		
 		// DB検索
-		machineSoftEntity_list = machineSoftRepository.query(js_softcode, js_floor, class_code);
+		machineSoftEntity_list = machineSoftRepository.getMachineCodeBySoft(js_softcode, js_floor, class_code);
 
 		// List<String>に取得した機種コードをセット
 		for (int j = 0; j < machineSoftEntity_list.size(); j++) {
@@ -136,14 +136,11 @@ public class RestReservation {
 		// セッションを取得
 		String studentcode = sessionForm.getSession_code();
 
-		// 機種の台数を取得
-		MachineEntity machineEntity = machineRepository.findByMachinecode(js_mcode);
-
 		// 10日×(1日付+7コマ)分の予約情報受け取り用のList
-		List resultList = new ArrayList();
+		List<List<String>> resultList = new ArrayList<List<String>>();
 		
 		// (1日付+7コマ)の受け取り用のリスト
-		List seatStatusPerDay = new ArrayList();
+		List<String> seatStatusPerDay = null;
 		
 		// 時限データをDBから取得
 		List<HourEntity> listHours = new ArrayList<HourEntity>();
@@ -154,7 +151,7 @@ public class RestReservation {
 		periodData = dateTimeComponent.Get_Monthdate(periodData);
 		
 		for (int i = 0; i < periodData.size(); i++) {
-			seatStatusPerDay = new ArrayList();
+			seatStatusPerDay = new ArrayList<String>();
 			
 			// 日付データの日・曜日を取得し、1日付+7コマのリストの最初に入れる
 			String key = (String) periodData.keySet().toArray()[i];
@@ -163,10 +160,8 @@ public class RestReservation {
 			
 			for (int j = 0; j < listHours.size(); j++) {
 				String hour = listHours.get(j).getHourCode();
-				System.out.println("hour: " + listHours.get(j).getHourCode());
-				
-				Date date = dateTimeComponent.strDateToDate(key + " 00:00:00", "yyyy/MM/dd hh:mm:ss");			
-				System.out.println("date: " + date);
+				Date date = dateTimeComponent.strDateToDate(key + " 00:00:00", "yyyy/MM/dd hh:mm:ss");
+				System.out.println("Time:" + date + "-" + hour);
 				
 				// 現在の時限より前かどうかをチェック
 				if (checkIsBeforeCurrentTime(hour, date)) {
@@ -213,8 +208,7 @@ public class RestReservation {
 			// 結果リストに座席状態データを追加する
 			resultList.add(seatStatusPerDay);
 		}
-		
-		System.out.println("Done!: ");
+
 		System.out.println("resultList: " + resultList);
 
 		return utilComponent.listToJSON(resultList);
@@ -235,6 +229,12 @@ public class RestReservation {
 			// 座席状態テーブルにデータを追加する
 			SeatStatusEntity entity = new SeatStatusEntity(dateDate, hourRepository.findByHourCode(hour), machineRepository.findByMachinecode(machinecode), 1, studentRepository.findByStudentcode(studentcode), "1", todayDate);
 			entity = seatStatusRepository.save(entity);
+			
+			// ログ保存
+			utilComponent.saveToLog(null, null, studentcode, "予約登録");
+			
+			// 予約ログ保存
+			utilComponent.saveToReservationLog(machinecode, "", studentcode, "", dateDate, hour, "予約登録");
 		} else {
 			return "残席がありません。";
 		}
@@ -315,7 +315,7 @@ public class RestReservation {
         int int_limit_seat = machineRepository.getSeatCountSelectMachine(machinecode);
         System.out.println("int_limit_seat: " + int_limit_seat);
 
-        // 故障機数の取得
+        // 故障機数の取得(故障確定のみ)
         int int_trouble_machine = troubleMachineRepository.getTroubleMachine(machinecode);
         System.out.println("int_trouble_machine: " + int_trouble_machine);
 

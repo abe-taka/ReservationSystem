@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-//時限
+//マシン解放待ち
 @Entity
 @Table(name="t16_cancel_wait")
 public class CancelWaitEntity {

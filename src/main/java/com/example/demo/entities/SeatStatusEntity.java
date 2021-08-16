@@ -23,63 +23,63 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Table(name="t09_seat_status")
 public class SeatStatusEntity {
 
-	//座席状態コード
+	//座席状態連番
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="t09_number")
 	private Integer number;
 			
-	//
+	//予約日付
 	@Column(name="t09_date")
 	private Date date;
 	
-	//
+	//予約時限
 	@ManyToOne
 	@JoinColumn(name="t09_checkin_hour")
 	@JsonBackReference("Unit2")
 	private HourEntity hour;
 	
-	//
+	//予約機種
 	@ManyToOne
 	@JoinColumn(name="t09_machine_code")
 	@JsonBackReference("Unit2")
 	private MachineEntity machine;
 	
-	//
+	//予約座席番号
 	@Column(name="t09_machine_no")
 	private String machineNo;
 	
-	//
+	//Reservationテーブル
 	@ManyToOne
 	@JoinColumn(name="t09_reservation_no")
 	@JsonBackReference("Unit2")
 	private ReservationEntity reservation;
 	
-	//
+	//学生コード
 	@ManyToOne
 	@JoinColumn(name="t09_student_code")
 	@JsonBackReference("Unit2")
 	private StudentEntity student;
 	
-	//
+	//先生コード
 	@ManyToOne
 	@JoinColumn(name="t09_teacher_code")
 	@JsonBackReference("Unit2")
 	private TeacherEntity teacher;
 	
-	//
+	//座席状態フラグ(0:仮予約中, 1:予約確定, 2:利用中, 3:マシン開放待ち登録中(利用不可), 4: マシン開放待ち登録中(利用可能))
 	@Column(name="t09_checkin_flag")
 	private String checkinFlag;
 	
-	//
+	//？
 	@Column(name="t09_popup_flag")
 	private String popupFlag;
 	
-	//
+	//登録日時
 	@Column(name="t09_update_date")
 	private Date updateDate;
 	
-	//
+	//予約マシン数
 	@Column(name="t09_machine_count")
 	private Integer machineCount;
 	

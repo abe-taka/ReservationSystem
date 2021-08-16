@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.components.DateTimeComponent;
+import com.example.demo.components.UtilComponent;
 import com.example.demo.entities.SeatStatusEntity;
 import com.example.demo.repositories.SeatStatusRepository;
 
@@ -20,14 +21,26 @@ public class RestCancelReservation {
 	@Autowired
 	DateTimeComponent dateTimeComponent;
 	@Autowired
+	UtilComponent utilComponent;
+	@Autowired
 	SeatStatusRepository seatStatusRepository;
 
 	// 予約取消
 	@RequestMapping(value="/cancel_reservation", method=RequestMethod.POST)
-	public String Post_CancelReservation(@RequestParam("reservationNumber") int reservationNumber, @RequestParam("usercode") String usercode) {
+	public String Post_CancelReservation(@RequestParam("reservationNumber") int reservationNumber, @RequestParam("machineCode") String machineCode, @RequestParam("usercode") String usercode, @RequestParam("date") String date, @RequestParam("hour") String hour) {
+		// タイプ変換
+		Date dateDate = dateTimeComponent.strDateToDate(date, "yyyy/MM/dd hh:mm:ss");
+				
 		// 予約が存在するかチェックし、あれば削除する
 		if (checkIfReservationExists(usercode, reservationNumber)) {
 			seatStatusRepository.deleteById(reservationNumber);
+			
+			// ログ保存
+			utilComponent.saveToLog(null, null, usercode, "予約取消");
+			
+			// 予約ログ保存
+			utilComponent.saveToReservationLog(machineCode, "", usercode, "", dateDate, hour, "予約取消");
+			
 			return "予約を取り消しました。";
 		}
 		return "予約取消に失敗しました。";

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.components.SessionForm;
-import com.example.demo.entities.MachineEntity;
 import com.example.demo.forms.StudentForm;
 
 //　トップ
@@ -37,6 +36,7 @@ public class TopController {
 		session.removeAttribute("checkinHour");
 		session.removeAttribute("machineCode");
 		session.removeAttribute("reservDate");
+		session.removeAttribute("checkinFlag");
 
 		//セッション確認
 		if (session_data != null) {

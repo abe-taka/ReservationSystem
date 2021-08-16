@@ -2,9 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+		crossorigin="anonymous"></script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
-	<title>待ち状態解除 | FOCS</title>
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>
+	<title>マシン解放待ち解除 | FOCS</title>
 </head>
 <body>
 	<nav class="fixed w-full h-14 flex items-center justify-between bg-white shadow px-2 sm:px-5">
@@ -20,80 +24,32 @@
 	
 	<main class="min-h-screen">
 		<div class="min-h-screen pt-14">
-			<div class="h-full flex flex-col p-10 items-center space-y-5 mb-20">
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
+			<div th:if="${#lists.size(list_waitings) > 0}" class="h-full flex flex-col p-3 sm:p-10 items-center space-y-5 mb-20">
+				<!-- マシン解放待ちリストの表示 -->
+				<div th:each="waiting : ${list_waitings}"
+					class="flex justify-between sm:justify-around items-center w-full h-24 border rounded-lg shadow px-3">
 					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
+						<div>
+							<span class="text-gray-600">時間：</span>
+							<span class="sm:mr-2" th:text="${#dates.format(waiting.seatStatus.getDate(), 'yyyy/MM/dd(E)')}"></span>
+							<span th:if="${waiting.seatStatus.hour.getHourCode() != '7'}" th:text="${waiting.seatStatus.hour.getHourCode() + '限目'}"></span>
+							<span th:unless="${waiting.seatStatus.hour.getHourCode() != '7'}" th:text="夜間"></span>
+						</div>
+						<div>
+							<span class="text-gray-600">機種コード：</span>
+							<span th:text="${waiting.machine.getMachinecode()}"></span>
+						</div>
 					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-xs sm:text-sm text-white">開放待ち解除</button>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
+					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
+						<button th:onclick="clickCancelWait([[${waiting.machine.getMachinecode()}]], [[${waiting.seatStatus.getNumber()}]])" 
+							class="w-20 sm:w-24 h-8 sm:h-10 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-xs sm:text-sm text-white">解放待ち解除</button>
 					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-xs sm:text-sm text-white">開放待ち解除</button>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-xs sm:text-sm text-white">開放待ち解除</button>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-xs sm:text-sm text-white">開放待ち解除</button>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-xs sm:text-sm text-white">開放待ち解除</button>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-xs sm:text-sm text-white">開放待ち解除</button>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-xs sm:text-sm text-white">開放待ち解除</button>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-xs sm:text-sm text-white">開放待ち解除</button>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<button class="w-20 sm:w-24 h-8 sm:h-10 bg-purple-500 hover:bg-purple-700 focus:ring ring-purple-300 rounded-lg text-xs sm:text-sm text-white">開放待ち解除</button>
-				</div>
-				
+				</div>				
+			</div>
+			
+			<!-- 予約リストに要素がない場合の表示 -->
+			<div th:unless="${#lists.size(list_waitings) > 0}" class="flex justify-center items-center" style="height: calc(100vh - 8.5rem);">
+				<span class="text-gray-600">マシン解放待ちデータ無し</span>
 			</div>
 		</div>
 	</main>
@@ -102,4 +58,30 @@
 		<button th:onclick="window.location.href='/top'" class="mx-3 w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">メニューへ戻る</button>
 	</div>
 </body>
+<script>
+	// キャンセル待ち解除の処理
+	function clickCancelWait(machinecode, reservationNumber) {
+		// データの取得
+		const usercode = $("#usercode").text();
+		
+		// ダイアログの表示
+		if (confirm(`マシン解放待ちを解除しますか？`)) {
+			// CSRFトークンの取得
+			const token = $("meta[name='_csrf']").attr("content");
+		
+			// 非同期通信
+			$.ajax({
+				type : "POST",
+				url : "/cancel_wait",
+				headers: {"X-CSRF-TOKEN": token},
+				data : {machineCode: machinecode, usercode: usercode, reservationNumber: reservationNumber },
+				dataType: "text",
+				success: function(data) {
+					location.replace("/deleteWaiting");
+					window.alert(data);
+				}
+			})
+		}
+	}
+</script>
 </html>

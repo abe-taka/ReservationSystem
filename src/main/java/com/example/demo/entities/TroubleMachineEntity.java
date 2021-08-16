@@ -30,24 +30,31 @@ public class TroubleMachineEntity {
 	@JsonBackReference("Unit11")
 	private MachineEntity machine;
 		
-	//
+	//座番
 	@Column(name="t18_machine_no")
 	private String machineNo;
 	
-	// 
+	//報告日
 	@Column(name="t18_report_date")
 	private Date reportDate;
 	
+<<<<<<< HEAD
 	//
 	@ManyToOne
 	@JoinColumn(name="t18_report_student_code")
 	@JsonBackReference("Unit6")
 	private StudentEntity student;
+=======
+	//報告学生コード
+	@Column(name="t18_report_student_code")
+	private String reportStudentCode;
+>>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 	
-	// 
+	//登録日
 	@Column(name="t18_register_date")
 	private Date registerDate;
 	
+<<<<<<< HEAD
 	//
 	@ManyToOne
 	@JoinColumn(name="t18_register_teacher_code")
@@ -55,58 +62,65 @@ public class TroubleMachineEntity {
 	private TeacherEntity teacher;
 	
 	//
+=======
+	//登録教官コード
+	@Column(name="t18_register_teacher_code")
+	private String registerTeacherCode;
+	
+	//登録学生コード
+>>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 	@Column(name="t18_register_student_code")
 	private String registerStudentCode;
 	
-	// 
+	//状態
 	@Column(name="t18_state")
 	private String state;
 	
-	// 
+	//故障分類
 	@Column(name="t18_trouble_pattern")
 	private String troublePattern;
 	
-	// 
+	//故障箇所
 	@Column(name="t18_trouble_parts")
 	private String troubleParts;
 	
-	// 
+	//その他・備考
 	@Column(name="t18_other")
 	private String other;
 	
-	// 
+	//修理開始日
 	@Column(name="t18_repair_start_date")
 	private Date repairStartDate;
 	
-	// 
+	//修理終了日
 	@Column(name="t18_repair_end_date")
 	private Date repairEndDate;
 	
-	// 
+	//更新日
 	@Column(name="t18_update_date")
 	private Date updateDate;
 	
-	// 
+	//委託業者名
 	@Column(name="t18_Consignment_name")
 	private String consignmentName;
 	
-	// 
+	//委託日
 	@Column(name="t18_Consignment_date")
 	private Date consignmentDate;
 	
-	// 
+	//製品番号
 	@Column(name="t18_Product_number")
 	private String productNumber;
 	
-	// 
+	//型番
 	@Column(name="t18_work_limit")
 	private Date workLimit;
 	
-	// 
+	//作業期限日
 	@Column(name="t18_collection_day")
 	private Date collectionDay;
 	
-	// 
+	//業者回収日
 	@Column(name="t18Type_number")
 	private String typeNumber;
 

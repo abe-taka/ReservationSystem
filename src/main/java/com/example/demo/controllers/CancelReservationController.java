@@ -67,11 +67,9 @@ public class CancelReservationController {
 			//現在時限を取得
 			String hour = dateTimeComponent.getCurrentHour();
 			
-			System.out.println("test" + hourRepository.findByHourCode(hour).getHourCode());
-			
 			//現在日・現在時限・学籍番号を基に予約を取得
 			List<SeatStatusEntity> list_reservations = new ArrayList<SeatStatusEntity>();
-			list_reservations = seatStatusRepository.getReservations(todayDate, hourRepository.findByHourCode(hour).getHourCode(), session_data);
+			list_reservations = seatStatusRepository.getReservations(todayDate, hour, session_data);
 			model.addAttribute("list_reservations", list_reservations);
 			
 			return "cancelReservation";

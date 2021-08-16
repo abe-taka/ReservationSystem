@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -27,12 +29,23 @@ public class MachineEntity {
 	// 台数
 	@Column(name = "m06_count")
 	private int count;
+<<<<<<< HEAD
 
 	// 階層
 	@Column(name = "m06_floor")
 	private int floor;
 
 	// m04テーブル(UsableMachineEntity)
+=======
+	
+	//階数コード
+	@ManyToOne
+	@JoinColumn(name="m06_floor_code")
+	@JsonBackReference("Unit3")
+	private FloorEntity floor;
+	
+	//m04テーブル(UsableMachineEntity)
+>>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 	@OneToMany(mappedBy = "machine")
 	@JsonBackReference("Unit")
 	private List<UsableMachineEntity> usableMachineEntity;
@@ -56,6 +69,7 @@ public class MachineEntity {
 	@OneToMany(mappedBy = "machine")
 	@JsonBackReference("Unit4")
 	private List<CancelWaitEntity> cancelWaitEntity;
+<<<<<<< HEAD
 
 	// t18テーブル(TroubleMachineEntity)
 	@OneToMany(mappedBy = "machine")
@@ -63,6 +77,11 @@ public class MachineEntity {
 	private List<TroubleMachineEntity> troubleMachineEntity;
 
 	// ゲッター、セッター
+=======
+	
+	
+	//ゲッター、セッター
+>>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 	public String getMachinecode() {
 		return machinecode;
 	}
@@ -86,12 +105,12 @@ public class MachineEntity {
 	public void setCount(int count) {
 		this.count = count;
 	}
-
-	public int getFloor() {
+	
+	public FloorEntity getFloor() {
 		return floor;
 	}
 
-	public void setFloor(int floor) {
+	public void setFloor(FloorEntity floor) {
 		this.floor = floor;
 	}
 
