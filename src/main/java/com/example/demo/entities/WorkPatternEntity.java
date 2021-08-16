@@ -29,5 +29,38 @@ public class WorkPatternEntity {
 	// m13テーブル
 	@OneToMany(mappedBy = "workPattern")
 	private List<CalendarEntity> calendarEntity;
+
+	public String getWorkPatternCode() {
+		return workPatternCode;
+	}
+
+	public void setWorkPatternCode(String workPatternCode) {
+		this.workPatternCode = workPatternCode;
+	}
+
+	public String getWorkPatternName() {
+		return workPatternName;
+	}
+
+	public void setWorkPatternName(String workPatternName) {
+		this.workPatternName = workPatternName;
+	}
+
+	public List<HourInWorkPatternEntity> getHourInWorkPatternEntity() {
+		return hourInWorkPatternEntity;
+	}
+
+	public void setHourInWorkPatternEntity(List<HourInWorkPatternEntity> hourInWorkPatternEntity) {
+		this.hourInWorkPatternEntity = hourInWorkPatternEntity;
+	}
+
+	public List<CalendarEntity> getCalendarEntity() {
+		return calendarEntity;
+	}
+
+	public void setCalendarEntity(List<CalendarEntity> calendarEntity) {
+		this.calendarEntity = calendarEntity;
+	}
+	
 	
 }

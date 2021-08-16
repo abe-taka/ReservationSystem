@@ -17,6 +17,14 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity
 @Table(name="m13_calendar")
 public class CalendarEntity {
+<<<<<<< HEAD
+
+	//稼働日程コード
+	@Id
+	@Column(name="m13_calendar_code")
+	private String calendarCode;
+=======
+>>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 		
 	//日付
 	@Id
@@ -26,7 +34,6 @@ public class CalendarEntity {
 	//稼働コード
 	@ManyToOne
 	@JoinColumn(name="m13_pattern_code")
-	@JsonBackReference("Unit3")
 	private WorkPatternEntity workPattern;
 
 	

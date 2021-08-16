@@ -14,21 +14,29 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 //機種
 @Entity
-@Table(name="m06_machine")
+@Table(name = "m06_machine")
 public class MachineEntity {
 
-	//機種コード
+	// 機種コード
 	@Id
-	@Column(name="m06_machine_code")
+	@Column(name = "m06_machine_code")
 	private String machinecode;
-	
-	//機種名
-	@Column(name="m06_machine_name")
+
+	// 機種名
+	@Column(name = "m06_machine_name")
 	private String machinename;
-	
-	//台数
-	@Column(name="m06_count")
+
+	// 台数
+	@Column(name = "m06_count")
 	private int count;
+<<<<<<< HEAD
+
+	// 階層
+	@Column(name = "m06_floor")
+	private int floor;
+
+	// m04テーブル(UsableMachineEntity)
+=======
 	
 	//階数コード
 	@ManyToOne
@@ -37,32 +45,43 @@ public class MachineEntity {
 	private FloorEntity floor;
 	
 	//m04テーブル(UsableMachineEntity)
+>>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 	@OneToMany(mappedBy = "machine")
 	@JsonBackReference("Unit")
 	private List<UsableMachineEntity> usableMachineEntity;
-	
-	//m08テーブル(MachineSoftEntity)
+
+	// m08テーブル(MachineSoftEntity)
 	@OneToMany(mappedBy = "machine")
 	@JsonBackReference("Unit2")
 	private List<MachineSoftEntity> machineSoftEntity;
-	
+
 	// t09テーブル(SeatStatusEntity)
 	@OneToMany(mappedBy = "machine")
 	@JsonBackReference("Unit7")
 	private List<SeatStatusEntity> seatStatusEntity;
-	
-	//t14テーブル(ReservationEntity)
+
+	// t14テーブル(ReservationEntity)
 	@OneToMany(mappedBy = "machine")
 	@JsonBackReference("Unit4")
 	private List<ReservationEntity> reservationEntity;
-	
-	//t16テーブル(CancelWaitEntity)
+
+	// t16テーブル(CancelWaitEntity)
 	@OneToMany(mappedBy = "machine")
 	@JsonBackReference("Unit4")
 	private List<CancelWaitEntity> cancelWaitEntity;
+<<<<<<< HEAD
+
+	// t18テーブル(TroubleMachineEntity)
+	@OneToMany(mappedBy = "machine")
+	@JsonBackReference("Unit11")
+	private List<TroubleMachineEntity> troubleMachineEntity;
+
+	// ゲッター、セッター
+=======
 	
 	
 	//ゲッター、セッター
+>>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 	public String getMachinecode() {
 		return machinecode;
 	}
@@ -110,7 +129,7 @@ public class MachineEntity {
 	public void setMachineSoftEntity(List<MachineSoftEntity> machineSoftEntity) {
 		this.machineSoftEntity = machineSoftEntity;
 	}
-	
+
 	public List<SeatStatusEntity> getSeatStatusEntity() {
 		return seatStatusEntity;
 	}
