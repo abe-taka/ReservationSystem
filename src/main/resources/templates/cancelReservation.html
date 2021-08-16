@@ -60,8 +60,9 @@
 <script>
 	// 予約取消ボタンのクリック処理
 	function clickCancelReservation(reservationNumber, reservationDate, reservationCheckinHour, reservationMachineCode) {
-		// 学籍番号の取得
+		// 値の取得
 		const usercode = $("#usercode").text();
+		const date = reservationDate.slice(0, reservationDate.length - 3);
 		
 		// ダイアログの表示
 		if (confirm(`予約日：${reservationDate}\n予約時限：${reservationCheckinHour !== "7" ? reservationCheckinHour.toString() + "限目" : "夜間"}\n予約機種：${reservationMachineCode}\n\n予約を取消しますか？`)) {
@@ -73,7 +74,7 @@
 				type : "POST",
 				url : "/cancel_reservation",
 				headers: {"X-CSRF-TOKEN": token},
-				data : {reservationNumber: reservationNumber, usercode: usercode},
+				data : {reservationNumber: reservationNumber, machineCode: reservationMachineCode, usercode: usercode, date: date, hour: reservationCheckinHour},
 				dataType: "text",
 				success: function(data) {
 					location.replace("/cancelReservation");

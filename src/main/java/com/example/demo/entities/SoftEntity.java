@@ -24,7 +24,7 @@ public class SoftEntity {
 	@Column(name = "m07_soft_name")
 	private String softname;
 
-	// ？
+	// ソフトメーカ名
 	@Column(name = "m07_maker")
 	private String maker;
 

@@ -40,11 +40,7 @@ public class StartController {
 	
 	// セッションデータ用
 	String session_data = null;
-	
-	// 처리해야 할 것들
-	// 1. 현재 날짜, 교시 기준으로 예약이 있는 경우 -> 이용 개시
-	// 2. 예약이 없거나 캔슬 대기 상태인 경우 -> 즉시 이용
-	
+		
 	@GetMapping(value="/start")
 	public String Get_Start(Model model, HttpServletRequest request) {
 		//セッションデータの取得
@@ -69,14 +65,15 @@ public class StartController {
 			model.addAttribute("session_data", session_data);
 			
 			// 予約から利用開始になった場合、時限と機種データをセッションで格納する
-			if (model.getAttribute("checkinHour") != null && model.getAttribute("machineCode") != null && model.getAttribute("reservDate") != null) {
+			if (model.getAttribute("checkinHour") != null && model.getAttribute("machineCode") != null && model.getAttribute("reservDate") != null && model.getAttribute("checkinFlag") != null) {
 				session.setAttribute("checkinHour", model.getAttribute("checkinHour"));
 				session.setAttribute("machineCode", model.getAttribute("machineCode"));
 				session.setAttribute("reservDate", model.getAttribute("reservDate"));
+				session.setAttribute("checkinFlag", model.getAttribute("checkinFlag"));
 			}
 			
 			// セッションに時限と機種・日付データがある場合、次の画面に渡す階数リスト・時限・機種データを保持し、セッションデータは削除する
-			if (session.getAttribute("checkinHour") != null && session.getAttribute("machineCode") != null && session.getAttribute("reservDate") != null) {
+			if (session.getAttribute("checkinHour") != null && session.getAttribute("machineCode") != null && session.getAttribute("reservDate") != null && session.getAttribute("checkinFlag") != null) {
 				// マシンエンティティを取得
 				MachineEntity machine = machineRepository.findByMachinecode((String) session.getAttribute("machineCode"));
 				
@@ -113,6 +110,7 @@ public class StartController {
 				model.addAttribute("checkinHour", session.getAttribute("checkinHour"));
 				model.addAttribute("machineCode", session.getAttribute("machineCode"));
 				model.addAttribute("reservDate", session.getAttribute("reservDate"));
+				model.addAttribute("checkinFlag", session.getAttribute("checkinFlag"));
 				model.addAttribute("isFull", isFull);
 				model.addAttribute("list_seats", list_seats);
 			} else {
@@ -128,8 +126,6 @@ public class StartController {
 				model.addAttribute("checkinHour", dateTimeComponent.getCurrentHour());
 				model.addAttribute("reservDate", todayDate);	
 			}			
-			
-			System.out.println(model);
 			
 			return "start";
 		} else {
