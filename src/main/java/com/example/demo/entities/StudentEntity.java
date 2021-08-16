@@ -35,7 +35,7 @@ public class StudentEntity {
 	// 管理用
 	@Column(name = "m01_student_stat")
 	private int studentstat;
-	
+
 	// t09テーブル(SeatStatusEntity)
 	@OneToMany(mappedBy = "student")
 	@JsonBackReference("Unit7")
@@ -45,13 +45,18 @@ public class StudentEntity {
 	@OneToMany(mappedBy = "student")
 	@JsonBackReference("Unit7")
 	private List<ReservationEntity> reservationEntity;
-	
-	//t16テーブル(CancelWaitEntity)
+
+	// t16テーブル(CancelWaitEntity)
 	@OneToMany(mappedBy = "student")
 	@JsonBackReference("Unit4")
 	private List<CancelWaitEntity> cancelWaitEntity;
 
-	
+	// t18テーブル(TroubleMachineEntity)
+	@OneToMany(mappedBy = "student")
+	@JsonBackReference("Unit9")
+	private List<TroubleMachineEntity> TroubleMachineEntity;
+
+
 	// ゲッター、セッター
 	public String getStudentcode() {
 		return studentcode;

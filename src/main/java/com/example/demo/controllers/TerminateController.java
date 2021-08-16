@@ -28,7 +28,7 @@ public class TerminateController {
 		session_data = sessionForm.getSession_code();
 		// セッション確認
 		if (session_data != null) {
-			SeatStatusEntity seatStatus = seatStatusRepository.findByStudentCodeAndCheckinFlag(session_data, "2");
+			SeatStatusEntity seatStatus = seatStatusRepository.getReservationByTerminate(session_data, "2");
 			model.addAttribute("seatStatus", seatStatus);
 
 			return "terminate";

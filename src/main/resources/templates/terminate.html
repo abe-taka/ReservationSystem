@@ -35,7 +35,9 @@
 			<div class="flex space-x-5">
 				<button id="backBtn"
 					class="w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">戻る</button>
-				<button class="w-full px-1 h-12 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-sm text-white" th:data-parameter1="${seatStatus.machineCode}"  th:data-parameter2="${seatStatus.machineNo}"  th:onclick="Trouble(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))">OK</button>
+				<form th:action="@{/top}" method="get">
+					<button type="submit" class="w-full px-1 h-12 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-sm text-white" th:data-parameter1="${seatStatus.machine.machinecode}"  th:data-parameter2="${seatStatus.machineNo}"  th:onclick="Trouble(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))">OK</button>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -45,12 +47,25 @@
 			<div class="h-full flex flex-col p-10 items-center space-y-5 mb-20">
 				
 				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base" th:object="${seatStatus}">
-						
-						<span th:text="機種名 + *{machineCode}"></span>
+					<div class="flex flex-col text-xs sm:text-base" th:object="${seatStatus}">				
+						<span th:text="機種名 + *{machine.machinecode}"></span>
 						<span th:text="座席 + *{machineNo}"></span>
-						
-						
+					</div>
+					
+					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
+						<button id="filterBtn" class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
+						<form th:action="@{/top}" method="get">
+							<button type="submit" class="w-20 sm:w-24 h-8 sm:h-10 bg-pink-500 hover:bg-pink-700 focus:ring ring-pink-300 rounded-lg text-xs sm:text-sm text-white" th:data-parameter1="${seatStatus.machine.machinecode}"  th:data-parameter2="${seatStatus.machineNo}"  th:onclick="UseOff(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))">利用終了</button>
+						</form>
+					</div>
+				</div>
+				
+				
+				
+				<!--<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
+					<div class="flex flex-col text-xs sm:text-base">
+						<span>機種名：MAC</span>
+						<span>座席：001</span>
 					</div>
 					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
 						<button id="filterBtn" class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
@@ -64,17 +79,6 @@
 						<span>座席：001</span>
 					</div>
 					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button id="filterBtn" class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-pink-500 hover:bg-pink-700 focus:ring ring-pink-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
 						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
 						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
 					</div>
@@ -144,7 +148,10 @@
 						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
 						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
 					</div>
-				</div>
+				</div> -->
+				
+				
+				
 				
 			</div>
 		</div>
@@ -178,20 +185,37 @@
 	
 	
 	//故障機報告、利用終了処理
-	function Trouble(mcode,mnum) {
+	function Trouble(machinecode,machinenum) {
 		//radioボタンの値取得
-		let TroubleValue;
+		let troubleValue;
 		const targets = $("input[name='trouble']");
 		for (let i = 0; i < targets.length; i++) {
 	    	if (targets[i].checked) {
-	    		TroubleValue = targets[i].value;
+	    		troubleValue = targets[i].value;
 	      	}
 	   	}
 		
-		console.log("チェックボックスの値",TroubleValue);
-		console.log("マシーンコード",mcode);
+		// 非同期通信
+	    $.ajax({
+			type : "GET",
+			url : "/restterminate",
+			data : {js_troubleValue : troubleValue, js_machinecode: machinecode, js_machinenum: machinenum},
+			dataType : "json"
+		})
+	}
+	
+	//利用終了処理
+	function UseOff(machinecode,machinenum) {
+		console.log("マシーンコード",machinecode);
+		console.log("マシーンNo",machinenum);
 		
-		
+		// 非同期通信
+	    $.ajax({
+			type : "GET",
+			url : "/restuseoff",
+			data : {js_machinecode: machinecode, js_machinenum: machinenum},
+			dataType : "json"
+		})
 	}
 </script>
 </html>

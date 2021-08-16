@@ -22,7 +22,6 @@ public class CalendarEntity {
 
 	//稼働日程コード
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="m13_calendar_code")
 	private String calendarCode;
 		
@@ -33,7 +32,6 @@ public class CalendarEntity {
 	//稼働コード
 	@ManyToOne
 	@JoinColumn(name="m13_pattern_code")
-	@JsonBackReference("Unit3")
 	private WorkPatternEntity workPattern;
 
 	

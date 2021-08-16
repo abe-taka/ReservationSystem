@@ -3,9 +3,9 @@ package com.example.demo.customRepositories;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.repository.query.Param;
-
+import com.example.demo.entities.MachineEntity;
 import com.example.demo.entities.SeatStatusEntity;
+import com.example.demo.entities.StudentEntity;
 
 public interface SeatStatusCustomRepository<T> {
 	
@@ -25,4 +25,5 @@ public interface SeatStatusCustomRepository<T> {
 	
 	public int countReservedMachine(Date date, String hour, String machinecode);
 	
+	SeatStatusEntity getReservationByTerminate(String studentcode, String checkinFlag);
 }
