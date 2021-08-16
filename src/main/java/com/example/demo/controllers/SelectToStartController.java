@@ -89,7 +89,7 @@ public class SelectToStartController {
 				} else if (checkIfCurrentlyWaitingAndCanCheckIn(todayDate, hour, session_data)) {			
 					//現在日・現在時限・学籍番号を基に、現在日・現在時限で有効な予約のみを取得
 					List<SeatStatusEntity> list_reservations = new ArrayList<SeatStatusEntity>();
-					list_reservations = seatStatusRepository.getReservationForStart(todayDate, hour, session_data, "4");
+					list_reservations = seatStatusRepository.getReservationByFlag(todayDate, hour, session_data, "4");
 					
 					model.addAttribute("currentTime", hour);
 					model.addAttribute("list_reservations", list_reservations);
@@ -98,7 +98,7 @@ public class SelectToStartController {
 				} else if (checkIfReservationsExist(todayDate, hour, session_data)) {
 					//現在日・現在時限・学籍番号を基に、現在日・現在時限で有効な予約のみを取得
 					List<SeatStatusEntity> list_reservations = new ArrayList<SeatStatusEntity>();
-					list_reservations = seatStatusRepository.getReservationForStart(todayDate, hour, session_data, "1");
+					list_reservations = seatStatusRepository.getReservationByFlag(todayDate, hour, session_data, "1");
 					
 					model.addAttribute("currentTime", hour);
 					model.addAttribute("list_reservations", list_reservations);
@@ -143,7 +143,7 @@ public class SelectToStartController {
 	private boolean checkIfCurrentlyWaiting(Date todayDate, String hour, String studentcode) {
 		// 現在日・現在時限・学籍番号を基に、現在日・現在時限でマシン解放待ち中のみを取得
 		List<SeatStatusEntity> list_reservations = new ArrayList<SeatStatusEntity>();
-		list_reservations = seatStatusRepository.getReservationForStart(todayDate, hour, studentcode, "3");
+		list_reservations = seatStatusRepository.getReservationByFlag(todayDate, hour, studentcode, "3");
 			
 		if (list_reservations.size() > 0) {
 			return true;
@@ -156,7 +156,7 @@ public class SelectToStartController {
 	private boolean checkIfReservationsExist(Date todayDate, String hour, String studentcode) {
 		// 現在日・現在時限・学籍番号を基に、現在日・現在時限で有効な予約のみを取得
 		List<SeatStatusEntity> list_reservations = new ArrayList<SeatStatusEntity>();
-		list_reservations = seatStatusRepository.getReservationForStart(todayDate, hour, studentcode, "1");
+		list_reservations = seatStatusRepository.getReservationByFlag(todayDate, hour, studentcode, "1");
 			
 		if (list_reservations.size() > 0) {
 			return true;
@@ -169,7 +169,7 @@ public class SelectToStartController {
 	private boolean checkIfCurrentlyWaitingAndCanCheckIn(Date todayDate, String hour, String studentcode) {
 		// 現在日・現在時限・学籍番号を基に、現在日・現在時限でマシン解放待ち中かつ利用開始できる状態のみを取得
 		List<SeatStatusEntity> list_reservations = new ArrayList<SeatStatusEntity>();
-		list_reservations = seatStatusRepository.getReservationForStart(todayDate, hour, studentcode, "4");
+		list_reservations = seatStatusRepository.getReservationByFlag(todayDate, hour, studentcode, "4");
 				
 		if (list_reservations.size() > 0) {
 			return true;

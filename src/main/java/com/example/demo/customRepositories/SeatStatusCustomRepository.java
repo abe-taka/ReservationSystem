@@ -3,12 +3,7 @@ package com.example.demo.customRepositories;
 import java.util.Date;
 import java.util.List;
 
-<<<<<<< HEAD
-import com.example.demo.entities.MachineEntity;
-=======
->>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 import com.example.demo.entities.SeatStatusEntity;
-import com.example.demo.entities.StudentEntity;
 
 
 public interface SeatStatusCustomRepository<T> {
@@ -19,7 +14,7 @@ public interface SeatStatusCustomRepository<T> {
 	
 	List<SeatStatusEntity> getReservations(Date date, String hour, String studentcode);
 	
-	List<SeatStatusEntity> getReservationForStart(Date date, String hour, String studentcode, String checkinFlag);
+	List<SeatStatusEntity> getReservationByFlag(Date date, String hour, String studentcode, String checkinFlag);
 	
 	SeatStatusEntity getReservationByNumber(Date date, String hour, String studentcode, int reservationNumber);
 	
@@ -28,6 +23,5 @@ public interface SeatStatusCustomRepository<T> {
 	boolean checkIfSeatIsInStateByStatusCode(Date date, String hour, String machineCode, String machineNumber, String checkinFlag);
 	
 	public int countReservedMachine(Date date, String hour, String machinecode);
-	
-	SeatStatusEntity getReservationByTerminate(String studentcode, String checkinFlag);
+
 }
