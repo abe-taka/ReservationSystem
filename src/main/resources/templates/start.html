@@ -292,7 +292,7 @@
 				
 				// ボックスタグ作成
 				const boxTag = `<div class="w-full sm:w-1/3">
-					<input type="radio" id="${softcode}" name="soft" value="${softcode}" />
+					<input type="radio" id="${softcode}" name="soft" value="${softcode}" ${i == 0 ? 'checked' : ''} />
     				<label for="${softcode}" class="text-sm sm:text-base">${softname}</label>
 				</div>`;
 				

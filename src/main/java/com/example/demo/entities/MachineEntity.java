@@ -29,14 +29,6 @@ public class MachineEntity {
 	// 台数
 	@Column(name = "m06_count")
 	private int count;
-<<<<<<< HEAD
-
-	// 階層
-	@Column(name = "m06_floor")
-	private int floor;
-
-	// m04テーブル(UsableMachineEntity)
-=======
 	
 	//階数コード
 	@ManyToOne
@@ -45,7 +37,6 @@ public class MachineEntity {
 	private FloorEntity floor;
 	
 	//m04テーブル(UsableMachineEntity)
->>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 	@OneToMany(mappedBy = "machine")
 	@JsonBackReference("Unit")
 	private List<UsableMachineEntity> usableMachineEntity;
@@ -69,7 +60,6 @@ public class MachineEntity {
 	@OneToMany(mappedBy = "machine")
 	@JsonBackReference("Unit4")
 	private List<CancelWaitEntity> cancelWaitEntity;
-<<<<<<< HEAD
 
 	// t18テーブル(TroubleMachineEntity)
 	@OneToMany(mappedBy = "machine")
@@ -77,11 +67,6 @@ public class MachineEntity {
 	private List<TroubleMachineEntity> troubleMachineEntity;
 
 	// ゲッター、セッター
-=======
-	
-	
-	//ゲッター、セッター
->>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 	public String getMachinecode() {
 		return machinecode;
 	}

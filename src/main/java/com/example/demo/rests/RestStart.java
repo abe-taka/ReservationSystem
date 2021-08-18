@@ -101,7 +101,7 @@ public class RestStart {
 		// 予約リストから利用開始の場合
 		if (processType == 1) {
 			// 座席状態テーブルに予約データが格納されているか確認するために取得
-			List<SeatStatusEntity> reservations = seatStatusRepository.getReservationForStart(dateDate, hour, studentcode, checkinFlag);
+			List<SeatStatusEntity> reservations = seatStatusRepository.getReservationByFlag(dateDate, hour, studentcode, checkinFlag);
 					
 			System.out.println(reservations);
 				
