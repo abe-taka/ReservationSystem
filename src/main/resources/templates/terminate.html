@@ -6,6 +6,7 @@
 		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
 		crossorigin="anonymous"></script>
 	<meta charset="UTF-8">
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>
 	<meta name="viewport" content="width=device-width">
 	<title>利用終了 | FOCS</title>
 </head>
@@ -21,143 +22,41 @@
 		</div>
 	</nav>
 	
-	<div id="backdrop"
+	<div
+		th:if="${#lists.size(use_list) > 0}" 
+		id="backdrop"
 		class="fixed w-full h-screen bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-		<div
-			class="w-3/4 h-3/4 sm:w-2/3 sm:h-2/3 bg-white rounded-lg p-3 sm:p-5 flex flex-col justify-between">
-			<h2 class="text-lg font-semibold">故障機報告</h2>
-			
-			<input type="radio" name="trouble" value="ハードウェア : マウス、ディスプレイ等に不具合が見られる場合">ハードウェア : マウス、ディスプレイ等に不具合が見られる場合
-			<input type="radio" name="trouble" value="ソフトウェア : インストールされているソフトに不具合が見られる場合">ソフトウェア : インストールされているソフトに不具合が見られる場合
-			<input type="radio" name="trouble" value="その他 : 上記2つ以外の場合">その他 : 上記2つ以外の場合
-			<input type="radio" name="trouble" value="不明 ">不明
-						
-			<div class="flex space-x-5">
-				<button id="backBtn"
-					class="w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">戻る</button>
-				<form th:action="@{/top}" method="get">
-					<button type="submit" class="w-full px-1 h-12 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-sm text-white" th:data-parameter1="${seatStatus.machine.machinecode}"  th:data-parameter2="${seatStatus.machineNo}"  th:onclick="Trouble(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))">OK</button>
-				</form>
-			</div>
-		</div>
+		<!-- JSで動的に生成 -->
 	</div>
 	
 	<main class="min-h-screen">
+		
 		<div class="min-h-screen pt-14">
-			<div class="h-full flex flex-col p-10 items-center space-y-5 mb-20">
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base" th:each=" seatStatus : ${seatStatus}" th:object="${seatStatus}">				
-						<span th:text="機種名 + *{machine.machinecode}"></span>
-						<span th:text="座席 + *{machineNo}"></span>
+			<!-- 利用リストに要素がある場合の表示 -->
+			<div th:if="${#lists.size(use_list) > 0}" class="h-full flex flex-col p-3 sm:p-10 items-center space-y-5 mb-20">
+
+				<div th:each="use : ${use_list}" 
+					class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
+					<div class="flex flex-col text-xs sm:text-base">
+						<span th:text="${use.getNumber()}" class="hidden"></span>
+						<span th:text="機種名： + *{use.machine.machinecode}"></span>
+						<span th:text="座席： + *{use.machineNo}"></span>
 					</div>
 					
 					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button id="filterBtn" class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<form th:action="@{/top}" method="get">
-							<button type="submit" class="w-20 sm:w-24 h-8 sm:h-10 bg-pink-500 hover:bg-pink-700 focus:ring ring-pink-300 rounded-lg text-xs sm:text-sm text-white" th:data-parameter1="${seatStatus.machine.machinecode}"  th:data-parameter2="${seatStatus.machineNo}"  th:onclick="UseOff(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'))">利用終了</button>
-						</form>
+						<button th:onclick="clickReportTrouble([[${use.machine.machinecode}]], [[${use.machineNo}]], [[${use.getNumber()}]])" class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
+						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-pink-500 hover:bg-pink-700 focus:ring ring-pink-300 rounded-lg text-xs sm:text-sm text-white" th:data-parameter1="${use.getNumber()}" th:onclick="useOff(this.getAttribute('data-parameter1'))">利用終了</button>
 					</div>
 				</div>
 				
-				
-				
-				<!--<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button id="filterBtn" class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-pink-500 hover:bg-pink-700 focus:ring ring-pink-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
-					</div>
-				</div>
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base">
-						<span>機種名：MAC</span>
-						<span>座席：001</span>
-					</div>
-					<div class="flex flex-col sm:flex-row space-y-1 sm:space-x-3 sm:space-y-0">
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-yellow-500 hover:bg-yellow-700 focus:ring ring-yellow-300 rounded-lg text-xs sm:text-sm text-white">故障機報告</button>
-						<button class="w-20 sm:w-24 h-8 sm:h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-xs sm:text-sm text-white">利用終了</button>
-					</div>
-				</div> -->
-				
-				
-				
-				
+			</div>
+			
+			<!-- 利用リストに要素がない場合の表示 -->
+			<div th:unless="${#lists.size(use_list) > 0}" class="flex justify-center items-center" style="height: calc(100vh - 8.5rem);">
+				<span class="text-gray-600">利用中マシン無し</span>
 			</div>
 		</div>
 	</main>
-	
-	
 	
 	<div class="fixed bottom-0 bg-white w-full h-20 flex items-center justify-around border-t">
 		<button th:onclick="window.location.href='/top'" class="mx-3 w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">メニューへ戻る</button>
@@ -165,27 +64,54 @@
 	
 </body>
 
-<script>
-	//UIボタンの操作
-	$(document).ready(function(){
+<script>	
+	// 報告ボタンクリック時の処理
+	function clickReportTrouble(machinecode, machinenumber, reservationNumber) {
 		const backdrop = $("#backdrop");
-   		const filterBtn = $("#filterBtn");
-   		const backBtn = $("#backBtn");
+		const reportTrouble = $("#reportTrouble");
    		
-   		// 絞り込みボタンの処理
-   		filterBtn.on("click", () => {
-			backdrop.removeClass("hidden");
-		});
-		
+		// モーダルを表示する
+		backdrop.removeClass("hidden");
+		const html = `
+			<div
+				class="w-3/4 h-3/4 sm:w-2/3 sm:h-2/3 bg-white rounded-lg p-3 sm:p-5 flex flex-col justify-between">
+				<h2 class="text-lg font-semibold">故障機報告</h2>
+					
+				<div>
+					<input type="radio" name="trouble" value="ハードウェア" checked><label class="ml-2 text-xs sm:text-sm">ハードウェア : マウス、ディスプレイ等に不具合が見られる場合</label>
+				</div>
+				<div>
+					<input type="radio" name="trouble" value="ソフトウェア"><label class="ml-2 text-xs sm:text-sm">ソフトウェア : インストールされているソフトに不具合が見られる場合</label>
+				</div>
+				<div>
+					<input type="radio" name="trouble" value="その他"><label class="ml-2 text-xs sm:text-sm">その他 : 上記2つ以外の場合</label>
+				</div>
+				<div>
+					<input type="radio" name="trouble" value="不明"><label class="ml-2 text-xs sm:text-sm">不明</label>
+				</div>
+								
+				<div class="flex space-x-5">
+					<button id="backBtn"
+						class="w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">戻る</button>
+					<button class="w-full px-1 h-12 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-sm text-white" data-parameter1="${machinecode}" data-parameter2="${machinenumber}" data-parameter3="${reservationNumber}" onclick="reportTrouble(this.getAttribute('data-parameter1'), this.getAttribute('data-parameter2'), this.getAttribute('data-parameter3'))">報告</button>
+				</div>
+			</div>
+		`;
+		backdrop.html(html);
+			
+			
 		// 戻るボタンの処理
+		const backBtn = $("#backBtn");
 		backBtn.on("click", () => {
 			backdrop.addClass("hidden");
 		});
-	});
-	
+	}
 	
 	//故障機報告、利用終了処理
-	function Trouble(machinecode,machinenum) {
+	function reportTrouble(machinecode, machinenum, reservationNumber) {
+		// CSRFトークンの取得
+		const token = $("meta[name='_csrf']").attr("content");
+		
 		//radioボタンの値取得
 		let troubleValue;
 		const targets = $("input[name='trouble']");
@@ -195,27 +121,48 @@
 	      	}
 	   	}
 		
-		// 非同期通信
-	    $.ajax({
-			type : "GET",
-			url : "/restterminate",
-			data : {js_troubleValue : troubleValue, js_machinecode: machinecode, js_machinenum: machinenum},
-			dataType : "json"
-		})
+		// ダイアログの表示
+		if (confirm(`故障機として報告し終了しますか？`)) {
+			// 非同期通信
+		    $.ajax({
+				type : "POST",
+				url : "/restterminate",
+				headers: {"X-CSRF-TOKEN": token},
+				data : {js_troubleValue : troubleValue, js_machinecode: machinecode, js_machinenum: machinenum, reservationNumber: reservationNumber},
+				dataType : "text",
+				success: function(data) {
+					// モーダルの非表示
+					const backdrop = $("#backdrop");
+					backdrop.addClass("hidden");
+					
+					location.replace("/terminate");
+					window.alert(data);
+				}
+			})
+		}
+		
 	}
 	
 	//利用終了処理
-	function UseOff(machinecode,machinenum) {
-		console.log("マシーンコード",machinecode);
-		console.log("マシーンNo",machinenum);
-		
-		// 非同期通信
-	    $.ajax({
-			type : "GET",
-			url : "/restuseoff",
-			data : {js_machinecode: machinecode, js_machinenum: machinenum},
-			dataType : "json"
-		})
+	function useOff(reservationNumber) {
+		// ダイアログの表示
+		if (confirm(`選択したマシンの利用を終了しますか？`)) {
+			// CSRFトークンの取得
+			const token = $("meta[name='_csrf']").attr("content");
+			
+			// 非同期通信
+		    $.ajax({
+				type : "POST",
+				url : "/restuseoff",
+				headers: {"X-CSRF-TOKEN": token},
+				data : {reservationNumber: reservationNumber},
+				dataType : "text",
+				success: function(data) {
+					location.replace("/terminate");
+					window.alert(data);
+				}
+			})
+		}
 	}
 </script>
 </html>

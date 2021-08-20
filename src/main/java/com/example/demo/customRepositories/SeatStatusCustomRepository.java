@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.example.demo.entities.SeatStatusEntity;
-import com.example.demo.entities.StudentEntity;
 
 
 public interface SeatStatusCustomRepository<T> {
@@ -15,7 +14,7 @@ public interface SeatStatusCustomRepository<T> {
 	
 	List<SeatStatusEntity> getReservations(Date date, String hour, String studentcode);
 	
-	List<SeatStatusEntity> getReservationForStart(Date date, String hour, String studentcode, String checkinFlag);
+	List<SeatStatusEntity> getReservationByFlag(Date date, String hour, String studentcode, String checkinFlag);
 	
 	SeatStatusEntity getReservationByNumber(Date date, String hour, String studentcode, int reservationNumber);
 	

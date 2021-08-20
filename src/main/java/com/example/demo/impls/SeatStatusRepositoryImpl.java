@@ -126,10 +126,10 @@ public class SeatStatusRepositoryImpl implements SeatStatusCustomRepository {
 		return false;
 	}
 
-	// (状態コード -> 0:仮予約中 1:予約中 2:利用中)
+	// 状態に合わせて予約リストを表示する(状態コード -> 0:仮予約中 1:予約中 2:利用中)
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SeatStatusEntity> getReservationForStart(Date date, String hour, String studentcode,
+	public List<SeatStatusEntity> getReservationByFlag(Date date, String hour, String studentcode,
 			String checkinFlag) {
 		String jpql = "SELECT * FROM t09_seat_status WHERE t09_date = :date AND t09_checkin_hour = :hour AND t09_student_code = :studentcode AND t09_checkin_flag = :checkinFlag";
 
