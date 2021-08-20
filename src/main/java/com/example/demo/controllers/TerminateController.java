@@ -1,10 +1,7 @@
 package com.example.demo.controllers;
 
-<<<<<<< HEAD
-=======
 import java.text.SimpleDateFormat;
 import java.util.Date;
->>>>>>> 197bd56cf8d07543b8e1b53e3d812a962b985a94
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
