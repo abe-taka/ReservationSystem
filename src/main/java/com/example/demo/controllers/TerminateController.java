@@ -40,10 +40,6 @@ public class TerminateController {
 		
 		// セッション確認
 		if (session_data != null) {
-<<<<<<< HEAD
-			List<SeatStatusEntity> seatStatus = seatStatusRepository.getReservationByTerminate(session_data, "2");
-			model.addAttribute("seatStatus", seatStatus);
-=======
 			//所属クラスを取得
 			String session_data = sessionForm.getSession_code();
 			StudentRegistEntity studentreg = new StudentRegistEntity();
@@ -69,7 +65,6 @@ public class TerminateController {
 			model.addAttribute("todayDate", todayDate);
 			model.addAttribute("hour", hour);
 			model.addAttribute("use_list", use_list);
->>>>>>> 197bd56cf8d07543b8e1b53e3d812a962b985a94
 
 			return "terminate";
 		} else {
