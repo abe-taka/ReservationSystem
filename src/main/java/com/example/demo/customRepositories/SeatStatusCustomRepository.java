@@ -3,10 +3,6 @@ package com.example.demo.customRepositories;
 import java.util.Date;
 import java.util.List;
 
-<<<<<<< HEAD
-import com.example.demo.entities.MachineEntity;
-=======
->>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 import com.example.demo.entities.SeatStatusEntity;
 import com.example.demo.entities.StudentEntity;
 
@@ -29,5 +25,5 @@ public interface SeatStatusCustomRepository<T> {
 	
 	public int countReservedMachine(Date date, String hour, String machinecode);
 	
-	SeatStatusEntity getReservationByTerminate(String studentcode, String checkinFlag);
+	List<SeatStatusEntity> getReservationByTerminate(String studentcode, String checkinFlag);
 }

@@ -38,23 +38,16 @@ public class TroubleMachineEntity {
 	@Column(name="t18_report_date")
 	private Date reportDate;
 	
-<<<<<<< HEAD
 	//
 	@ManyToOne
 	@JoinColumn(name="t18_report_student_code")
 	@JsonBackReference("Unit6")
 	private StudentEntity student;
-=======
-	//報告学生コード
-	@Column(name="t18_report_student_code")
-	private String reportStudentCode;
->>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 	
 	//登録日
 	@Column(name="t18_register_date")
 	private Date registerDate;
 	
-<<<<<<< HEAD
 	//
 	@ManyToOne
 	@JoinColumn(name="t18_register_teacher_code")
@@ -62,13 +55,6 @@ public class TroubleMachineEntity {
 	private TeacherEntity teacher;
 	
 	//
-=======
-	//登録教官コード
-	@Column(name="t18_register_teacher_code")
-	private String registerTeacherCode;
-	
-	//登録学生コード
->>>>>>> a7deea17c725e708ca7ac00fd16ca57b35bdc164
 	@Column(name="t18_register_student_code")
 	private String registerStudentCode;
 	

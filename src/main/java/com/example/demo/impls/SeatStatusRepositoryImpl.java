@@ -161,7 +161,7 @@ public class SeatStatusRepositoryImpl implements SeatStatusCustomRepository {
 	// 利用開始している機種を取得
 	@SuppressWarnings("unchecked")
 	@Override
-	public SeatStatusEntity getReservationByTerminate(String studentcode, String checkinFlag) {
+	public List<SeatStatusEntity> getReservationByTerminate(String studentcode, String checkinFlag) {
 		String jpql = "SELECT * FROM t09_seat_status x WHERE x.t09_student_code = :studentcode AND x.t09_checkin_flag = :checkinFlag";
 
 		TypedQuery<SeatStatusEntity> query = (TypedQuery<SeatStatusEntity>) entityManager.createNativeQuery(jpql,
@@ -169,6 +169,6 @@ public class SeatStatusRepositoryImpl implements SeatStatusCustomRepository {
 		query.setParameter("studentcode", studentcode);
 		query.setParameter("checkinFlag", checkinFlag);
 
-		return query.getSingleResult();
+		return query.getResultList();
 	}
 }

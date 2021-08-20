@@ -1,5 +1,7 @@
 package com.example.demo.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +30,7 @@ public class TerminateController {
 		session_data = sessionForm.getSession_code();
 		// セッション確認
 		if (session_data != null) {
-			SeatStatusEntity seatStatus = seatStatusRepository.getReservationByTerminate(session_data, "2");
+			List<SeatStatusEntity> seatStatus = seatStatusRepository.getReservationByTerminate(session_data, "2");
 			model.addAttribute("seatStatus", seatStatus);
 
 			return "terminate";
