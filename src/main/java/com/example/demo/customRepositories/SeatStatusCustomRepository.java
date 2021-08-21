@@ -25,4 +25,6 @@ public interface SeatStatusCustomRepository<T> {
 	public int countReservedMachine(Date date, String hour, String machinecode);
 	
 	List<SeatStatusEntity> getReservationByTerminate(String studentcode, String checkinFlag);
+	
+	SeatStatusEntity getReservationMachinecodeByTerminate(String machinecode ,String studentcode, String checkinFlag);
 }

@@ -33,7 +33,6 @@ public class ReuseController {
 		if (session_data != null) {
 			List<SeatStatusEntity> seatStatus = seatStatusRepository.getReservationByTerminate(session_data, "2");
 			model.addAttribute("seatStatus", seatStatus);
-
 			return "reuse";
 		} else {
 			model.addAttribute("studentForm", new StudentForm());

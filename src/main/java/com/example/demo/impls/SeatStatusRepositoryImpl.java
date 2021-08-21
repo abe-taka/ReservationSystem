@@ -129,8 +129,7 @@ public class SeatStatusRepositoryImpl implements SeatStatusCustomRepository {
 	// 状態に合わせて予約リストを表示する(状態コード -> 0:仮予約中 1:予約中 2:利用中)
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SeatStatusEntity> getReservationByFlag(Date date, String hour, String studentcode,
-			String checkinFlag) {
+	public List<SeatStatusEntity> getReservationByFlag(Date date, String hour, String studentcode, String checkinFlag) {
 		String jpql = "SELECT * FROM t09_seat_status WHERE t09_date = :date AND t09_checkin_hour = :hour AND t09_student_code = :studentcode AND t09_checkin_flag = :checkinFlag";
 
 		TypedQuery<SeatStatusEntity> query = (TypedQuery<SeatStatusEntity>) entityManager.createNativeQuery(jpql,
@@ -170,5 +169,19 @@ public class SeatStatusRepositoryImpl implements SeatStatusCustomRepository {
 		query.setParameter("checkinFlag", checkinFlag);
 
 		return query.getResultList();
+	}
+
+	// 利用開始している機種を取得
+	@SuppressWarnings("unchecked")
+	@Override
+	public SeatStatusEntity getReservationMachinecodeByTerminate(String machinecode , String studentcode, String checkinFlag) {
+		String jpql = "SELECT * FROM t09_seat_status x WHERE x.t09_student_code = :studentcode AND x.t09_checkin_flag = :checkinFlag AND t09_machine_code = :machinecode";
+
+		TypedQuery<SeatStatusEntity> query = (TypedQuery<SeatStatusEntity>) entityManager.createNativeQuery(jpql,SeatStatusEntity.class);
+		query.setParameter("machinecode", machinecode);
+		query.setParameter("studentcode", studentcode);
+		query.setParameter("checkinFlag", checkinFlag);
+
+		return query.getSingleResult();
 	}
 }
