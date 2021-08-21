@@ -20,6 +20,5 @@ public abstract interface SeatStatusRepository extends JpaRepository<SeatStatusE
 
 	@Transactional
 	public void deleteByStudentAndCheckinFlagAndMachineAndMachineNo(StudentEntity studentEntity, String checkinFlag, MachineEntity machineEntity, String machineNo);
-
 	public SeatStatusEntity findByNumber(int number);
 }

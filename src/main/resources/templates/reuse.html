@@ -6,6 +6,7 @@
 		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
 		crossorigin="anonymous"></script>
 	<meta charset="UTF-8">
+	<meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>
 	<meta name="viewport" content="width=device-width">
 	<title>継続利用 | FOCS</title>
 </head>
@@ -15,8 +16,7 @@
 		<div class="flex items-center">
 			<span id="usercode" th:text="${session_data}" class="mr-3 text-sm sm:text-base text-gray-600"></span>
 			<form th:action="@{/logout}" method="get">
-				<button type="submit"
-					class="w-full px-2 h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-sm text-white">ログアウト</button>
+				<button type="submit" class="w-full px-2 h-10 bg-red-500 hover:bg-red-700 focus:ring ring-red-300 rounded-lg text-sm text-white">ログアウト</button>
 			</form>
 		</div>
 	</nav>
@@ -24,36 +24,48 @@
 	<div id="backdrop" class="fixed w-full h-screen bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
 		<div class="w-3/4 h-3/4 sm:w-2/3 sm:h-2/3 bg-white rounded-lg p-3 sm:p-5 flex flex-col justify-between">
 			<h2 class="text-lg font-semibold">継続利用できました。</h2>
-			<form th:action="@{/top}" method="get">
-				<button type="submit" class="w-full px-1 h-12 bg-green-500 hover:bg-green-700 focus:ring ring-green-300 rounded-lg text-sm text-white">トップに戻る</button>
-			</form>
+			
+			<div class="flex space-x-5">
+				<button type="button" id="backBtn" th:onclick="back()" class="w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">トップページに戻る</button>
+			</div>
 		</div>
 	</div>
 	
 	<div id="backdrop2" class="fixed w-full h-screen bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
 		<div class="w-3/4 h-3/4 sm:w-2/3 sm:h-2/3 bg-white rounded-lg p-3 sm:p-5 flex flex-col justify-between">
 			<h2 class="text-lg font-semibold">継続利用できません。</h2>
+			
+			<div class="flex space-x-5">
+				<button type="button" id="backBtn" th:onclick="back()" class="w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">トップページに戻る</button>
+			</div>
 		</div>
 	</div>
 	
-	<main class="min-h-screen">
-		<div class="min-h-screen pt-14">
-			<div class="h-full flex flex-col p-10 items-center space-y-5 mb-20">
-				
-				<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3">
-					<div class="flex flex-col text-xs sm:text-base" th:object="${seatStatus}">
-						<span th:text="機種名 + *{machine.machinecode}"></span>
-						<span th:text="座席 + *{machineNo}"></span>
-						<input type="hidden" th:value="*{hour.hourName}">
-						<input type="hidden" th:value="*{date}">
+	<div th:if="${#lists.size(seatStatus) > 0}">
+		<main class="min-h-screen">
+			<div class="min-h-screen pt-14">
+				<div class="h-full flex flex-col p-10 items-center space-y-5 mb-20">
+					
+					<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3" th:each="seatStatus : ${seatStatus}" th:object="${seatStatus}">
+						<div class="flex flex-col text-xs sm:text-base">
+							<span th:text="機種名 + *{machine.machinecode}"></span>
+							<span th:text="座席 + *{machineNo}"></span>
+							<input type="hidden" th:value="*{hour.hourCode}">
+							<input type="hidden" th:value="*{date}">
+						</div>
+						<div class="filterBtn">
+							<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-300 hover:bg-green-500 focus:ring ring-green-100 rounded-lg text-xs sm:text-sm text-white" th:data-parameter1="*{machine.machinecode}"  th:data-parameter2="*{hour.hourCode}" th:data-parameter3="*{date}" th:onclick="ContinueUse(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'),this.getAttribute('data-parameter3'))">継続利用</button>
+						</div>
 					</div>
 					
-					<button id="filterBtn" class="w-20 sm:w-24 h-8 sm:h-10 bg-green-300 hover:bg-green-500 focus:ring ring-green-100 rounded-lg text-xs sm:text-sm text-white" th:data-parameter1="${seatStatus.machine.machinecode}"  th:data-parameter2="${seatStatus.hour.hourName}" th:data-parameter3="${seatStatus.date}" th:onclick="ContinueUse(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'),this.getAttribute('data-parameter3'))">継続利用</button>
 				</div>
-				
 			</div>
-		</div>
-	</main>
+		</main>
+	</div>
+	
+	<div th:unless="${#lists.size(seatStatus) > 0}" class="flex justify-center items-center" style="height: calc(100vh - 8.5rem);">
+		<span class="text-gray-600">利用中マシン無し</span>
+	</div>
 	
 	<div class="fixed bottom-0 bg-white w-full h-20 flex items-center justify-around border-t">
 		<button th:onclick="window.location.href='/top'" class="mx-3 w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">メニューへ戻る</button>
@@ -61,45 +73,47 @@
 </body>
 
 <script>
-	//UIボタンの操作
+	
+	//トップページに戻る
+	function back(){
+		location.href = "/top";
+	}	
+
+	//継続利用
 	function ContinueUse(machinecode,hour,date) {
-   			
+		// CSRFトークンの取得
+		const token = $("meta[name='_csrf']").attr("content");
+		
    		// 非同期通信
    		$.ajax({
-   			type : "GET",
+   			type : "POST",
    			url : "/restresue",
-   			data : {js_machinecode: machinecode, js_date: date,js_hour: hour},
+   			headers: {"X-CSRF-TOKEN": token},
+   			data : {js_machinecode: machinecode, js_date: date, js_hour: hour},
    			dataType : "json"
    		})
    		.then(function(response_data) {
    			let data = response_data;
-   			console.log("%%%%",data);
-   			console.log("$$$$$$");
+   			console.log("戻り値",data);
    			
-   			// 絞り込みボタンの処理
+   			// 予約〇
    			if(data == 0){
    				const backdrop = $("#backdrop");
-   	   			const filterBtn = $("#filterBtn");
+   	   			const filterBtn = $(".filterBtn");
    	   			const backBtn = $("#backBtn");
    	   	   		filterBtn.on("click", () => {
    	   				backdrop.removeClass("hidden");
    	   			});
    	   			
-   	   			// 戻るボタンの処理
-   	   			backBtn.on("click", () => {
-   	   				backdrop.addClass("hidden");
-   	   			});
-   			}else if(data == 1){
-   				const backdrop = $("#backdrop2");
-   	   			const filterBtn = $("#filterBtn");
+   			}
+   			
+   			//予約×
+   			else if(data == 1){
+   				const backdrop2 = $("#backdrop2");
+   	   			const filterBtn = $(".filterBtn");
    	   			const backBtn = $("#backBtn");
    	   	   		filterBtn.on("click", () => {
-   	   				backdrop.removeClass("hidden");
-   	   			});
-   	   			
-   	   			// 戻るボタンの処理
-   	   			backBtn.on("click", () => {
-   	   				backdrop.addClass("hidden");
+   	   				backdrop2.removeClass("hidden");
    	   			});
    			}
 		}
