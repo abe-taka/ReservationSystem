@@ -11,8 +11,6 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-
-
 //稼働日程
 @Entity
 @Table(name="m13_calendar")

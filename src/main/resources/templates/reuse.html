@@ -34,7 +34,7 @@
 							<input type="hidden" th:value="*{date}">
 						</div>
 						<div class="filterBtn">
-							<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-300 hover:bg-green-500 focus:ring ring-green-100 rounded-lg text-xs sm:text-sm text-white" th:data-parameter1="*{machine.machinecode}"  th:data-parameter2="*{hour.hourCode}" th:data-parameter3="*{date}" th:onclick="ContinueUse(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'),this.getAttribute('data-parameter3'))">継続利用</button>
+							<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-300 hover:bg-green-500 focus:ring ring-green-100 rounded-lg text-xs sm:text-sm text-white" th:data-parameter1="*{machine.machinecode}" th:data-parameter2="*{machineNo}" th:data-parameter3="*{hour.hourCode}" th:data-parameter4="*{date}" th:onclick="ContinueUse(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'),this.getAttribute('data-parameter3'),this.getAttribute('data-parameter4'))">継続利用</button>
 						</div>
 					</div>
 					
@@ -54,7 +54,7 @@
 
 <script>
 	//継続利用
-	function ContinueUse(machinecode,hour,date) {
+	function ContinueUse(machinecode,machinenum,hour,date) {
 		// CSRFトークンの取得
 		const token = $("meta[name='_csrf']").attr("content");
 		
@@ -68,7 +68,7 @@
 				type : "POST",
 				url : "/restresue",
 				headers: {"X-CSRF-TOKEN": token},
-				data : {js_machinecode: machinecode, js_date: date, js_hour: hour},
+				data : {js_machinecode: machinecode, js_machinenum: machinenum, js_date: date, js_hour: hour},
 				dataType: "text",
 				success: function(data) {
 					location.replace("/reuse");
