@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionForm;
 import com.example.demo.entities.SeatStatusEntity;
 import com.example.demo.forms.StudentForm;
@@ -20,6 +21,8 @@ public class ReuseController {
 	SessionForm sessionForm;
 	@Autowired
 	SeatStatusRepository seatStatusRepository;
+	@Autowired
+	DateTimeComponent dateTimeComponent;
 
 	// セッションデータ用
 	String session_data = null;
@@ -31,8 +34,18 @@ public class ReuseController {
 		session_data = sessionForm.getSession_code();
 		// セッション確認
 		if (session_data != null) {
-			List<SeatStatusEntity> seatStatus = seatStatusRepository.getReservationByTerminate(session_data, "2");
-			model.addAttribute("seatStatus", seatStatus);
+			
+			String currenthour = dateTimeComponent.getCurrentHour();
+			
+			//時間外の場合
+			if(!(currenthour.equals("8"))){
+				List<SeatStatusEntity> seatStatus = seatStatusRepository.getReservationByTerminate(session_data, "2",currenthour);
+				model.addAttribute("seatStatus", seatStatus);
+			}else {
+				List<SeatStatusEntity> seatStatus = null;
+				model.addAttribute("seatStatus", seatStatus);
+			}
+			
 			return "reuse";
 		} else {
 			model.addAttribute("studentForm", new StudentForm());

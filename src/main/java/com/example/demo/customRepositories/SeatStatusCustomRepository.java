@@ -22,9 +22,15 @@ public interface SeatStatusCustomRepository<T> {
 	
 	boolean checkIfSeatIsInStateByStatusCode(Date date, String hour, String machineCode, String machineNumber, String checkinFlag);
 	
+	boolean checkIfAlreadySeatIsInReservationByStatusCode(String date, String hour, String studentcode, String checkinFlag, String checkinFlag2);
+	
+	boolean checkIfSeatIsInReservationByStatusCode(String date, String hour, String machineCode, String machineNumber, String checkinFlag,String checkinFlag2);
+	
 	public int countReservedMachine(Date date, String hour, String machinecode);
 	
-	List<SeatStatusEntity> getReservationByTerminate(String studentcode, String checkinFlag);
+	public int countReuseReservedMachine(String date, String hour, String machinecode);
 	
-	SeatStatusEntity getReservationMachinecodeByTerminate(String machinecode ,String studentcode, String checkinFlag);
+	List<SeatStatusEntity> getReservationByTerminate(String studentcode, String checkinFlag, String hour);
+	
+	SeatStatusEntity getReservationMachinecodeByTerminate(String machinecode ,String studentcode, String checkinFlag,String hour);
 }
