@@ -21,26 +21,6 @@
 		</div>
 	</nav>
 	
-	<div id="backdrop" class="fixed w-full h-screen bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-		<div class="w-3/4 h-3/4 sm:w-2/3 sm:h-2/3 bg-white rounded-lg p-3 sm:p-5 flex flex-col justify-between">
-			<h2 class="text-lg font-semibold">継続利用できました。</h2>
-			
-			<div class="flex space-x-5">
-				<button type="button" id="backBtn" th:onclick="back()" class="w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">トップページに戻る</button>
-			</div>
-		</div>
-	</div>
-	
-	<div id="backdrop2" class="fixed w-full h-screen bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-		<div class="w-3/4 h-3/4 sm:w-2/3 sm:h-2/3 bg-white rounded-lg p-3 sm:p-5 flex flex-col justify-between">
-			<h2 class="text-lg font-semibold">継続利用できません。</h2>
-			
-			<div class="flex space-x-5">
-				<button type="button" id="backBtn" th:onclick="back()" class="w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">トップページに戻る</button>
-			</div>
-		</div>
-	</div>
-	
 	<div th:if="${#lists.size(seatStatus) > 0}">
 		<main class="min-h-screen">
 			<div class="min-h-screen pt-14">
@@ -48,8 +28,8 @@
 					
 					<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3" th:each="seatStatus : ${seatStatus}" th:object="${seatStatus}">
 						<div class="flex flex-col text-xs sm:text-base">
-							<span th:text="機種名 + *{machine.machinecode}"></span>
-							<span th:text="座席 + *{machineNo}"></span>
+							<span th:text="機種名： + *{machine.machinecode}"></span>
+							<span th:text="座席： + *{machineNo}"></span>
 							<input type="hidden" th:value="*{hour.hourCode}">
 							<input type="hidden" th:value="*{date}">
 						</div>
@@ -73,52 +53,29 @@
 </body>
 
 <script>
-	
-	//トップページに戻る
-	function back(){
-		location.href = "/top";
-	}	
-
 	//継続利用
 	function ContinueUse(machinecode,hour,date) {
 		// CSRFトークンの取得
 		const token = $("meta[name='_csrf']").attr("content");
 		
-   		// 非同期通信
-   		$.ajax({
-   			type : "POST",
-   			url : "/restresue",
-   			headers: {"X-CSRF-TOKEN": token},
-   			data : {js_machinecode: machinecode, js_date: date, js_hour: hour},
-   			dataType : "json"
-   		})
-   		.then(function(response_data) {
-   			let data = response_data;
-   			console.log("戻り値",data);
-   			
-   			// 予約〇
-   			if(data == 0){
-   				const backdrop = $("#backdrop");
-   	   			const filterBtn = $(".filterBtn");
-   	   			const backBtn = $("#backBtn");
-   	   	   		filterBtn.on("click", () => {
-   	   				backdrop.removeClass("hidden");
-   	   			});
-   			}
-   			
-   			//予約×
-   			else if(data == 1){
-   				const backdrop2 = $("#backdrop2");
-   	   			const filterBtn = $(".filterBtn");
-   	   			const backBtn = $("#backBtn");
-   	   	   		filterBtn.on("click", () => {
-   	   				backdrop2.removeClass("hidden");
-   	   			});
-   			}
+		// ダイアログの表示
+		if (confirm(`選択した座席を継続利用しますか？`)) {
+			// CSRFトークンの取得
+			const token = $("meta[name='_csrf']").attr("content");
+		
+			// 非同期通信
+			$.ajax({
+				type : "POST",
+				url : "/restresue",
+				headers: {"X-CSRF-TOKEN": token},
+				data : {js_machinecode: machinecode, js_date: date, js_hour: hour},
+				dataType: "text",
+				success: function(data) {
+					location.replace("/reuse");
+					window.alert(data);
+				}
+			})
 		}
-		, function() {
-			console.log("ContinueUse() : fail");
-		});   		
 	}
 </script>
 </html>
