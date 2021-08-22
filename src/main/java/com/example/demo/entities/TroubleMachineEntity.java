@@ -24,7 +24,7 @@ public class TroubleMachineEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int troubleMachineId;
 	
-	//
+	//機種コード
 	@ManyToOne
 	@JoinColumn(name="t18_machine_code")
 	@JsonBackReference("Unit11")
@@ -38,7 +38,7 @@ public class TroubleMachineEntity {
 	@Column(name="t18_report_date")
 	private Date reportDate;
 	
-	//
+	//報告学生コード
 	@ManyToOne
 	@JoinColumn(name="t18_report_student_code")
 	@JsonBackReference("Unit6")
@@ -48,13 +48,13 @@ public class TroubleMachineEntity {
 	@Column(name="t18_register_date")
 	private Date registerDate;
 	
-	//
+	//登録教官コード
 	@ManyToOne
 	@JoinColumn(name="t18_register_teacher_code")
 	@JsonBackReference("Unit9")
 	private TeacherEntity teacher;
 	
-	//
+	//登録学生コード
 	@Column(name="t18_register_student_code")
 	private String registerStudentCode;
 	
@@ -278,5 +278,4 @@ public class TroubleMachineEntity {
 		this.typeNumber = typeNumber;
 	}
 
-	
 }

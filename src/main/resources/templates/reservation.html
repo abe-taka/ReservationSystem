@@ -157,6 +157,17 @@
 			disabled>予約確定</button>
 	</div>
 </body>
+<script th:inline="javascript">
+	// ページにアクセスできない場合の処理
+	/*<![CDATA[*/
+	const isNotAvailable = /*[[${notAvailable != null}]]*/ false;
+
+	if (isNotAvailable) {
+		location.replace("/top");
+		window.alert(/*[[${notAvailable}]]*/);
+	}
+	/*]]>*/
+</script>
 <script>
 	// UIボタンの操作
 	$(document).ready(function(){

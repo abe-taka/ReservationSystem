@@ -52,7 +52,9 @@ public class ReservationController {
 			if (studentreg != null) {
 				classcode = studentreg.getClassEntity().getClasscode();
 			} else {
-				System.out.println("所属クラスがない");
+				// 所属クラスが確認できない場合、正常利用ができないため利用不可の文字列を入れる
+				model.addAttribute("notAvailable", "所属クラスが確認できません。");
+				return "reservation";
 			}
 			
 			//機種の階層を取得(所属クラスが使える + 重複無し)

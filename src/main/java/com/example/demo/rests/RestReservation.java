@@ -161,24 +161,20 @@ public class RestReservation {
 			for (int j = 0; j < listHours.size(); j++) {
 				String hour = listHours.get(j).getHourCode();
 				Date date = dateTimeComponent.strDateToDate(key + " 00:00:00", "yyyy/MM/dd hh:mm:ss");
-				System.out.println("Time:" + date + "-" + hour);
 				
 				// 現在の時限より前かどうかをチェック
 				if (checkIsBeforeCurrentTime(hour, date)) {
 					// RED!!
-					System.out.println("BEFORE: RED!!");
 					seatStatusPerDay.add("RED-NONE");
 				// 稼動パターンに対応しているかどうかをチェック
 				} else if (checkIsMachineRoomNotWorking(hour, date)) {
 					// RED!!
-					System.out.println("NOT WORKING: RED!!");
 					seatStatusPerDay.add("RED-NONE");
 				} else {
 					// ユーザが確定予約を持っている場合
 					if (checkIsMachineReserved(date, hour, studentcode)) {
 						// BLUE!!
 						String reservedMachineCode = getReservedMachineCode(date, hour, studentcode);
-						System.out.println("BLUE!! " + reservedMachineCode);
 						seatStatusPerDay.add("BLUE-" + reservedMachineCode);
 					// 確定予約ではない場合
 					} else {
@@ -186,19 +182,16 @@ public class RestReservation {
 						if (checkIsMachineTentativelyReserved(date, hour, studentcode)) {
 							// YELLOW!!
 							String tentativelyReservedMachineCode = getTentativelyReservedMachineCode(date, hour, studentcode);
-							System.out.println("YELLOW!! " + tentativelyReservedMachineCode);
 							seatStatusPerDay.add("YELLOW-" + tentativelyReservedMachineCode);
 						// 仮予約ではない場合
 						} else {
 							// 残席がない場合
 							if (checkLimitSeatPersonal(js_mcode, hour, date)) {
 								// RED!!
-								System.out.println("RED!!");
 								seatStatusPerDay.add("RED-NONE");
 							//すべてのケースに該当しないため、予約可能にする	
 							} else {
 								// WHITE!!
-								System.out.println("WHITE!!");
 								seatStatusPerDay.add("WHITE-NONE");
 							}
 						}
@@ -208,8 +201,6 @@ public class RestReservation {
 			// 結果リストに座席状態データを追加する
 			resultList.add(seatStatusPerDay);
 		}
-
-		System.out.println("resultList: " + resultList);
 
 		return utilComponent.listToJSON(resultList);
 	}
@@ -243,9 +234,7 @@ public class RestReservation {
 	
 	
 	// 現在の時限より前かどうかチェック
-	private boolean checkIsBeforeCurrentTime(String targetHour, Date date) {
-		System.out.println("checkIsBeforeCurrentTime");
-		
+	private boolean checkIsBeforeCurrentTime(String targetHour, Date date) {	
 		// 現在時刻を取得
 		Date currentTime = new Date(System.currentTimeMillis());
 		
@@ -261,7 +250,6 @@ public class RestReservation {
 	
 	// マシンルームが非稼働かどうかチェック(非稼働：true, 稼働：false)
 	private boolean checkIsMachineRoomNotWorking(String targetHour, Date date) {
-		System.out.println("checkIsMachineRoomNotWorking");
 		// DBから該当時限で検索し、非稼働であればtrueを返す
 		if (hourInWorkPatternRepository.findNotWorkingHour(targetHour, date).size() > 0) {
 			return true;
@@ -271,7 +259,6 @@ public class RestReservation {
 	
 	// 予約確定かを調査する(確定：true, 未定：false)
 	private boolean checkIsMachineReserved(Date date, String targetHour, String studentcode) {
-		System.out.println("checkIsMachineReserved");
 		// DBから日付・時限・学籍番号で検索し、その日時に該当学生がどれかのマシーンを予約していればtrueを返す
 		if (seatStatusRepository.findIfAlreadyReserved(date, targetHour, studentcode).size() > 0) {
 			return true;
@@ -281,10 +268,8 @@ public class RestReservation {
 	
 	// 予約確定の機種コードを取得する
 	private String getReservedMachineCode(Date date, String targetHour, String studentcode) {
-		System.out.println("getReservedMachineCode");
 		List<SeatStatusEntity> entities = seatStatusRepository.findIfAlreadyReserved(date, targetHour, studentcode);
 		if (entities.size() > 0) {
-			System.out.println(entities);
 			return entities.get(0).getMachine().getMachinecode();
 		}
 		return "";
@@ -292,7 +277,6 @@ public class RestReservation {
 	
 	// 仮予約かを調査する(仮予約：true, 未定：false)
 	private boolean checkIsMachineTentativelyReserved(Date date, String targetHour, String studentcode) {
-		System.out.println("checkIsMachineTentativelyReserved");
 		if (seatStatusRepository.findIfAlreadyTentativelyReserved(date, targetHour, studentcode).size() > 0) {
 			return true;
 		}
@@ -301,7 +285,6 @@ public class RestReservation {
 	
 	// 仮予約の機種コードを取得する
 	private String getTentativelyReservedMachineCode(Date date, String targetHour, String studentcode) {
-		System.out.println("getTentativelyReservedMachineCode");
 		List<SeatStatusEntity> entities = seatStatusRepository.findIfAlreadyTentativelyReserved(date, targetHour, studentcode);
 		if (entities.size() > 0) {
 			return entities.get(0).getMachine().getMachinecode();
@@ -313,18 +296,14 @@ public class RestReservation {
 	private boolean checkLimitSeatPersonal(String machinecode, String hour, Date date) {
 		// マシンの総台数を取得
         int int_limit_seat = machineRepository.getSeatCountSelectMachine(machinecode);
-        System.out.println("int_limit_seat: " + int_limit_seat);
 
         // 故障機数の取得(故障確定のみ)
         int int_trouble_machine = troubleMachineRepository.getTroubleMachine(machinecode);
-        System.out.println("int_trouble_machine: " + int_trouble_machine);
 
         // 予約・利用中の台数の取得
         int int_reservation_machine = seatStatusRepository.countReservedMachine(date, hour, machinecode);
-        System.out.println("int_reservation_machine: " + int_reservation_machine);
         
         int int_seat_count = int_limit_seat - int_trouble_machine - int_reservation_machine;
-        System.out.println("int_seat_count: " + int_seat_count);
         
         // 空席数が0以上の場合、予約可能なのでfalseを返す
         if (int_seat_count > 0) {

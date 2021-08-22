@@ -39,14 +39,7 @@ public class SelectToStartController {
 	
 	// セッションデータ用
 	String session_data = null;
-	
-	// 元プログラムの流れ
-	// 1. マシン解放待ちに登録中かを調べる -> Y: "マシン解放待ちに登録中です。" N: 次へ
-	// 2. (まだ、実装する予定なし)　複数台利用時に期間内にあるかチェック（単体の場合、常にtrue）
-	// 3. マシン解放待ちにした機種が利用可能かどうか調べる
-	// 4. 予約があるかどうかチェックする
-	// 5. 全部該当しない場合、即時利用にする
-	
+		
 	@GetMapping(value="/selectToStart")
 	public String Get_SelectToStart(Model model) {
 		// セッションデータの取得
@@ -63,7 +56,11 @@ public class SelectToStartController {
 			if (studentreg != null) {
 				classcode = studentreg.getClassEntity().getClasscode();
 			} else {
-				System.out.println("所属クラスがない");
+				if (classcode == null) {
+					// 所属クラスが確認できない場合、正常利用ができないため利用不可の文字列を入れる
+					model.addAttribute("notAvailable", "所属クラスが確認できません。");
+					return "start";
+				}
 			}
 			model.addAttribute("session_data", session_data);
 					
@@ -126,9 +123,8 @@ public class SelectToStartController {
 	
 	// 利用可能時間外または稼働時間外かをチェックする
 	private boolean checkIfCurrentlyNotAvailable(String targetHour, Date date) {
-		System.out.println("checkIfCurrentlyNotAvailable");
 		// DBに設定されている時限コードを超えた数字になった場合、利用不可判定
-		if (targetHour.equals("8")) {
+		if (targetHour.equals("00")) {
 			return true;
 		}
 		// DBから該当時限で検索し、非稼働であればtrueを返す

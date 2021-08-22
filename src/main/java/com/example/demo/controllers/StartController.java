@@ -60,7 +60,11 @@ public class StartController {
 			if (studentreg != null) {
 				classcode = studentreg.getClassEntity().getClasscode();
 			} else {
-				System.out.println("所属クラスがない");
+				if (classcode == null) {
+					// 所属クラスが確認できない場合、正常利用ができないため利用不可の文字列を入れる
+					model.addAttribute("notAvailable", "所属クラスが確認できません。");
+					return "start";
+				}
 			}
 			model.addAttribute("session_data", session_data);
 			

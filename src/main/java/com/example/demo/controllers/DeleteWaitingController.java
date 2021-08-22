@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionForm;
 import com.example.demo.entities.CancelWaitEntity;
-import com.example.demo.entities.StudentRegistEntity;
 import com.example.demo.repositories.CancelWaitRepository;
-import com.example.demo.repositories.StudentRegistRepository;
-import com.example.demo.repositories.StudentRepository;
 
 //　待ち状態解除
 @Controller
@@ -26,10 +23,6 @@ public class DeleteWaitingController {
 	SessionForm sessionForm;
 	@Autowired
 	DateTimeComponent dateTimeComponent;
-	@Autowired
-	StudentRepository studentRepository;
-	@Autowired
-	StudentRegistRepository studentregRepository;
 	@Autowired
 	CancelWaitRepository cancelWaitRepository;
 	
@@ -43,17 +36,8 @@ public class DeleteWaitingController {
 				
 		// セッションを確認し、ない場合取得を試す
 		if (session_data != null) {
-			// 所属クラスを取得
-			String session_data = sessionForm.getSession_code();
-			StudentRegistEntity studentreg = new StudentRegistEntity();
-			studentreg = studentregRepository.findByStudentcode(session_data);
-			String classcode = null;
-					
-			if (studentreg != null) {
-				classcode = studentreg.getClassEntity().getClasscode();
-			} else {
-				System.out.println("所属クラスがない");
-			}
+			// セッションデータの受け渡し設定
+			String session_data = sessionForm.getSession_code();	
 			model.addAttribute("session_data", session_data);
 			
 			//現在日を取得		

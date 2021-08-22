@@ -30,12 +30,9 @@ public class RestCancelWait {
 
 	// マシン解放待ち解除
 	@RequestMapping(value="/cancel_wait", method=RequestMethod.POST)
-	public String Post_CancelWait(@RequestParam("machineCode") String machineCode, @RequestParam("usercode") String usercode, @RequestParam("reservationNumber") int reservationNumber) {
-		System.out.println(machineCode + usercode + Integer.toString(reservationNumber));
-		
+	public String Post_CancelWait(@RequestParam("machineCode") String machineCode, @RequestParam("usercode") String usercode, @RequestParam("reservationNumber") int reservationNumber) {	
 		// マシン解放待ちデータを取得する
 		CancelWaitEntity waitEntity = cancelWaitRepository.findByStudentAndMachineAndSeatStatus(studentRepository.findByStudentcode(usercode), machineRepository.findByMachinecode(machineCode), seatStatusRepository.findByNumber(reservationNumber));
-		System.out.print(waitEntity);
 		
 		if (waitEntity != null) {
 			// マシン解放待ちデータを削除する

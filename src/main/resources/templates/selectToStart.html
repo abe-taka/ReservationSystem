@@ -57,12 +57,14 @@
 </body>
 <script th:inline="javascript">
 	// ページにアクセスできない場合の処理
-	const isNotAvailable = [[${notAvailable != null}]];
+	/*<![CDATA[*/
+	const isNotAvailable = /*[[${notAvailable != null}]]*/ false;
 
 	if(isNotAvailable) {
 		location.replace("/top");
-		window.alert([[${notAvailable}]]);
+		window.alert(/*[[${notAvailable}]]*/);
 	}
+	/*]]>*/
 </script>
 <script>
 	// 利用開始ボタンの処理

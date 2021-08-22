@@ -3,11 +3,11 @@ package com.example.demo.configs;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 //バリデーション
 @Configuration
-public class ValidationConfig extends WebMvcConfigurerAdapter {
+public class ValidationConfig implements WebMvcConfigurer {
 
 	public org.springframework.validation.Validator getValidator() {
 		LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();

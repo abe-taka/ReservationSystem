@@ -33,5 +33,27 @@ public class HourInWorkPatternRepositoryImpl implements HourInWorkPatternCustomR
         
         return query.getResultList();
     }
+	
+	// 稼働中の最大時限数を取得
+	@SuppressWarnings("unchecked")
+	@Override
+	public int findMaxHour(String patternCode) {
+		String jpql = "SELECT * FROM m12_hour_in_work_pattern WHERE m12_work_pattern_code = :patternCode AND m12_work_flag = '1'"; 
+        
+        TypedQuery<HourInWorkPatternEntity> query = (TypedQuery<HourInWorkPatternEntity>) entityManager.createNativeQuery(jpql, HourInWorkPatternEntity.class);
+        query.setParameter("patternCode", patternCode);
+        
+        List<HourInWorkPatternEntity> result = query.getResultList();
+        
+        int maxHour = 0;
+        for (HourInWorkPatternEntity entity : result) {
+        	int entityHour = Integer.parseInt(entity.getHour().getHourCode());
+        	if (entityHour > maxHour) {
+        		maxHour = entityHour;
+        	}
+        }
+
+        return maxHour;
+	}
 
 }
