@@ -71,7 +71,6 @@ public class DateTimeComponent {
 		calendar.add(Calendar.DAY_OF_MONTH, 9);
 		dateObj = calendar.getTime();
 		sevenafter_ymd = format.format(dateObj);
-		System.out.println("*****"+sevenafter_ymd);
 
 		return sevenafter_ymd;
 	}
@@ -139,9 +138,8 @@ public class DateTimeComponent {
 			// DBから時限コードを取得
 			currentHour = hourRepository.getHourCodeBetweenCheckinStartAndCheckoutLimit(tempTimeStr).get(0).getHourCode();
 		} else {
-			// 現在時刻がDBに登録した時限の時間外の場合、最大時限数に+1をした値を返還
-			int beyondMaxHour = Integer.parseInt(hourRepository.findFirstByOrderByHourEndTimeDesc().getHourCode()) + 1;
-			currentHour = String.valueOf(beyondMaxHour);
+			// 現在時刻がDBに登録した時限の時間外の場合、00を返還
+			currentHour = "00";
 		}
 			
 		return currentHour;
@@ -178,7 +176,7 @@ public class DateTimeComponent {
 		// DB比較用の臨時文字列を生成
 		String tempTimeStr = "1900/01/01 " + dateToStrTime(currentTime);
 		
-		// 
+		// 現在の時間が開始と制限時間の間にある場合
 		if (hourRepository.checkIfCurrentTimeIsBetweenStartAndLimit(tempTimeStr, targetHour).size() > 0) {
 			return true;
 		}	

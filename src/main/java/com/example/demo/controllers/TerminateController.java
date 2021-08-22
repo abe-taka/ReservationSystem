@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionForm;
 import com.example.demo.entities.SeatStatusEntity;
-import com.example.demo.entities.StudentRegistEntity;
-import com.example.demo.forms.StudentForm;
 import com.example.demo.repositories.SeatStatusRepository;
-import com.example.demo.repositories.StudentRegistRepository;
 
 //　利用終了
 @Controller
@@ -27,8 +24,6 @@ public class TerminateController {
 	DateTimeComponent dateTimeComponent;
 	@Autowired
 	SeatStatusRepository seatStatusRepository;
-	@Autowired
-	StudentRegistRepository studentregRepository;
 
 	// セッションデータ用
 	String session_data = null;
@@ -40,17 +35,8 @@ public class TerminateController {
 		
 		// セッション確認
 		if (session_data != null) {
-			//所属クラスを取得
+			//セッションデータの受け渡し設定
 			String session_data = sessionForm.getSession_code();
-			StudentRegistEntity studentreg = new StudentRegistEntity();
-			studentreg = studentregRepository.findByStudentcode(session_data);
-			String classcode = null;
-							
-			if (studentreg != null) {
-				classcode = studentreg.getClassEntity().getClasscode();
-			} else {
-				System.out.println("所属クラスがない");
-			}
 			model.addAttribute("session_data", session_data);
 			
 			// 現在日を取得		

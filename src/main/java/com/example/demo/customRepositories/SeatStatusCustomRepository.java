@@ -22,15 +22,17 @@ public interface SeatStatusCustomRepository<T> {
 	
 	boolean checkIfSeatIsInStateByStatusCode(Date date, String hour, String machineCode, String machineNumber, String checkinFlag);
 	
-	boolean checkIfAlreadySeatIsInReservationByStatusCode(String date, String hour, String studentcode, String checkinFlag, String checkinFlag2);
+	boolean checkIfUserAlreadyReserved(String date, String hour, String studentcode, String checkinFlag, String checkinFlag2);
+
+	boolean checkIfSeatIsReservedByMyself(String date, String hour, String machineCode, String machineNumber, String studentCode, String checkinFlag,String checkinFlag2);
 	
-	boolean checkIfSeatIsInReservationByStatusCode(String date, String hour, String machineCode, String machineNumber, String checkinFlag,String checkinFlag2);
+	boolean checkIfSeatIsReservedByOthers(String date, String hour, String machineCode, String machineNumber, String studentCode, String checkinFlag,String checkinFlag2);
 	
 	public int countReservedMachine(Date date, String hour, String machinecode);
 	
 	public int countReuseReservedMachine(String date, String hour, String machinecode);
 	
-	List<SeatStatusEntity> getReservationByTerminate(String studentcode, String checkinFlag, String hour);
+	List<SeatStatusEntity> getReservationForReusing(String studentcode, String checkinFlag, String hour, Date date);
 	
-	SeatStatusEntity getReservationMachinecodeByTerminate(String machinecode ,String studentcode, String checkinFlag,String hour);
+	SeatStatusEntity getReservationByMachinecode(String machinecode, String studentcode, String checkinFlag, String hour);
 }

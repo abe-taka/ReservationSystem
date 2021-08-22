@@ -9,4 +9,5 @@ public interface HourInWorkPatternCustomRepository<T> {
 
 	List<HourInWorkPatternEntity> findNotWorkingHour(String hour, Date date);
 	
+	int findMaxHour(String patternCode);
 }

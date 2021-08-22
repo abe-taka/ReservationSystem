@@ -5,8 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.example.demo.customRepositories.TroubleMachineCustomRepository;
-import com.example.demo.entities.MachineEntity;
-import com.example.demo.entities.StudentEntity;
 import com.example.demo.entities.TroubleMachineEntity;
 
 public abstract interface TroubleMachineRepository extends JpaRepository<TroubleMachineEntity, String>, TroubleMachineCustomRepository<TroubleMachineEntity> {

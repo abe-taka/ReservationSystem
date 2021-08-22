@@ -14,4 +14,6 @@ public interface CalendarRepository extends JpaRepository<CalendarEntity,String>
 	//日付検索
 	@Query(value="SELECT * FROM m13_calendar WHERE m13_date= :date",nativeQuery=true)
 	public CalendarEntity findByDate(String date);
+	
+	public CalendarEntity findByDate(Date date);
 }

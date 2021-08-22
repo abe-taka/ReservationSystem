@@ -21,10 +21,10 @@
 		</div>
 	</nav>
 	
-	<div th:if="${#lists.size(seatStatus) > 0}">
-		<main class="min-h-screen">
-			<div class="min-h-screen pt-14">
-				<div class="h-full flex flex-col p-10 items-center space-y-5 mb-20">
+	<main class="min-h-screen">		
+		<div class="min-h-screen pt-14">
+			<div th:if="${seatStatus != null && #lists.size(seatStatus) > 0}">	
+				<div class="h-full flex flex-col p-3 sm:p-10 items-center space-y-5 mb-20">
 					
 					<div class="flex justify-between sm:justify-around items-center w-full h-20 border rounded-lg shadow px-3" th:each="seatStatus : ${seatStatus}" th:object="${seatStatus}">
 						<div class="flex flex-col text-xs sm:text-base">
@@ -34,27 +34,37 @@
 							<input type="hidden" th:value="*{date}">
 						</div>
 						<div class="filterBtn">
-							<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-300 hover:bg-green-500 focus:ring ring-green-100 rounded-lg text-xs sm:text-sm text-white" th:data-parameter1="*{machine.machinecode}" th:data-parameter2="*{machineNo}" th:data-parameter3="*{hour.hourCode}" th:data-parameter4="*{date}" th:onclick="ContinueUse(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'),this.getAttribute('data-parameter3'),this.getAttribute('data-parameter4'))">継続利用</button>
+							<button class="w-20 sm:w-24 h-8 sm:h-10 bg-green-300 hover:bg-green-500 focus:ring ring-green-100 rounded-lg text-xs sm:text-sm text-white" th:data-parameter1="*{machine.machinecode}" th:data-parameter2="*{machineNo}" th:data-parameter3="*{hour.hourCode}" th:data-parameter4="*{date}" th:onclick="continueUse(this.getAttribute('data-parameter1'),this.getAttribute('data-parameter2'),this.getAttribute('data-parameter3'),this.getAttribute('data-parameter4'))">継続利用</button>
 						</div>
 					</div>
 					
 				</div>
 			</div>
-		</main>
-	</div>
-	
-	<div th:unless="${#lists.size(seatStatus) > 0}" class="flex justify-center items-center" style="height: calc(100vh - 8.5rem);">
-		<span class="text-gray-600">利用中マシン無し</span>
-	</div>
+			
+			<div th:unless="${seatStatus != null && #lists.size(seatStatus) > 0}" class="flex justify-center items-center" style="height: calc(100vh - 8.5rem);">
+				<span class="text-gray-600">利用中のマシン無し</span>
+			</div>
+		</div>
+	</main>
 	
 	<div class="fixed bottom-0 bg-white w-full h-20 flex items-center justify-around border-t">
 		<button th:onclick="window.location.href='/top'" class="mx-3 w-full px-1 h-12 bg-gray-500 hover:bg-gray-700 focus:ring ring-gray-300 rounded-lg text-sm text-white">メニューへ戻る</button>
 	</div>
 </body>
+<script th:inline="javascript">
+	// ページにアクセスできない場合の処理
+	/*<![CDATA[*/
+	const isNotAvailable = /*[[${notAvailable != null}]]*/ false;
 
+	if (isNotAvailable) {
+		location.replace("/top");
+		window.alert(/*[[${notAvailable}]]*/);
+	}
+	/*]]>*/
+</script>
 <script>
 	//継続利用
-	function ContinueUse(machinecode,machinenum,hour,date) {
+	function continueUse(machinecode, machinenum, hour,date) {
 		// CSRFトークンの取得
 		const token = $("meta[name='_csrf']").attr("content");
 		

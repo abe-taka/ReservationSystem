@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionForm;
 import com.example.demo.entities.SeatStatusEntity;
-import com.example.demo.entities.StudentRegistEntity;
 import com.example.demo.repositories.HourRepository;
 import com.example.demo.repositories.SeatStatusRepository;
-import com.example.demo.repositories.StudentRegistRepository;
 
 //　予約取消
 @Controller
@@ -27,8 +25,6 @@ public class CancelReservationController {
 	SessionForm sessionForm;
 	@Autowired
 	DateTimeComponent dateTimeComponent;
-	@Autowired
-	StudentRegistRepository studentregRepository;
 	@Autowired
 	SeatStatusRepository seatStatusRepository;
 	@Autowired
@@ -46,17 +42,8 @@ public class CancelReservationController {
 				
 		//セッションを確認し、ない場合取得を試す
 		if (session_data != null) {
-			//所属クラスを取得
+			//セッションデータの受け渡し設定
 			String session_data = sessionForm.getSession_code();
-			StudentRegistEntity studentreg = new StudentRegistEntity();
-			studentreg = studentregRepository.findByStudentcode(session_data);
-			String classcode = null;
-					
-			if (studentreg != null) {
-				classcode = studentreg.getClassEntity().getClasscode();
-			} else {
-				System.out.println("所属クラスがない");
-			}
 			model.addAttribute("session_data", session_data);
 			
 			//現在日を取得		
@@ -77,7 +64,4 @@ public class CancelReservationController {
 			return "redirect:/";
 		}
 	}
-	
-	
-	
 }

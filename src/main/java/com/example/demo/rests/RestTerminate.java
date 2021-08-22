@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.components.DateTimeComponent;
 import com.example.demo.components.SessionForm;
+import com.example.demo.components.UtilComponent;
 import com.example.demo.entities.MachineEntity;
 import com.example.demo.entities.StudentEntity;
 import com.example.demo.entities.TroubleMachineEntity;
@@ -25,6 +26,8 @@ public class RestTerminate {
 	DateTimeComponent dateTimeComponent;
 	@Autowired
 	SessionForm sessionForm;
+	@Autowired
+	UtilComponent utilComponent;
 	@Autowired
 	TroubleMachineRepository troubleMachineRepository;
 	@Autowired
@@ -55,6 +58,11 @@ public class RestTerminate {
 		// 利用終了
 		if (troubleMachineEntity != null && checkIfCanTerminateUse(reservationNumber)) {
 			seatStatusRepository.deleteById(reservationNumber);
+			
+			// ログ保存
+			utilComponent.saveToLog(null, null, session_data, "故障機報告");
+			utilComponent.saveToLog(null, null, session_data, "利用終了");
+			
 			return "故障機報告を完了し、利用を終了しました！";
 		}
 		return "故障機報告に失敗しました。";
@@ -62,9 +70,16 @@ public class RestTerminate {
 	
 	// 利用終了(REST)
 	@RequestMapping(value="/restuseoff", method=RequestMethod.POST)
-	public String UseOffProcess(@RequestParam("reservationNumber") int reservationNumber) {			
+	public String UseOffProcess(@RequestParam("reservationNumber") int reservationNumber) {
+		// ユーザ番号を取得
+		String session_data = sessionForm.getSession_code();
+		
 		if (checkIfCanTerminateUse(reservationNumber)) {
 			seatStatusRepository.deleteById(reservationNumber);
+			
+			// ログ保存
+			utilComponent.saveToLog(null, null, session_data, "利用終了");
+			
 			return "利用を終了しました！";
 		}
 		return "利用終了に失敗しました。";

@@ -190,15 +190,16 @@
 </body>
 <script th:inline="javascript">
 	// ページにアクセスできない場合の処理
-	const isNotAvailable = [[${notAvailable != null}]];
+	/*<![CDATA[*/
+	const isNotAvailable = /*[[${notAvailable != null}]]*/ false;
 
 	if (isNotAvailable) {
 		location.replace("/top");
-		window.alert([[${notAvailable}]]);
+		window.alert(/*[[${notAvailable}]]*/);
 	}
 	
 	// 満席の場合、マシン解放待ちボタンを表示(予約から来た時)
-	const isFull = [[${isFull}]];
+	const isFull = /*[[${isFull}]]*/ false;
 	
 	if (isFull) {
 		const waitBtnContainer = $("#waitBtnContainer");
@@ -208,11 +209,12 @@
 	// 利用開始ボタンの活性化(予約から来た時)
 	const startBtn = $("#startBtn");
 	
-	const isStartFromReserv = [[${floor != null && machineCode != null && checkinHour != null}]];
+	const isStartFromReserv = /*[[${floor != null && machineCode != null && checkinHour != null}]]*/ false;
 	
 	isStartFromReserv ? startBtn.attr("onClick", "clickStart(1)") : startBtn.attr("onClick", "clickStart(2)");
 	isStartFromReserv && startBtn.prop("disabled", false);
 	isStartFromReserv && startBtn.removeClass("cursor-not-allowed");
+	/*]]>*/
 </script>
 <script>
 	// UIボタンの操作

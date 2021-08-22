@@ -80,9 +80,6 @@ public class RestStart {
 			// 結果リストに座席情報を格納する
 			list_seats.add(seatNumber + "-" + seatColor);
 		}
-			
-		System.out.println("Done!: ");
-		System.out.println("resultList: " + list_seats);
 
 		return utilComponent.listToJSON(list_seats);
 	}
@@ -90,10 +87,8 @@ public class RestStart {
 	// 利用開始処理
 	@RequestMapping(value="/make_start", method=RequestMethod.POST)
 	public String Post_Start(@RequestParam("date") String date, @RequestParam("hour") String hour, @RequestParam("machineCode") String machineCode, @RequestParam("studentcode") String studentcode, @RequestParam("machineNumber") String machineNumber, @RequestParam("processType") int processType, @RequestParam("checkinFlag") String checkinFlag) {
-		System.out.println(date + hour + machineCode + studentcode + machineNumber + checkinFlag);
 		// タイプ変換
 		Date dateDate = dateTimeComponent.strDateToDate(date, "yyyy/MM/dd hh:mm:ss");
-		System.out.println(dateDate);
 		
 		// 現在時刻の取得
 		Date todayDate = new Date();
@@ -102,8 +97,6 @@ public class RestStart {
 		if (processType == 1) {
 			// 座席状態テーブルに予約データが格納されているか確認するために取得
 			List<SeatStatusEntity> reservations = seatStatusRepository.getReservationByFlag(dateDate, hour, studentcode, checkinFlag);
-					
-			System.out.println(reservations);
 				
 			// 該当機種に残席があるかチェック
 			if (reservations.size() > 0) {
@@ -115,17 +108,14 @@ public class RestStart {
 				entity.setUpdateDate(todayDate);
 				entity = seatStatusRepository.save(entity);
 				
-				System.out.println(entity.getNumber());
 				// マシン解放待ちデータがあれば削除する
-				CancelWaitEntity waitEntity = cancelWaitRepository.findBySeatStatus(seatStatusRepository.findByNumber(entity.getNumber()));
-				System.out.print(waitEntity);			
+				CancelWaitEntity waitEntity = cancelWaitRepository.findBySeatStatus(seatStatusRepository.findByNumber(entity.getNumber()));		
 				if (waitEntity != null) {
 					cancelWaitRepository.delete(waitEntity);
 				}
 				
 				// ログ保存
 				utilComponent.saveToLog(null, null, studentcode, "利用開始");
-				System.out.println(machineCode);
 				
 				// 予約ログ保存
 				utilComponent.saveToReservationLog(machineCode, machineNumber, studentcode, "", dateDate, hour, "利用開始");
@@ -169,10 +159,8 @@ public class RestStart {
 	// マシン解放待ち登録
 	@RequestMapping(value="/make_wait", method=RequestMethod.POST)
 	public String Post_CancelWait(@RequestParam("date") String date, @RequestParam("hour") String hour, @RequestParam("machineCode") String machineCode, @RequestParam("studentcode") String studentcode) {
-		System.out.println(date + hour + machineCode + studentcode);
 		// タイプ変換
 		Date dateDate = dateTimeComponent.strDateToDate(date, "yyyy/MM/dd hh:mm:ss");
-		System.out.println(dateDate);
 		
 		// 現在時刻の取得
 		Date todayDate = new Date();
@@ -187,7 +175,6 @@ public class RestStart {
 		seatStatusEntity.setStudent(studentRepository.findByStudentcode(studentcode));
 		seatStatusEntity.setUpdateDate(todayDate);
 		seatStatusEntity = seatStatusRepository.save(seatStatusEntity);
-		System.out.println(seatStatusEntity);
 		
 		// マシン解放待ちテーブルにテータを追加
 		CancelWaitEntity cancelWaitEntity = new CancelWaitEntity();
@@ -196,7 +183,6 @@ public class RestStart {
 		cancelWaitEntity.setSeatStatus(seatStatusEntity);
 		cancelWaitEntity.setUpdateDate(todayDate);
 		cancelWaitEntity = cancelWaitRepository.save(cancelWaitEntity);
-		System.out.println(cancelWaitEntity);
 		
 		if (seatStatusEntity != null && cancelWaitEntity != null) {
 			// ログ保存

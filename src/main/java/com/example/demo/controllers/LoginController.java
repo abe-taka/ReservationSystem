@@ -56,8 +56,6 @@ public class LoginController {
 		// バリデーションチェック
 		if (result.hasErrors()) {
 			// エラー(バリデーションチェック)
-			System.out.println("バリデーションエラー");
-			System.out.println("バリデーションログ" + result);
 			redirectAttr.addFlashAttribute("err", "IDとパスワードを確認してください。");
 
 			return "redirect:/";
@@ -65,7 +63,6 @@ public class LoginController {
 
 		// DBでのデータ存在チェック
 		else if (studentEntity == null) {
-			System.out.println("DBに存在しない");
 			redirectAttr.addFlashAttribute("err", "IDとパスワードを確認してください。");
 			// エラー表示は、LDAPが終わってから
 			return "redirect:/";
